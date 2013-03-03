@@ -9,10 +9,11 @@ addonsFolder=xbmc.translatePath('special://home/addons/')
 catsFile=xbmc.translatePath(addon_work_folder+'/categories.list')
 addon = xbmcaddon.Addon(id=addonID)
 translation = addon.getLocalizedString
-forceViewMode=addon.getSetting("forceViewMode")
+forceViewMode=addon.getSetting("forceView")
 viewMode=str(addon.getSetting("viewMode"))
 catCount=addon.getSetting("catCount")
 versionInTitle=str(addon.getSetting("versionInTitle"))
+showMessages=str(addon.getSetting("showMessages"))
 if not os.path.isdir(addon_work_folder):
   os.mkdir(addon_work_folder)
 
@@ -30,7 +31,12 @@ def indexMain():
             xbmc.executebuiltin('XBMC.ActivateWindow(10002,plugin://script.categories/?content_type=image)')
 
 def index():
-        addDir(translation(30001), "all", "listCat", "")
+        allCount=getAllCount()
+        if catCount=="true" and allCount>0:
+          allTitle=translation(30001)+" ("+str(allCount)+")"
+        else:
+          allTitle=translation(30001)
+        addDir(allTitle, "all", "listCat", "")
         cats = []
         if os.path.exists(catsFile):
           json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Addons.GetAddons", "params": {"content": "'+contentType+'"}, "id": 1}' )
@@ -58,13 +64,21 @@ def index():
                 if cat not in cats:
                   cats.append(cat)
           fh.close()
-          if catCount=="true":
-            for cat in cats:
-              addRDir(cat+" ("+str(getCatCount(cat))+")", cat, "listCat", "")
-          else:
-            for cat in cats:
-              addRDir(cat, cat, "listCat", "")
+          for cat in cats:
+            catsCount=getCatCount(cat)
+            if catCount=="true" and catsCount>0:
+              catTitle=cat+" ("+str(catsCount)+")"
+            else:
+              catTitle=cat
+            addRDir(catTitle, cat, "listCat", "")
         xbmcplugin.endOfDirectory(pluginhandle)
+        if forceViewMode=="true":
+          xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+
+def getAllCount():
+        json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Addons.GetAddons", "params": {"content": "'+contentType+'"}, "id": 1}' )
+        match=re.compile('"addonid"', re.DOTALL).findall(json_result)
+        return len(match)-1
 
 def getCatCount(category):
         count=0
@@ -241,7 +255,8 @@ def addAddon(args):
               fh=open(catsFile, 'a')
               fh.write(playlistEntry+"\n")
               fh.close()
-          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30018).format(addon=xbmcaddon.Addon(id=addonID).getAddonInfo('name'), cat=pl)+',5000)')
+          if showMessages=="true":
+            xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30018).format(addon=xbmcaddon.Addon(id=addonID).getAddonInfo('name'), cat=pl)+',5000)')
 
 def deleteAddon(args):
         match=re.compile('(.+?)#(.+?)#', re.DOTALL).findall(args)
@@ -253,8 +268,9 @@ def deleteAddon(args):
         fh=open(catsFile, 'w')
         fh.write(content.replace(args+"\n",""))
         fh.close()
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30019).format(addon=xbmcaddon.Addon(id=id).getAddonInfo('name'), cat=cat)+',5000)')
         xbmc.executebuiltin("Container.Refresh")
+        if showMessages=="true":
+          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30019).format(addon=xbmcaddon.Addon(id=id).getAddonInfo('name'), cat=cat)+',5000)')
 
 def deleteCat(args):
         dialog = xbmcgui.Dialog()
