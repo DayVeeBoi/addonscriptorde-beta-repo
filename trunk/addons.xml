@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+<addon id="script.categories" name="- Categories" version="2.0.8" provider-name="AddonScriptorDE">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video audio image</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</summary>
+    <summary lang="de">Video/Audio/Image Add-ons per Kontextmenü zu Kategorien hinzufügen</summary>
+    <language></language>
+    <description lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</description>
+    <description lang="de">Video/Audio/Image Add-ons per Kontextmenü zu Kategorien hinzufügen</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.5" provider-name="AddonScriptorDE">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.subtitles" library="default.py" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</summary>
+    <summary lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</summary>
+    <description lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</description>
+    <description lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+</addons>
