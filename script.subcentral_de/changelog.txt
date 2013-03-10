@@ -18,3 +18,5 @@
 1.0.6
 - Improved subtitle listing
 - Improved custom search
+1.0.7
+- Some improvements & bugfixes

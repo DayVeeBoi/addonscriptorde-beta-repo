@@ -68,11 +68,9 @@ currentSeason=""
 currentEpisode=xbmc.getInfoLabel('VideoPlayer.Episode')
 currentSeason=xbmc.getInfoLabel('VideoPlayer.Season')
 
-dirName=""
-fileName=""
+dirName=(currentFile.split(os.sep)[-2]).lower()
+fileName=os.path.basename(currentFile).lower()
 if currentEpisode=="" and "http://" not in currentFile and "plugin://" not in currentFile:
-  dirName=(currentFile.split(os.sep)[-2]).lower()
-  fileName=os.path.basename(currentFile).lower()
   matchDir=re.compile('\\.s(.+?)e(.+?)\\.', re.DOTALL).findall(dirName)
   matchFile=re.compile('\\.s(.+?)e(.+?)\\.', re.DOTALL).findall(fileName)
   if len(matchDir)>0:
@@ -241,7 +239,7 @@ def search():
               if len(titles)>0:
                 titles, attachments = (list(x) for x in zip(*sorted(zip(titles, attachments))))
               dialog = xbmcgui.Dialog()
-              nr=dialog.select(currentTitle, titles)
+              nr=dialog.select(os.path.basename(currentFile), titles)
               if nr>=0:
                 subUrl="http://www.subcentral.de/index.php?page=Attachment&attachmentID="+attachments[nr]
                 setSubtitle(subUrl)
@@ -435,7 +433,7 @@ def showSeries(seriesID):
         else:
           threadNames.append(translation(30004))
         dialog = xbmcgui.Dialog()
-        nr=dialog.select(currentTitle, threadNames)
+        nr=dialog.select(os.path.basename(currentFile), threadNames)
         if nr>=0:
           if nr==len(threadNames)-1:
             if threadNames[nr]==translation(30003):
@@ -512,7 +510,7 @@ def showSubtitles(seriesID,id):
         if len(titles)>0:
           titles, attachments = (list(x) for x in zip(*sorted(zip(titles, attachments))))
         dialog = xbmcgui.Dialog()
-        nr=dialog.select(currentTitle, titles)
+        nr=dialog.select(os.path.basename(currentFile), titles)
         if nr>=0:
           subUrl="http://www.subcentral.de/index.php?page=Attachment&attachmentID="+attachments[nr]
           setSubtitle(subUrl)
