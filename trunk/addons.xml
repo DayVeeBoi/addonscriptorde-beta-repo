@@ -17,7 +17,7 @@
   </extension>
 </addon>
 
-<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.7" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
