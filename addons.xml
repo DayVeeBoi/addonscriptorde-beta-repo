@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="script.categories" name="- Categories" version="2.0.8" provider-name="AddonScriptorDE">
+<addon id="script.categories" name="- Categories" version="2.0.9" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -8,25 +8,30 @@
     <provides>video audio image</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</summary>
-    <summary lang="de">Video/Audio/Image Add-ons per Kontextmenü zu Kategorien hinzufügen</summary>
     <language></language>
-    <description lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</description>
-    <description lang="de">Video/Audio/Image Add-ons per Kontextmenü zu Kategorien hinzufügen</description>
     <platform>all</platform>
+    <summary lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</summary>
+    <summary lang="de">Video/Audio/Image Add-ons per KontextmenÃ¼ zu Kategorien hinzufÃ¼gen</summary>
+    <description lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</description>
+    <description lang="de">Video/Audio/Image Add-ons per KontextmenÃ¼ zu Kategorien hinzufÃ¼gen</description>
+    <website></website>
+    <source>https://github.com/AddonScriptorDE/script.categories</source>
+    <forum>http://forum.xbmc.org/showthread.php?tid=154668</forum>
+    <email>AddonScriptorDE at yahoo dot de</email>
   </extension>
 </addon>
 
-<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.7" provider-name="AddonScriptorDE">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
+<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.8" provider-name="AddonScriptorDE">
   <extension point="xbmc.python.subtitles" library="default.py" />
   <extension point="xbmc.addon.metadata">
     <summary lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</summary>
-    <summary lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</summary>
+    <summary lang="de">SubCentral.de - Hochwertige Untertitel fÃ¼r TV-Serien (DE/EN)</summary>
     <description lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</description>
-    <description lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</description>
+    <description lang="de">SubCentral.de - Hochwertige Untertitel fÃ¼r TV-Serien (DE/EN)</description>
+    <website></website>
+    <source>https://github.com/AddonScriptorDE/script.subcentral_de</source>
+    <forum>http://forum.xbmc.org/showthread.php?tid=157479</forum>
+    <email>AddonScriptorDE at yahoo dot de</email>
     <platform>all</platform>
   </extension>
 </addon>

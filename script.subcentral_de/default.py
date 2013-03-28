@@ -312,7 +312,12 @@ def appendSubInfo(tvShowTitle,season,episode,release,content,lang):
               titles1.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
         attachments2 = []
         titles2 = []
-        spl=content.split('class="release"')
+        splitStr = ""
+        if 'class="release"' in content:
+          splitStr = 'class="release"'
+        elif 'class="Stil9"' in content:
+          splitStr = 'class="Stil9"'
+        spl=content.split(splitStr)
         for i in range(1,len(spl),1):
           entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
           temp = getEpisodes(entry)
@@ -329,7 +334,7 @@ def appendSubInfo(tvShowTitle,season,episode,release,content,lang):
                   attachments2.append(attach)
                   titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
         if len(attachments2)==0:
-          spl=content.split('class="release"')
+          spl=content.split(splitStr)
           for i in range(1,len(spl),1):
             entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
             temp = getEpisodes(entry)
@@ -342,7 +347,7 @@ def appendSubInfo(tvShowTitle,season,episode,release,content,lang):
                   attachments2.append(attach)
                   titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
         if len(attachments2)==0:
-          spl=content.split('class="release"')
+          spl=content.split(splitStr)
           for i in range(1,len(spl),1):
             entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
             temp = getEpisodes(entry)

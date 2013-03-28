@@ -20,3 +20,5 @@
 - Improved custom search
 1.0.7
 - Some improvements & bugfixes
+1.0.8
+- Some improvements & bugfixes
