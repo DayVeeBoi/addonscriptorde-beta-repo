@@ -6,11 +6,11 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">A simple WebBrowser for XBMC</summary>
-        <summary lang="de">Ein einfacher WebBrowser fÃ¼r XBMC</summary>
+        <summary lang="en">A simple WebBrowser</summary>
+        <summary lang="de">Ein einfacher WebBrowser</summary>
         <language></language>
-        <description lang="en">A simple WebBrowser for XBMC</description>
-        <description lang="de">Ein einfacher WebBrowser fÃ¼r XBMC</description>
+        <description lang="en">A simple WebBrowser</description>
+        <description lang="de">Ein einfacher WebBrowser</description>
         <website></website>
         <source>https://github.com/AddonScriptorDE/plugin.program.webbrowser</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
