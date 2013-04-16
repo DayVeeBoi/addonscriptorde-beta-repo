@@ -16,7 +16,9 @@ addonId = 'plugin.video.lovefilm_de'
 addon = xbmcaddon.Addon(id=addonId)
 translation = addon.getLocalizedString
 baseUrl = "http://www.lovefilm.de"
-playerPath = xbmc.translatePath("special://home/addons/"+addonId+"/resources/LovefilmPlayer.exe")
+lfPlayerPath = xbmc.translatePath("special://home/addons/"+addonId+"/LovefilmPlayer.exe")
+useCoverAsFanart = addon.getSetting("useCoverAsFanart") == "true"
+player = addon.getSetting("player")
 
 
 def index():
@@ -26,18 +28,18 @@ def index():
 
 
 def listMovies(url):
-    addDir(translation(30004), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526sort%25253Ddemand%25252Bdesc%252526expand%25253Dnone%252526action%25253Dall%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526items_per_page%25253D25%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Cfilm%252526adult%25253D0%252526start_index%25253D1%2526m%253DGET&r=50", 'listVideos', "")
-    addDir(translation(30005), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526sort%25253Dcollections%25252Bdesc%252526mature%25253D1%252526expand%25253Dnone%252526action%25253Dall%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526items_per_page%25253D10%252526f%25253Dcollection_id%2525257C2171%252526adult%25253D0%252526start_index%25253D1%2526m%253DGET&r=50", 'listVideos', "")
-    addDir(translation(30006), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Cfilm%252526adult%25253D0%2526m%253DGET", "listGenres", "")
+    addDir(translation(30004), baseUrl+"/c/video-on-demand/filme/p1/?v=l&r=50", 'listVideos', "")
+    addDir(translation(30005), baseUrl+"/c/p1/?facet-2=collection_id|2171&v=l&r=50", 'listVideos', "")
+    addDir(translation(30006), baseUrl+"/c/video-on-demand/filme/", "listGenres", "")
     addDir(translation(30007), baseUrl+"/c/video-on-demand/filme-sammlungen", "listCollections", "")
     addDir(translation(30008), "movies", "search", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listTvShows(url):
-    addDir(translation(30009), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526sort%25253Ddemand%25252Bdesc%252526expand%25253Dnone%252526action%25253Dall%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526items_per_page%25253D25%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Ctv%252526adult%25253D0%252526start_index%25253D1%2526m%253DGET&r=50", 'listVideos', "")
-    addDir(translation(30010), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526sort%25253Dcollections%25252Bdesc%252526mature%25253D1%252526expand%25253Dnone%252526action%25253Dall%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526items_per_page%25253D10%252526f%25253Dcollection_id%2525257C2730%252526adult%25253D0%252526start_index%25253D1%2526m%253DGET&r=50", 'listVideos', "")
-    addDir(translation(30006), baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Ctv%252526adult%25253D0%2526m%253DGET", "listGenres", "")
+    addDir(translation(30009), baseUrl+"/c/video-on-demand/fernsehfilme/p1/?v=l&r=50", 'listVideos', "")
+    addDir(translation(30010), baseUrl+"/c/p1/?facet-2=collection_id|2730&v=l&r=50", 'listVideos', "")
+    addDir(translation(30006), baseUrl+"/c/video-on-demand/fernsehfilme/", "listGenres", "")
     addDir(translation(30007), baseUrl+"/c/video-on-demand/tv-sammlungen", "listCollections", "")
     addDir(translation(30008), "tvshows", "search", "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -51,7 +53,7 @@ def listGenres(url):
     urlNext = ""
     for url, title, nr in match:
         title = cleanTitle(title)
-        addDir(title + nr, url+"&r=50", 'listVideos', "")
+        addDir(title + nr, url+"?v=l&r=50", 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -63,7 +65,7 @@ def listCollections(url):
     urlNext = ""
     for url, thumb, title in match:
         title = cleanTitle(title)
-        addDir(title, url+"&r=50", 'listVideos', thumb)
+        addDir(title, url+"&v=l&r=50", 'listVideos', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -85,12 +87,27 @@ def listVideos(url):
         elif match2:
             title = match2[0]
         title = cleanTitle(title)
+        match = re.compile('<div class="synopsis "><p>(.+?)<', re.DOTALL).findall(entry)
+        desc = match[0]
+        match = re.compile('<span class="release_decade">(.+?)</span>', re.DOTALL).findall(entry)
+        year = match[0].strip()
+        match = re.compile('data-current_rating="(.+?)"', re.DOTALL).findall(entry)
+        rating = ""
+        if match:
+            rating = match[0] + " / 5"
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("_UX140_CR0,0,140", "_UX500").replace("_UR140,105", "_UX500").replace("_UR77,109", "_UX500")
-        if baseUrl+"/tv/" in url:
-            addDir(title, url, 'listEpisodes', thumb)
+        if rating:
+          desc = "Year: "+year+"\nRating: "+rating+"\n"+desc
         else:
-            addDir(title, url, 'playVideo', thumb)
+          desc = "Year: "+year+"\n"+desc
+        if baseUrl+"/tv/" in url:
+            addDir(title, url, 'listEpisodes', thumb, desc)
+        else:
+            if player=="0":
+                addDir(title, url, 'playVideoBrowser', thumb, desc)
+            elif player=="1":
+                addDir(title, url, 'playVideoPlayer', thumb, desc)
     content = content[content.find('<span class="page_selected">'):]
     content = content[:content.find('</ul>')]
     match = re.compile('<a href="(.+?)"  >(.+?)</a>', re.DOTALL).findall(content)
@@ -99,7 +116,7 @@ def listVideos(url):
         if "chste" in title:
             urlNext = url
     if urlNext:
-        addDir(translation(30001), urlNext+"&r=50", "listVideos", "")
+        addDir(translation(30001), urlNext+"?v=l&r=50", "listVideos", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -112,7 +129,10 @@ def listEpisodes(url):
     urlNext = ""
     addDir(matchFirst[0], url, 'playVideo', "")
     for url, title in match:
-        addDir(title, url, 'playVideo', "")
+        if player=="0":
+            addDir(title, url, 'playVideoBrowser', thumb, desc)
+        elif player=="1":
+            addDir(title, url, 'playVideoPlayer', thumb, desc)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -120,16 +140,21 @@ def search(type):
     keyboard = xbmc.Keyboard('', translation(30008))
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
-        search_string = keyboard.getText().replace(" ", "%25252B")
+        search_string = keyboard.getText().replace(" ", "+")
         if type == "movies":
-            listVideos(baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Cfilm%252526adult%25253D0%252526term%25253D"+search_string+"%2526m%253DGET&r=50")
+            listVideos(baseUrl+"/c/video-on-demand/filme/?q="+search_string+"&v=l&r=50")
         if type == "tvshows":
-            listVideos(baseUrl+"/c/?token=%253Fu%253D%25252Fcatalog%25252Fvideo%25253Funique%25253Dseries%252526mature%25253D1%252526type%25253Dseries%25252BOR%25252Bfeature%25252BOR%25252Bfilm%25252BOR%25252Bgame%252526f%25253D_fmt%2525257Cdigital%252526f%25253Dtitle_content%2525257Ctv%252526adult%25253D0%252526term%25253D"+search_string+"%2526m%253DGET&r=50")
+            listVideos(baseUrl+"/c/video-on-demand/fernsehfilme/?q="+search_string+"&v=l&r=50")
 
 
-def playVideo(url):
+def playVideoPlayer(url):
     xbmc.Player().stop()
-    subprocess.Popen(playerPath+' '+url, shell=False)
+    subprocess.Popen(lfPlayerPath+' '+url, shell=False)
+
+
+def playVideoBrowser(url):
+    xbmc.Player().stop()
+    xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite)')
 
 
 def cleanTitle(title):
@@ -160,21 +185,16 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addDir(name, url, mode, iconimage):
+def addDir(name, url, mode, iconimage, desc=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+urllib.quote_plus(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
+    if useCoverAsFanart:
+      liz.setProperty("fanart_image", iconimage)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
-
-def addBrowserDir(name, url, mode, iconimage):
-    ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name})
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url="plugin://plugin.program.webbrowser/?url="+urllib.quote_plus(url)+"&mode=showSite", listitem=liz, isFolder=True)
-    return ok
 
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
@@ -192,8 +212,10 @@ elif mode == 'listEpisodes':
     listEpisodes(url)
 elif mode == 'listTvShows':
     listTvShows(url)
-elif mode == 'playVideo':
-    playVideo(url)
+elif mode == 'playVideoPlayer':
+    playVideoPlayer(url)
+elif mode == 'playVideoBrowser':
+    playVideoBrowser(url)
 elif mode == 'search':
     search(url)
 else:
