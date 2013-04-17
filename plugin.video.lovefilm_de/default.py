@@ -130,9 +130,9 @@ def listEpisodes(url):
     addDir(matchFirst[0], url, 'playVideo', "")
     for url, title in match:
         if player=="0":
-            addDir(title, url, 'playVideoBrowser', thumb, desc)
+            addDir(title, url, 'playVideoBrowser', "")
         elif player=="1":
-            addDir(title, url, 'playVideoPlayer', thumb, desc)
+            addDir(title, url, 'playVideoPlayer', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
