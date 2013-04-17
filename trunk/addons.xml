@@ -18,7 +18,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.1" provider-name="AddonScriptorDE | andyS91">
+<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.2" provider-name="AddonScriptorDE | andyS91">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
     </requires>
