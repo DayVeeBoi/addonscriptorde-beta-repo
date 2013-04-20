@@ -6,3 +6,5 @@
 - Added access to favourites via Browser
 - Improved virtual keyboard
 - Improved magnifier
+1.0.3
+- Changed default setting for "Use custom cursor" to false
