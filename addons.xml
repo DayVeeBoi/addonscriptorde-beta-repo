@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.3" provider-name="AddonScriptorDE">
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>executable</provides>
     </extension>
