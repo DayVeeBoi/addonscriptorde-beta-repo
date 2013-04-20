@@ -53,7 +53,8 @@ if pause=="true" and xbmc.Player().isPlayingVideo():
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 if playlist.getposition()>=0:
   currentTitle = playlist[playlist.getposition()].getdescription()
-  currentFile = playlist[playlist.getposition()].getfilename()
+  
+currentFile = xbmc.Player().getPlayingFile()
 
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
@@ -68,9 +69,14 @@ currentSeason=""
 currentEpisode=xbmc.getInfoLabel('VideoPlayer.Episode')
 currentSeason=xbmc.getInfoLabel('VideoPlayer.Season')
 
-dirName=(currentFile.split(os.sep)[-2]).lower()
+dirName = ""
+try:
+  dirName=(currentFile.split(os.sep)[-2]).lower()
+except:
+  pass
+
 fileName=os.path.basename(currentFile).lower()
-if currentEpisode=="" and "http://" not in currentFile and "plugin://" not in currentFile:
+if currentEpisode=="":
   matchDir=re.compile('\\.s(.+?)e(.+?)\\.', re.DOTALL).findall(dirName)
   matchFile=re.compile('\\.s(.+?)e(.+?)\\.', re.DOTALL).findall(fileName)
   if len(matchDir)>0:
@@ -205,6 +211,8 @@ def search():
               match=re.compile('<title>(.+?)-', re.DOTALL).findall(content)
               tvShowTitle=match[0].replace("[Subs]","").strip()
               
+              content = content[content.find("quoteData.set('post-")+1:]
+              content = content[:content.find("quoteData.set('post-")]
               contentDE=content
               contentEN=""
               if '<img src="creative/bilder/flags/usa.png"' in content:
@@ -276,7 +284,7 @@ def getEpisodes(entry):
           elif len(match5):
             ep=match5[0]
           else:
-            ep=""
+            ep="00"
           ep2="E"+ep
         return [ep,ep2]
 
@@ -317,23 +325,7 @@ def appendSubInfo(tvShowTitle,season,episode,release,content,lang):
           splitStr = 'class="release"'
         elif 'class="Stil9"' in content:
           splitStr = 'class="Stil9"'
-        spl=content.split(splitStr)
-        for i in range(1,len(spl),1):
-          entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
-          temp = getEpisodes(entry)
-          ep = temp[0]
-          ep2 = temp[1]
-          match=re.compile('index.php\\?page=Attachment&attachmentID=(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
-          for attach, rel in match:
-            if episode==ep:
-              check = release==""
-              if release!="":
-                check = release==rel.lower()
-              if check:
-                if attach not in attachments2:
-                  attachments2.append(attach)
-                  titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
-        if len(attachments2)==0:
+        if splitStr:
           spl=content.split(splitStr)
           for i in range(1,len(spl),1):
             entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
@@ -343,21 +335,38 @@ def appendSubInfo(tvShowTitle,season,episode,release,content,lang):
             match=re.compile('index.php\\?page=Attachment&attachmentID=(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
             for attach, rel in match:
               if episode==ep:
+                check = release==""
+                if release!="":
+                  check = release==rel.lower()
+                if check:
+                  if attach not in attachments2:
+                    attachments2.append(attach)
+                    titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
+          if len(attachments2)==0:
+            spl=content.split(splitStr)
+            for i in range(1,len(spl),1):
+              entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
+              temp = getEpisodes(entry)
+              ep = temp[0]
+              ep2 = temp[1]
+              match=re.compile('index.php\\?page=Attachment&attachmentID=(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
+              for attach, rel in match:
+                if episode==ep:
+                  if attach not in attachments2:
+                    attachments2.append(attach)
+                    titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
+          if len(attachments2)==0:
+            spl=content.split(splitStr)
+            for i in range(1,len(spl),1):
+              entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
+              temp = getEpisodes(entry)
+              ep = temp[0]
+              ep2 = temp[1]
+              match=re.compile('index.php\\?page=Attachment&attachmentID=(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
+              for attach, rel in match:
                 if attach not in attachments2:
                   attachments2.append(attach)
                   titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
-        if len(attachments2)==0:
-          spl=content.split(splitStr)
-          for i in range(1,len(spl),1):
-            entry=spl[i].replace("<strong>","").replace("</strong>","").replace('<span style="font-size: 8pt">','')
-            temp = getEpisodes(entry)
-            ep = temp[0]
-            ep2 = temp[1]
-            match=re.compile('index.php\\?page=Attachment&attachmentID=(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
-            for attach, rel in match:
-              if attach not in attachments2:
-                attachments2.append(attach)
-                titles2.append(lang+" - "+tvShowTitle+" - S"+season+ep2+" - "+rel.replace("</span>",""))
         return [attachments1+attachments2,titles1+titles2]
 
 def showFavourites():
@@ -481,6 +490,8 @@ def showSubtitles(seriesID,id):
         if len(season)==1:
           season="0"+season
         
+        content = content[content.find("quoteData.set('post-")+1:]
+        content = content[:content.find("quoteData.set('post-")]
         contentDE=content
         contentEN=""
         if '<img src="creative/bilder/flags/usa.png"' in content:

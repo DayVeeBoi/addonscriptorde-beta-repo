@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.program.webbrowser" name="WebBrowser" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.2" provider-name="AddonScriptorDE">
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>executable</provides>
     </extension>
@@ -18,7 +18,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.2" provider-name="AddonScriptorDE | andyS91">
+<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
     </requires>
@@ -60,7 +60,7 @@
   </extension>
 </addon>
 
-<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.8" provider-name="AddonScriptorDE">
+<addon id="script.subcentral_de" name="SubCentral.de" version="1.0.9" provider-name="AddonScriptorDE">
   <extension point="xbmc.python.subtitles" library="default.py" />
   <extension point="xbmc.addon.metadata">
     <summary lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</summary>
