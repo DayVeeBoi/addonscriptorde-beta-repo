@@ -1,4 +1,3 @@
 <settings>
    <setting id="useCoverAsFanart" type="bool" label="30101" default="true"/>
-   <setting id="player" type="enum" label="30102" values="XBMC WebBrowser|LoveFilmPlayer" default="0"/>
 </settings>

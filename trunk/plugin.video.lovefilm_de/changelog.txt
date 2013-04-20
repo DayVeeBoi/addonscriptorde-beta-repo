@@ -7,3 +7,5 @@
 - Added option to choose Player
 1.0.2
 - Fixed episode listing
+1.0.3
+- Some small fixes

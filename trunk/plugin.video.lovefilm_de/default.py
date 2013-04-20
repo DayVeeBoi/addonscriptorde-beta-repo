@@ -16,9 +16,8 @@ addonId = 'plugin.video.lovefilm_de'
 addon = xbmcaddon.Addon(id=addonId)
 translation = addon.getLocalizedString
 baseUrl = "http://www.lovefilm.de"
-lfPlayerPath = xbmc.translatePath("special://home/addons/"+addonId+"/LovefilmPlayer.exe")
+lfPlayerPath = xbmc.translatePath("special://profile/addon_data/"+addonId+"/LovefilmPlayer.exe")
 useCoverAsFanart = addon.getSetting("useCoverAsFanart") == "true"
-player = addon.getSetting("player")
 
 
 def index():
@@ -88,9 +87,13 @@ def listVideos(url):
             title = match2[0]
         title = cleanTitle(title)
         match = re.compile('<div class="synopsis "><p>(.+?)<', re.DOTALL).findall(entry)
-        desc = match[0]
+        desc = ""
+        if match:
+          desc = match[0]
         match = re.compile('<span class="release_decade">(.+?)</span>', re.DOTALL).findall(entry)
-        year = match[0].strip()
+        year = ""
+        if match:
+          year = match[0].strip()
         match = re.compile('data-current_rating="(.+?)"', re.DOTALL).findall(entry)
         rating = ""
         if match:
@@ -104,10 +107,11 @@ def listVideos(url):
         if baseUrl+"/tv/" in url:
             addDir(title, url, 'listEpisodes', thumb, desc)
         else:
-            if player=="0":
-                addDir(title, url, 'playVideoBrowser', thumb, desc)
-            elif player=="1":
+            if os.path.exists(lfPlayerPath):
                 addDir(title, url, 'playVideoPlayer', thumb, desc)
+            else:
+                addDir(title, url, 'playVideoBrowser', thumb, desc)
+                
     content = content[content.find('<span class="page_selected">'):]
     content = content[:content.find('</ul>')]
     match = re.compile('<a href="(.+?)"  >(.+?)</a>', re.DOTALL).findall(content)
@@ -127,12 +131,15 @@ def listEpisodes(url):
     matchFirst = re.compile('<span class="episode_link">(.+?)</span>', re.DOTALL).findall(content)
     match = re.compile('<a class="episode_link" href="(.+?)">(.+?)</a>', re.DOTALL).findall(content)
     urlNext = ""
-    addDir(matchFirst[0], url, 'playVideo', "")
+    if os.path.exists(lfPlayerPath):
+        addDir(matchFirst[0], url, 'playVideoPlayer', "")
+    else:
+        addDir(matchFirst[0], url, 'playVideoBrowser', "")
     for url, title in match:
-        if player=="0":
-            addDir(title, url, 'playVideoBrowser', "")
-        elif player=="1":
+        if os.path.exists(lfPlayerPath):
             addDir(title, url, 'playVideoPlayer', "")
+        else:
+            addDir(title, url, 'playVideoBrowser', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -154,7 +161,10 @@ def playVideoPlayer(url):
 
 def playVideoBrowser(url):
     xbmc.Player().stop()
-    xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite)')
+    content = getUrl(url)
+    match = re.compile("'release:(.+?):", re.DOTALL).findall(content)
+    fullUrl = "http://www.lovefilm.de/apps/catalog/module/player/player_popout.mhtml?release_id="+match[0]
+    xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(fullUrl)+'&mode=showSite)')
 
 
 def cleanTitle(title):

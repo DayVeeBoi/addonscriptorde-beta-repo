@@ -19,6 +19,9 @@
 - Improved subtitle listing
 - Improved custom search
 1.0.7
-- Some improvements & bugfixes
+- Added support for some more subtitle table layouts
 1.0.8
-- Some improvements & bugfixes
+- Added support for some more subtitle table layouts
+1.0.9
+- Fixed filename detection bug
+- Added support for some more subtitle table layouts
