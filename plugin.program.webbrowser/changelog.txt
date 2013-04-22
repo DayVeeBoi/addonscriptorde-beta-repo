@@ -10,3 +10,5 @@
 - Changed default setting for "Use custom cursor" to false
 1.0.4
 - Fixed bug, that Xbmc is minimized after closing the browser (on some systems)
+1.0.5
+- Changed default custom cursor
