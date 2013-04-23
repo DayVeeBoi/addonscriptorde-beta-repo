@@ -16,8 +16,15 @@ addonId = 'plugin.video.lovefilm_de'
 addon = xbmcaddon.Addon(id=addonId)
 translation = addon.getLocalizedString
 baseUrl = "http://www.lovefilm.de"
+osx = xbmc.getCondVisibility('system.platform.osx')
+addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonId)
 lfPlayerPath = xbmc.translatePath("special://profile/addon_data/"+addonId+"/LovefilmPlayer.exe")
 useCoverAsFanart = addon.getSetting("useCoverAsFanart") == "true"
+forceViewMode = addon.getSetting("forceViewMode") == "true"
+viewMode = str(addon.getSetting("viewMode"))
+osxPlayer = addon.getSetting("osxPlayer")
+if not os.path.isdir(addonUserDataFolder):
+    os.mkdir(addonUserDataFolder)
 
 
 def index():
@@ -89,11 +96,11 @@ def listVideos(url):
         match = re.compile('<div class="synopsis "><p>(.+?)<', re.DOTALL).findall(entry)
         desc = ""
         if match:
-          desc = match[0]
+            desc = match[0]
         match = re.compile('<span class="release_decade">(.+?)</span>', re.DOTALL).findall(entry)
         year = ""
         if match:
-          year = match[0].strip()
+            year = match[0].strip()
         match = re.compile('data-current_rating="(.+?)"', re.DOTALL).findall(entry)
         rating = ""
         if match:
@@ -101,9 +108,9 @@ def listVideos(url):
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("_UX140_CR0,0,140", "_UX500").replace("_UR140,105", "_UX500").replace("_UR77,109", "_UX500")
         if rating:
-          desc = "Year: "+year+"\nRating: "+rating+"\n"+desc
+            desc = "Year: "+year+"\nRating: "+rating+"\n"+desc
         else:
-          desc = "Year: "+year+"\n"+desc
+            desc = "Year: "+year+"\n"+desc
         if baseUrl+"/tv/" in url:
             addDir(title, url, 'listEpisodes', thumb, desc)
         else:
@@ -111,7 +118,7 @@ def listVideos(url):
                 addDir(title, url, 'playVideoPlayer', thumb, desc)
             else:
                 addDir(title, url, 'playVideoBrowser', thumb, desc)
-                
+
     content = content[content.find('<span class="page_selected">'):]
     content = content[:content.find('</ul>')]
     match = re.compile('<a href="(.+?)"  >(.+?)</a>', re.DOTALL).findall(content)
@@ -122,6 +129,8 @@ def listVideos(url):
     if urlNext:
         addDir(translation(30001), urlNext+"?v=l&r=50", "listVideos", "")
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listEpisodes(url):
@@ -164,7 +173,16 @@ def playVideoBrowser(url):
     content = getUrl(url)
     match = re.compile("'release:(.+?):", re.DOTALL).findall(content)
     fullUrl = "http://www.lovefilm.de/apps/catalog/module/player/player_popout.mhtml?release_id="+match[0]
-    xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(fullUrl)+'&mode=showSite)')
+    if osx:
+        if osxPlayer == "0":
+            player = "Safari"
+        elif osxPlayer == "1":
+            player = "Firefox"
+        elif osxPlayer == "2":
+            player = "Google Chrome"
+        subprocess.Popen('open -a "/Applications/'+player+'.app/" '+fullUrl, shell=True)
+    else:
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(fullUrl)+'&mode=showSite)')
 
 
 def cleanTitle(title):
@@ -201,7 +219,7 @@ def addDir(name, url, mode, iconimage, desc=""):
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     if useCoverAsFanart:
-      liz.setProperty("fanart_image", iconimage)
+        liz.setProperty("fanart_image", iconimage)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 

@@ -3,13 +3,11 @@
   <string id="30001">Nächste Seite</string>
   <string id="30002">Filme</string>
   <string id="30003">Serien</string>
-  <string id="30004">Alle Filme</string>
-  <string id="30005">HD Filme</string>
-  <string id="30006">Genres</string>
-  <string id="30007">Kollektionen</string>
-  <string id="30008">Suchen</string>
-  <string id="30009">Alle Serien</string>
-  <string id="30010">HD Serien</string>
+  <string id="30004">Meistgesehen</string>
+  <string id="30005">Neu im Programm</string>
+  <string id="30006">Am besten bewertet</string>
+  <string id="30007">Erscheinungsjahr</string>
+  <string id="30009">Suchen</string>
   <string id="30101">Cover als Fanart nutzen</string>
   <string id="30103">View erzwingen</string>
 </strings>
