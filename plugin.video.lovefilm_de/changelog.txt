@@ -9,3 +9,5 @@
 - Fixed episode listing
 1.0.3
 - Some small fixes
+1.0.4
+- Added support for Mac OSX
