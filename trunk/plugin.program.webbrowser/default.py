@@ -193,7 +193,7 @@ mode = urllib.unquote_plus(params.get('mode', ''))
 name = urllib.unquote_plus(params.get('name', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 zoom = urllib.unquote_plus(params.get('zoom', '100'))
-stopPlayback = urllib.unquote_plus(params.get('stopPlayback', 'yes'))
+stopPlayback = urllib.unquote_plus(params.get('stopPlayback', 'no'))
 showPopups = urllib.unquote_plus(params.get('showPopups', 'no'))
 
 if mode == 'addSite':

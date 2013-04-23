@@ -12,3 +12,5 @@
 - Fixed bug, that Xbmc is minimized after closing the browser (on some systems)
 1.0.5
 - Changed default custom cursor
+1.0.6
+- Added support for watchever playback
