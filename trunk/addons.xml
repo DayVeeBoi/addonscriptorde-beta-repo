@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.7" provider-name="AddonScriptorDE">
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>executable</provides>
     </extension>
@@ -18,7 +18,26 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.4" provider-name="AddonScriptorDE">
+<addon id="plugin.video.lovefilm_com" name="LoveFilm.com" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="plugin.program.webbrowser" version="1.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch videos on LoveFilm.com</summary>
+        <language>en</language>
+        <description lang="en">Watch videos on LoveFilm.com</description>
+        <website></website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.lovefilm_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.5" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
     </requires>
@@ -39,7 +58,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.watchever_de" name="Watchever.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.watchever_de" name="Watchever.de" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
     </requires>
@@ -58,27 +77,6 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
-</addon>
-
-<addon id="script.categories" name="- Categories" version="2.0.9" provider-name="AddonScriptorDE">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource" library="default.py">
-    <provides>video audio image</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <language></language>
-    <platform>all</platform>
-    <summary lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</summary>
-    <summary lang="de">Video/Audio/Image Add-ons per KontextmenÃ¼ zu Kategorien hinzufÃ¼gen</summary>
-    <description lang="en">Add your Video/Audio/Image add-ons to categories (via context menu)</description>
-    <description lang="de">Video/Audio/Image Add-ons per KontextmenÃ¼ zu Kategorien hinzufÃ¼gen</description>
-    <website></website>
-    <source>https://github.com/AddonScriptorDE/script.categories</source>
-    <forum>http://forum.xbmc.org/showthread.php?tid=154668</forum>
-    <email>AddonScriptorDE at yahoo dot de</email>
-  </extension>
 </addon>
 
 <addon id="script.subcentral_de" name="SubCentral.de" version="1.0.9" provider-name="AddonScriptorDE">

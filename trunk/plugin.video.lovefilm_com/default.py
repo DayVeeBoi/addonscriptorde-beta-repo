@@ -12,13 +12,12 @@ import subprocess
 
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonId = 'plugin.video.lovefilm_de'
+addonId = 'plugin.video.lovefilm_com'
 addon = xbmcaddon.Addon(id=addonId)
 translation = addon.getLocalizedString
-baseUrl = "http://www.lovefilm.de"
+baseUrl = "http://www.lovefilm.com"
 osx = xbmc.getCondVisibility('system.platform.osx')
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonId)
-lfPlayerPath = xbmc.translatePath("special://profile/addon_data/"+addonId+"/LovefilmPlayer.exe")
 useCoverAsFanart = addon.getSetting("useCoverAsFanart") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
@@ -34,21 +33,20 @@ def index():
 
 
 def listMovies(url):
-    addDir(translation(30004), baseUrl+"/c/video-on-demand/filme/p1/?v=l&r=50", 'listVideos', "")
-    addDir(translation(30005), baseUrl+"/c/p1/?facet-2=collection_id|2171&v=l&r=50", 'listVideos', "")
-    addDir(translation(30006), baseUrl+"/c/video-on-demand/filme/", "listGenres", "")
-    addDir(translation(30007), baseUrl+"/c/video-on-demand/filme-sammlungen", "listCollections", "")
-    addDir(translation(30011), "https://www.lovefilm.de/account/watchlist/film/", 'openBrowser', "")
+    addDir(translation(30004), baseUrl+"/c/instant/films/p1/?v=l&r=50", 'listVideos', "")
+    addDir(translation(30005), baseUrl+"/c/p1/?facet-2=collection_id|10593&v=l&r=50", 'listVideos', "")
+    addDir(translation(30006), baseUrl+"/c/instant/films/", "listGenres", "")
+    addDir(translation(30007), baseUrl+"/c/instant/film-collections", "listCollections", "")
+    addDir(translation(30011), "https://www.lovefilm.com/account/watchlist/films/", 'openBrowser', "")
     addDir(translation(30008), "movies", "search", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listTvShows(url):
-    addDir(translation(30009), baseUrl+"/c/video-on-demand/fernsehfilme/p1/?v=l&r=50", 'listVideos', "")
-    addDir(translation(30010), baseUrl+"/c/p1/?facet-2=collection_id|2730&v=l&r=50", 'listVideos', "")
-    addDir(translation(30006), baseUrl+"/c/video-on-demand/fernsehfilme/", "listGenres", "")
-    addDir(translation(30007), baseUrl+"/c/video-on-demand/tv-sammlungen", "listCollections", "")
-    addDir(translation(30011), "https://www.lovefilm.de/account/watchlist/tv/", 'openBrowser', "")
+    addDir(translation(30009), baseUrl+"/c/instant/tv/p1/?v=l&r=50", 'listVideos', "")
+    addDir(translation(30006), baseUrl+"/c/instant/tv/", "listGenres", "")
+    addDir(translation(30007), baseUrl+"/c/instant/tv-collections", "listCollections", "")
+    addDir(translation(30011), "https://www.lovefilm.com/account/watchlist/tv/", 'openBrowser', "")
     addDir(translation(30008), "tvshows", "search", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -58,7 +56,6 @@ def listGenres(url):
     content = content[content.find('<h3>Genre</h3>'):]
     content = content[:content.find('</li></ul></div>')]
     match = re.compile('<a href="(.+?)" title="(.+?)"><span class="facet_link">.+?</span> <span class="facet_results  ">(.+?)</span></a>', re.DOTALL).findall(content)
-    urlNext = ""
     for url, title, nr in match:
         title = cleanTitle(title)
         addDir(title + nr, url+"?v=l&r=50", 'listVideos', "")
@@ -70,7 +67,6 @@ def listCollections(url):
     content = content[content.find('<div class="collection_items"'):]
     content = content[:content.find('<div class="page-footer bermuda-footer">')]
     match = re.compile('<a href="(.+?)">.+?<img src="(.+?)" width=".+?" height=".+?" />.+?<h3>(.+?)</h3>', re.DOTALL).findall(content)
-    urlNext = ""
     for url, thumb, title in match:
         title = cleanTitle(title)
         addDir(title, url+"&v=l&r=50", 'listVideos', thumb)
@@ -79,57 +75,54 @@ def listCollections(url):
 
 def listVideos(url):
     content = getUrl(url)
-    if '<div class="core_info_snb' in content:
-        splitStr = '<div class="core_info_snb'
-    elif 'class="compact_info_snb' in content:
-        splitStr = 'class="compact_info_snb'
-    spl = content.split(splitStr)
-    for i in range(1, len(spl), 1):
-        entry = spl[i]
-        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-        url = match[0]
-        match = re.compile('data-product_name="(.+?)"', re.DOTALL).findall(entry)
-        match2 = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
-        if match:
-            title = match[0]
-        elif match2:
-            title = match2[0]
-        title = cleanTitle(title)
-        match = re.compile('<div class="synopsis "><p>(.+?)<', re.DOTALL).findall(entry)
-        desc = ""
-        if match:
-            desc = match[0]
-        match = re.compile('<span class="release_decade">(.+?)</span>', re.DOTALL).findall(entry)
-        year = ""
-        if match:
-            year = match[0].strip()
-        match = re.compile('data-current_rating="(.+?)"', re.DOTALL).findall(entry)
-        rating = ""
-        if match:
-            rating = match[0] + " / 5"
-        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = match[0].replace("_UX140_CR0,0,140", "_UX500").replace("_UR140,105", "_UX500").replace("_UR77,109", "_UX500")
-        if rating:
-            desc = "Year: "+year+"\nRating: "+rating+"\n"+desc
-        else:
-            desc = "Year: "+year+"\n"+desc
-        if baseUrl+"/tv/" in url:
-            addDir(title, url, 'listEpisodes', thumb, desc)
-        else:
-            if os.path.exists(lfPlayerPath):
-                addDir(title, url, 'playVideoPlayer', thumb, desc)
+    if "did not match any titles" not in content:
+        if '<div class="core_info_snb' in content:
+            splitStr = '<div class="core_info_snb'
+        elif 'class="compact_info_snb' in content:
+            splitStr = 'class="compact_info_snb'
+        spl = content.split(splitStr)
+        for i in range(1, len(spl), 1):
+            entry = spl[i]
+            match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+            url = match[0]
+            match = re.compile('data-product_name="(.+?)"', re.DOTALL).findall(entry)
+            match2 = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+            if match:
+                title = match[0]
+            elif match2:
+                title = match2[0]
+            title = cleanTitle(title)
+            match = re.compile('<div class="synopsis "><p>(.+?)<', re.DOTALL).findall(entry)
+            desc = ""
+            if match:
+                desc = match[0]
+            match = re.compile('<span class="release_decade">(.+?)</span>', re.DOTALL).findall(entry)
+            year = ""
+            if match:
+                year = match[0].strip()
+            match = re.compile('data-current_rating="(.+?)"', re.DOTALL).findall(entry)
+            rating = ""
+            if match:
+                rating = match[0] + " / 5"
+            match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+            thumb = match[0].replace("_UX140_CR0,0,140", "_UX500").replace("_UR140,105", "_UX500").replace("_UR77,109", "_UX500")
+            if rating:
+                desc = "Year: "+year+"\nRating: "+rating+"\n"+desc
+            else:
+                desc = "Year: "+year+"\n"+desc
+            if baseUrl+"/tv/" in url:
+                addDir(title, url, 'listEpisodes', thumb, desc)
             else:
                 addDir(title, url, 'playVideoBrowser', thumb, desc)
-
-    content = content[content.find('<span class="page_selected">'):]
-    content = content[:content.find('</ul>')]
-    match = re.compile('<a href="(.+?)"  >(.+?)</a>', re.DOTALL).findall(content)
-    urlNext = ""
-    for url, title in match:
-        if "chste" in title:
-            urlNext = url
-    if urlNext:
-        addDir(translation(30001), urlNext+"?v=l&r=50", "listVideos", "")
+        content = content[content.find('<span class="page_selected">'):]
+        content = content[:content.find('</ul>')]
+        match = re.compile('<a href="(.+?)"  >(.+?)</a>', re.DOTALL).findall(content)
+        urlNext = ""
+        for url, title in match:
+            if "Next" in title:
+                urlNext = url
+        if urlNext:
+            addDir(translation(30001), urlNext+"?v=l&r=50", "listVideos", "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -142,16 +135,12 @@ def listEpisodes(url):
     matchFirst = re.compile('<span class="episode_link">(.+?)</span>', re.DOTALL).findall(content)
     match = re.compile('<a class="episode_link" href="(.+?)">(.+?)</a>', re.DOTALL).findall(content)
     urlNext = ""
-    if os.path.exists(lfPlayerPath):
-        addDir(matchFirst[0], url, 'playVideoPlayer', "")
-    else:
-        addDir(matchFirst[0], url, 'playVideoBrowser', "")
+    addDir(matchFirst[0], url, 'playVideoBrowser', "")
     for url, title in match:
-        if os.path.exists(lfPlayerPath):
-            addDir(title, url, 'playVideoPlayer', "")
-        else:
-            addDir(title, url, 'playVideoBrowser', "")
+        addDir(title, url, 'playVideoBrowser', "")
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def search(type):
@@ -160,20 +149,15 @@ def search(type):
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = keyboard.getText().replace(" ", "+")
         if type == "movies":
-            listVideos(baseUrl+"/c/video-on-demand/filme/?q="+search_string+"&v=l&r=50")
+            listVideos(baseUrl+"/c/instant/films/?q="+search_string+"&v=l&r=50")
         if type == "tvshows":
-            listVideos(baseUrl+"/c/video-on-demand/fernsehfilme/?q="+search_string+"&v=l&r=50")
-
-
-def playVideoPlayer(url):
-    xbmc.Player().stop()
-    subprocess.Popen(lfPlayerPath+' '+url, shell=False)
+            listVideos(baseUrl+"/c/instant/tv/?q="+search_string+"&v=l&r=50")
 
 
 def playVideoBrowser(url):
     content = getUrl(url)
     match = re.compile("'release:(.+?):", re.DOTALL).findall(content)
-    fullUrl = "http://www.lovefilm.de/apps/catalog/module/player/player_popout.mhtml?release_id="+match[0]
+    fullUrl = "http://www.lovefilm.com/apps/catalog/module/player/player_popout.mhtml?release_id="+match[0]
     openBrowser(fullUrl)
 
 
@@ -248,8 +232,6 @@ elif mode == 'listEpisodes':
     listEpisodes(url)
 elif mode == 'listTvShows':
     listTvShows(url)
-elif mode == 'playVideoPlayer':
-    playVideoPlayer(url)
 elif mode == 'playVideoBrowser':
     playVideoBrowser(url)
 elif mode == 'openBrowser':

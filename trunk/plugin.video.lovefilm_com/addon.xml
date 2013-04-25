@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.lovefilm_de" name="LoveFilm.de" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.lovefilm_com" name="LoveFilm.com" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
     </requires>
@@ -8,13 +8,11 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Watch videos on LoveFilm.de</summary>
-        <summary lang="de">Videos auf LoveFilm.de schauen</summary>
-        <language>de</language>
-        <description lang="en">Watch videos on LoveFilm.de</description>
-        <description lang="de">Videos auf LoveFilm.de schauen</description>
+        <summary lang="en">Watch videos on LoveFilm.com</summary>
+        <language>en</language>
+        <description lang="en">Watch videos on LoveFilm.com</description>
         <website></website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.lovefilm_de</source>
+        <source>https://github.com/AddonScriptorDE/plugin.video.lovefilm_com</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
     </extension>

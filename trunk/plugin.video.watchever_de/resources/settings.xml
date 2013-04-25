@@ -1,6 +1,6 @@
 <settings>
    <setting id="useCoverAsFanart" type="bool" label="30101" default="true"/>
-   <setting id="osxPlayer" type="enum" label="30102" values="Safari|Firefox|Google Chrome" default="0"/>
+   <setting id="osxPlayer" type="enum" label="30102" values="Safari|Firefox|Chrome" default="2"/>
    <setting id="forceViewMode" type="bool" label="30103" default="false"/>
    <setting id="viewMode" type="number" label="30104" default="500"/>
 </settings>
