@@ -2,14 +2,14 @@
 <strings>
   <string id="30001">Next Page</string>
   <string id="30002">Movies</string>
-  <string id="30003">TV Shows</string>
+  <string id="30003">TV-Shows</string>
   <string id="30004">All Movies</string>
   <string id="30005">HD Movies</string>
   <string id="30006">Genres</string>
   <string id="30007">Collections</string>
   <string id="30008">Search</string>
-  <string id="30009">All TV Shows</string>
-  <string id="30010">HD TV Shows</string>
+  <string id="30009">All TV-Shows</string>
+  <string id="30010">HD TV-Shows</string>
   <string id="30011">Watchlist</string>
   <string id="30101">Use Cover as Fanart</string>
   <string id="30102">Mac OSX Player</string>

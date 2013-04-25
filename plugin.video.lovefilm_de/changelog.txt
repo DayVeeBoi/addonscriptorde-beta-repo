@@ -11,3 +11,5 @@
 - Some small fixes
 1.0.4
 - Added support for Mac OSX
+1.0.5
+- OSX: Chrome now starts in Kiosk-Mode

@@ -27,6 +27,8 @@ def index():
     addDir(translation(30002), "", "listMovies", "")
     addDir(translation(30003), "", "listTvShows", "")
     addDir(translation(30009), "", 'search', "")
+    if osx:
+        addDir(translation(30010), "http://www.watchever.de/mein-programm/watchliste", 'openBrowser', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -76,7 +78,7 @@ def listVideos(url):
         url = baseUrl+"/player"+match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("165x235", "495x705")
-        addDir(title, url, 'playVideoBrowser', thumb)
+        addDir(title, url, 'openBrowser', thumb)
     match = re.compile('<div class="bgO"><a href="(.+?)"', re.DOTALL).findall(content)
     if match:
         addDir(translation(30001), match[0], "listVideos", "")
@@ -93,16 +95,18 @@ def search():
         listVideos(baseUrl+"/suchanfrage/"+search_string)
 
 
-def playVideoBrowser(url):
+def openBrowser(url):
     xbmc.Player().stop()
     if osx:
         if osxPlayer == "0":
-            player = "Safari"
+            fullUrl = 'open -a "/Applications/Safari.app/" '+url
         elif osxPlayer == "1":
-            player = "Firefox"
+            fullUrl = 'open -a "/Applications/Firefox.app/" '+url
         elif osxPlayer == "2":
-            player = "Google Chrome"
-        subprocess.Popen('open -a "/Applications/'+player+'.app/" '+url, shell=True)
+            fullUrl = '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --kiosk '+url
+        elif osxPlayer == "3":
+            fullUrl = 'open -a "/Applications/Kylo.app/" '+url
+        subprocess.Popen(fullUrl, shell=True)
     else:
         xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite)')
 
@@ -158,8 +162,8 @@ elif mode == 'showSortList':
     showSortList(url)
 elif mode == 'listTvShows':
     listTvShows(url)
-elif mode == 'playVideoBrowser':
-    playVideoBrowser(url)
+elif mode == 'openBrowser':
+    openBrowser(url)
 elif mode == 'search':
     search()
 else:
