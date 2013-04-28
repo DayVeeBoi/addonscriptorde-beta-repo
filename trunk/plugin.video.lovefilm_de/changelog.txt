@@ -13,3 +13,5 @@
 - Added support for Mac OSX
 1.0.5
 - OSX: Chrome now starts in Kiosk-Mode
+1.0.6
+- Fixed collection listing

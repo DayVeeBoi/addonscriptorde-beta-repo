@@ -108,7 +108,7 @@ def openBrowser(url):
             fullUrl = 'open -a "/Applications/Kylo.app/" '+url
         subprocess.Popen(fullUrl, shell=True)
     else:
-        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite)')
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite&showScrollbar=no)')
 
 
 def cleanTitle(title):
