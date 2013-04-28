@@ -58,16 +58,23 @@ def listGenres(url):
     match = re.compile('<a href="(.+?)" title="(.+?)"><span class="facet_link">.+?</span> <span class="facet_results  ">(.+?)</span></a>', re.DOTALL).findall(content)
     for url, title, nr in match:
         title = cleanTitle(title)
-        addDir(title + nr, url+"?v=l&r=50", 'listVideos', "")
+        addDir(title + nr, url+"&v=l&r=50", 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listCollections(url):
     content = getUrl(url)
-    content = content[content.find('<div class="collection_items"'):]
+    content = content[content.find('<div class="collection_items"')+1:]
     content = content[:content.find('<div class="page-footer bermuda-footer">')]
-    match = re.compile('<a href="(.+?)">.+?<img src="(.+?)" width=".+?" height=".+?" />.+?<h3>(.+?)</h3>', re.DOTALL).findall(content)
-    for url, thumb, title in match:
+    spl = content.split('<div class="collection_item')
+    for i in range(1, len(spl), 1):
+        entry = spl[i]
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = match[0]
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0]
+        match = re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
+        title = match[0]
         title = cleanTitle(title)
         addDir(title, url+"&v=l&r=50", 'listVideos', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -174,7 +181,7 @@ def openBrowser(url):
             fullUrl = 'open -a "/Applications/Kylo.app/" '+url
         subprocess.Popen(fullUrl, shell=True)
     else:
-        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite)')
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite&showScrollbar=no)')
 
 
 def cleanTitle(title):
