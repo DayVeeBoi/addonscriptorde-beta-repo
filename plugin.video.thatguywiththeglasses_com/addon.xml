@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.thatguywiththeglasses_com" name="ThatGuyWithTheGlasses.com" version="1.0.4" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.bliptv" version="0.5.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
     </requires>
