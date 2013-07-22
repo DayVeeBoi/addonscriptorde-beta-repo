@@ -18,6 +18,61 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.0.3" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">ARTE Mediathek (DE/FR)</summary>
+        <summary lang="en">ARTE Media Library (DE/FR)</summary>
+        <summary lang="fr">ARTE mÃ©diathÃ¨que (DE/FR)</summary>
+        <language>de fr</language>
+        <description lang="de">ARTE Mediathek (DE/FR)</description>
+        <description lang="en">ARTE Media Library (DE/FR)</description>
+        <description lang="fr">ARTE mÃ©diathÃ¨que (DE/FR)</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+    </extension>
+</addon>
+
+<addon id="plugin.video.bild_de" name="Bild.de" version="1.0.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">News, Politik, Unterhaltung, Sport, Auto und Lifestye</summary>
+        <summary lang="en">News, Politics, Entertainment, Sports, Cars and Lifestye</summary>
+        <language>de</language>
+        <description lang="de">News, Politik, Unterhaltung, Sport, Auto und Lifestye</description>
+        <description lang="en">News, Politics, Entertainment, Sports, Cars and Lifestye</description>
+    </extension>
+</addon>
+
+<addon id="plugin.video.chefkoch_de" name="Chefkoch.de" version="2.0.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Cooking videos</summary>
+        <summary lang="de">Video Kochrezepte</summary>
+        <language>de</language>
+        <description lang="en">Cooking videos</description>
+        <description lang="de">Video Kochrezepte</description>
+    <platform>all</platform>
+    </extension>
+</addon>
+
 <addon id="plugin.video.dailymotion_com" name="DailyMotion.com" version="2.1.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -35,6 +90,22 @@
         <source>https://github.com/AddonScriptorDE/plugin.video.dailymotion_com</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=142626</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.euronews_com" name="euronews.com" version="2.0.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Livestream and latest news videos from euronews.com | Available languages: English, Greek, French, German, Italian, Spanish, Portuguese, Polish, Russian, Ukrainian, Turkish, Arabic and Persian</summary>
+        <language></language>
+        <description lang="en">Livestream and latest news videos from euronews.com | Available languages: English, Greek, French, German, Italian, Spanish, Portuguese, Polish, Russian, Ukrainian, Turkish, Arabic and Persian</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
     </extension>
 </addon>
 
@@ -78,6 +149,24 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.thatguywiththeglasses_com" name="ThatGuyWithTheGlasses.com" version="1.0.4" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+        <import addon="plugin.video.bliptv" version="0.5.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">ThatGuyWithTheGlasses and many more...</summary>
+        <language>en</language>
+        <description lang="en">ThatGuyWithTheGlasses and many more...</description>
+    <platform>all</platform>
+    </extension>
+</addon>
+
 <addon id="plugin.video.watchever_de" name="Watchever.de" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
@@ -95,6 +184,28 @@
         <website></website>
         <source>https://github.com/AddonScriptorDE/plugin.video.watchever_de</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">ZDF, ZDFneo, ZDFkultur, ZDFinfo und 3sat Mediathek</summary>
+        <summary lang="en">ZDF, ZDFneo, ZDFkultur, ZDFinfo and 3sat Media Library</summary>
+        <language>de</language>
+        <description lang="de">ZDF, ZDFneo, ZDFkultur, ZDFinfo und 3sat Mediathek</description>
+        <description lang="en">ZDF, ZDFneo, ZDFkultur, ZDFinfo and 3sat Media Library</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+        <website></website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.zdf_de_lite</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
