@@ -40,7 +40,7 @@ def index():
     addDir(translation(30007), "by_date", "listCats", "")
     addDir(translation(30008), "", "search", "")
     addDir(translation(30012), "", "listWebLiveMain", "")
-    # addLink(translation(30009), "", "playLiveStream", "")
+    addLink(translation(30009), "", "playLiveStream", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -241,7 +241,7 @@ def playLiveStream():
         url = "http://org-www.arte.tv/papi/tvguide/videos/livestream/player/F/"
     content = getUrl(url)
     match = re.compile('"RMTP_HQ":\\{"quality":"SD - 400p","width":.+?,"height":.+?,"mediaType":"rtmp","mimeType":"application/x-fcs","bitrate":.+?,"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
-    listitem = xbmcgui.ListItem(path=match[0][0]+" playpath=mp4:"+match[0][1])
+    listitem = xbmcgui.ListItem(path=match[0][0] + match[0][1] + " swfUrl=http://www.arte.tv/flash/mediaplayer/mediaplayer.swf live=1 swfVfy=1")
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
