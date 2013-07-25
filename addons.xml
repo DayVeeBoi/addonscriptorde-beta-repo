@@ -18,7 +18,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -181,6 +181,25 @@
         <language>en</language>
         <description lang="en">ThatGuyWithTheGlasses and many more...</description>
     <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="plugin.video.theonion_com" name="TheOnion.com" version="2.0.4" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">America's Finest News Source</summary>
+        <language>en</language>
+        <description lang="en">America's Finest News Source</description>
+        <website></website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.theonion_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=137871</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
 

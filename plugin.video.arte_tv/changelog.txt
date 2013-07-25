@@ -10,3 +10,5 @@
 - Now using new media library backend
 - Added "Add to queue" context menu
 - Added support for HD videos
+1.0.4 / 2.0.4
+- Added Arte Livestream
