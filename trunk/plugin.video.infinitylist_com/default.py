@@ -50,8 +50,8 @@ def listVideosMain(id):
 
 def listVideos(url):
     content = getUrl(url)
-    if '<div id="videoSlider"' in content:
-        content = content[content.find('<div id="videoSlider"'):]
+    if '<a class="nextLink"' in content:
+        content = content[content.find('<a class="nextLink"'):]
     elif '<nav id="highlightMySection"' in content:
         content = content[content.find('<nav id="highlightMySection"'):]
     spl = content.split('<div id="videoPost-')
@@ -155,7 +155,10 @@ def cleanTitle(title):
 
 def getUrl(url):
     req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:22.0) Gecko/20100101 Firefox/22.0')
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0')
+    req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+    req.add_header('Accept-Language', 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3')
+    req.add_header('Accept-Encoding', 'deflate')
     response = urllib2.urlopen(req)
     link = response.read()
     response.close()
@@ -175,14 +178,13 @@ def parameters_string_to_dict(parameters):
 
 
 def addLink(name, url, mode, iconimage, desc, length):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart:
         liz.setProperty("fanart_image", iconimage)
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=liz)
     return ok
 
 
