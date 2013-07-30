@@ -78,15 +78,13 @@ def listVideos(url):
         matchVimeo2 = re.compile('http://player.vimeo.com/video/(.+?)\\?', re.DOTALL).findall(entry)
         url = ""
         if matchYoutube:
-            url = getYoutubeUrl(matchYoutube[0])
+            addLink(title, matchYoutube[0], 'playYoutubeVideo', thumb, date, length)
         elif matchVimeo:
-            url = getVimeoUrl(matchVimeo[0])
+            addLink(title, matchVimeo[0], 'playVimeoVideo', thumb, date, length)
         elif matchYoutube2:
-            url = getYoutubeUrl(matchYoutube2[0])
+            addLink(title, matchYoutube2[0], 'playYoutubeVideo', thumb, date, length)
         elif matchVimeo2:
-            url = getVimeoUrl(matchVimeo2[0])
-        if url:
-            addLink(title, url, 'playVideo', thumb, date, length)
+            addLink(title, matchVimeo2[0], 'playVimeoVideo', thumb, date, length)
     match = re.compile('<div id="featuredContentPageNumbers" class="featuredContentPageNumbers pageNavigation infinite">.+?<a href="(.+?)">.+?</a>', re.DOTALL).findall(content)
     if match:
         url = match[0]+"?burnt_inline_load=true"
@@ -96,13 +94,18 @@ def listVideos(url):
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def playVideo(url):
-    listItem = xbmcgui.ListItem(path=url)
+def playYoutubeVideo(id):
+    listItem = xbmcgui.ListItem(path=getYoutubeUrl(id))
+    xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
+
+
+def playVimeoVideo(id):
+    listItem = xbmcgui.ListItem(path=getVimeoUrl(id))
     xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
 
 
 def getYoutubeUrl(id):
-    if xbox == True:
+    if xbox:
         url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + id
     else:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + id
@@ -110,7 +113,7 @@ def getYoutubeUrl(id):
 
 
 def getVimeoUrl(id):
-    if xbox == True:
+    if xbox:
         url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
     else:
         url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
@@ -178,13 +181,14 @@ def parameters_string_to_dict(parameters):
 
 
 def addLink(name, url, mode, iconimage, desc, length):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart:
         liz.setProperty("fanart_image", iconimage)
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=liz)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
 
@@ -204,8 +208,10 @@ if mode == 'listVideos':
     listVideos(url)
 elif mode == 'listVideosMain':
     listVideosMain(url)
-elif mode == 'playVideo':
-    playVideo(url)
+elif mode == 'playYoutubeVideo':
+    playYoutubeVideo(url)
+elif mode == 'playVimeoVideo':
+    playVimeoVideo(url)
 elif mode == 'playRandom':
     playRandom(url)
 else:
