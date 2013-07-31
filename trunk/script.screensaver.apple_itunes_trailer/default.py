@@ -1,20 +1,27 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui,xbmcaddon
+import urllib
+import urllib2
+import re
+import xbmcplugin
+import xbmcgui
+import xbmcaddon
 
 addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 quality = addon.getSetting("quality")
-quality = ["480p","720p","1080p"][int(quality)]
+quality = ["480p", "720p", "1080p"][int(quality)]
 opener = urllib2.build_opener()
+
 
 def playVideo(url):
         content = opener.open(url).read()
-        match=re.compile('<a class="movieLink" href="(.+?)"', re.DOTALL).findall(content)
+        match = re.compile('<a class="movieLink" href="(.+?)"', re.DOTALL).findall(content)
         url = match[0]
         url = url[:url.find("?")].replace("720p", "h"+quality)+"|User-Agent=iTunes"
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+
 
 def parameters_string_to_dict(parameters):
         paramDict = {}

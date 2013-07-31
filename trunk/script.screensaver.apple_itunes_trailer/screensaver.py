@@ -32,18 +32,18 @@ class window(xbmcgui.WindowXMLDialog):
 addon = xbmcaddon.Addon()
 urlMain = "http://trailers.apple.com"
 jumpBack = int(addon.getSetting("jumpBack"))
-g_action = addon.getSetting("g_action")=="true"
-g_comedy = addon.getSetting("g_comedy")=="true"
-g_docu = addon.getSetting("g_docu")=="true"
-g_drama = addon.getSetting("g_drama")=="true"
-g_family = addon.getSetting("g_family")=="true"
-g_fantasy = addon.getSetting("g_fantasy")=="true"
-g_foreign = addon.getSetting("g_foreign")=="true"
-g_horror = addon.getSetting("g_horror")=="true"
-g_musical = addon.getSetting("g_musical")=="true"
-g_romance = addon.getSetting("g_romance")=="true"
-g_scifi = addon.getSetting("g_scifi")=="true"
-g_thriller = addon.getSetting("g_thriller")=="true"
+g_action = addon.getSetting("g_action") == "true"
+g_comedy = addon.getSetting("g_comedy") == "true"
+g_docu = addon.getSetting("g_docu") == "true"
+g_drama = addon.getSetting("g_drama") == "true"
+g_family = addon.getSetting("g_family") == "true"
+g_fantasy = addon.getSetting("g_fantasy") == "true"
+g_foreign = addon.getSetting("g_foreign") == "true"
+g_horror = addon.getSetting("g_horror") == "true"
+g_musical = addon.getSetting("g_musical") == "true"
+g_romance = addon.getSetting("g_romance") == "true"
+g_scifi = addon.getSetting("g_scifi") == "true"
+g_thriller = addon.getSetting("g_thriller") == "true"
 opener = urllib2.build_opener()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 playlist.clear()
@@ -109,7 +109,7 @@ def addVideos():
         match = re.compile('"genre":(.+?),', re.DOTALL).findall(entry)
         genres = match[0]
         match = re.compile('"poster":"(.+?)"', re.DOTALL).findall(entry)
-        thumb = urlMain+match[0].replace("poster.jpg","poster-xlarge.jpg")
+        thumb = urlMain+match[0].replace("poster.jpg", "poster-xlarge.jpg")
         match = re.compile('"url":"(.+?)","type":"(.+?)"', re.DOTALL).findall(entry)
         for url, type in match:
             urlTemp = urlMain+url+"includes/"+type.replace('-', '').replace(' ', '').lower()+"/extralarge.html"
