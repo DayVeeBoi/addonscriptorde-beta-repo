@@ -18,7 +18,6 @@ class window(xbmcgui.WindowXMLDialog):
         ACTION_PREVIOUS_MENU = 10
         if action in [ACTION_PREVIOUS_MENU, ACTION_STOP]:
             xbmc.Player().stop()
-            self.close()
             xbmc.sleep(1000)
             xbmc.Player().stop()
             if isPlaying:
@@ -26,6 +25,8 @@ class window(xbmcgui.WindowXMLDialog):
                 xbmc.Player().play(currentUrl)
                 xbmc.Player().seekTime(currentPosition-jumpBack)
                 xbmc.Player().pause()
+            xbmc.sleep(500)
+            self.close()
 
 addon = xbmcaddon.Addon()
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
