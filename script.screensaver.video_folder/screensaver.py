@@ -13,7 +13,12 @@ import random
 class window(xbmcgui.WindowXMLDialog):
     def onInit(self):
         addVideos()
-        xbmc.Player().play(playlist)
+        if playlist:
+            xbmc.Player().play(playlist)
+        else:
+            xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30003)+'!,5000)')
+            xbmc.Player().stop()
+            self.close()
 
     def onAction(self, action):
         ACTION_STOP = 13
@@ -32,6 +37,7 @@ class window(xbmcgui.WindowXMLDialog):
 
 addon = xbmcaddon.Addon()
 addonID = "script.screensaver.video_folder"
+translation = addon.getLocalizedString
 
 while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("videoDir")=="":
     addon.openSettings()
