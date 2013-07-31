@@ -1,0 +1,4 @@
+<settings>
+    <setting id="videoDir" type="folder" label="30001" default="" />
+    <setting id="jumpBack" type="number" label="30002" default="10"/>
+</settings>
