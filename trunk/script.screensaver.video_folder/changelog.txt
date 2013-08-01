@@ -4,3 +4,5 @@
 - Fixed bug when no videos were found
 1.0.2
 - Added tv_mode parameter for usage without Screensaver function
+1.0.3
+- Bugfix with tv_mode
