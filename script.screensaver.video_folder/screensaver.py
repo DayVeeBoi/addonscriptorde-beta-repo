@@ -75,8 +75,6 @@ if param=="tv_mode":
         xbmc.Player().play(playlist)
     else:
         xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30003)+'!,5000)')
-        xbmc.Player().stop()
-        self.close()
 else:
     myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
     myWindow.doModal()
