@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.screensaver.infinitylist_com" name="InfinityList.com" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Reddit.com Videos" version="1.0.0" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -10,12 +10,12 @@
 	<language></language>
     <platform>all</platform>
     <language></language>
-    <summary lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</summary>
-    <description lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</description>
+    <summary lang="en">Play random Reddit.com videos - Choose category via add-on settings</summary>
+    <description lang="en">Play random Reddit.com videos - Choose category via add-on settings</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
-    <website>http://www.infinitylist.com</website>
+    <website>http://www.reddit.com</website>
     <email>AddonScriptorDE at yahoo dot de</email>
-    <source>https://github.com/AddonScriptorDE/script.screensaver.infinitylist_com</source>
+    <source>https://github.com/AddonScriptorDE/script.screensaver.redit_com</source>
   </extension>
 </addon>

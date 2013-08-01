@@ -246,7 +246,7 @@
     </extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Apple iTunes Trailers" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Apple iTunes Trailers" version="1.0.1" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -255,8 +255,9 @@
   <extension point="xbmc.addon.metadata">
 	<language></language>
     <platform>all</platform>
-    <summary lang="en">Play random trailers from Apple iTunes</summary>
-    <description lang="en">Play random trailers from Apple iTunes</description>
+    <language>en</language>
+    <summary lang="en">Play random trailers from Apple iTunes - Choose quality and genres via the add-on settings</summary>
+    <description lang="en">Play random trailers from Apple iTunes - Choose quality and genres via the add-on settings</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://trailers.apple.com</website>
@@ -265,7 +266,27 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.infinitylist_com" name="InfinityList.com" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.filmstarts_de" name="FilmStarts.de Trailer" version="1.0.0" provider-name="AddonScriptorDE">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
+  <extension point="xbmc.python.pluginsource" library="default.py"/>
+  <extension point="xbmc.addon.metadata">
+	<language></language>
+    <platform>all</platform>
+    <language>de</language>
+    <summary lang="en">Play random popular trailers from FilmStarts.de</summary>
+    <description lang="en">Play random popular trailers from FilmStarts.de</description>
+	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+    <website>http://trailers.apple.com</website>
+    <email>AddonScriptorDE at yahoo dot de</email>
+    <source>https://github.com/AddonScriptorDE/script.screensaver.filmstarts_de</source>
+  </extension>
+</addon>
+
+<addon id="script.screensaver.infinitylist_com" name="InfinityList.com" version="1.0.2" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -275,8 +296,9 @@
   <extension point="xbmc.addon.metadata">
 	<language></language>
     <platform>all</platform>
-    <summary lang="en">Play random videos from InfinityList.com</summary>
-    <description lang="en">Play random videos from InfinityList.com</description>
+    <language></language>
+    <summary lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</summary>
+    <description lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://www.infinitylist.com</website>
@@ -285,7 +307,28 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.video_folder" name="Video Screensaver" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Reddit.com Videos" version="1.0.0" provider-name="AddonScriptorDE">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="plugin.video.youtube" version="3.0.0"/>
+    <import addon="plugin.video.vimeo" version="2.3.0"/>
+  </requires>
+  <extension library="screensaver.py" point="xbmc.ui.screensaver"/>
+  <extension point="xbmc.addon.metadata">
+	<language></language>
+    <platform>all</platform>
+    <language></language>
+    <summary lang="en">Play random Reddit.com videos - Choose category via add-on settings</summary>
+    <description lang="en">Play random Reddit.com videos - Choose category via add-on settings</description>
+	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+    <website>http://www.reddit.com</website>
+    <email>AddonScriptorDE at yahoo dot de</email>
+    <source>https://github.com/AddonScriptorDE/script.screensaver.redit_com</source>
+  </extension>
+</addon>
+
+<addon id="script.screensaver.video_folder" name="Video Screensaver" version="1.0.2" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -293,8 +336,9 @@
   <extension point="xbmc.addon.metadata">
 	<language></language>
     <platform>all</platform>
-    <summary lang="en">Play random videos of a directory</summary>
-    <description lang="en">Play random videos of a directory</description>
+    <language></language>
+    <summary lang="en">Play random videos from a local directory</summary>
+    <description lang="en">Play random videos from a local directory</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website></website>

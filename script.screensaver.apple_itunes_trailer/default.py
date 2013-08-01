@@ -12,7 +12,7 @@ pluginhandle = int(sys.argv[1])
 quality = addon.getSetting("quality")
 quality = ["480p", "720p", "1080p"][int(quality)]
 opener = urllib2.build_opener()
-
+opener.addheaders = [('User-Agent', 'iTunes')]
 
 def playVideo(url):
     content = opener.open(url).read()

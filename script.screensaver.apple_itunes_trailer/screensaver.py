@@ -121,5 +121,12 @@ def addVideos():
         listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
         playlist.add(url, listitem)
 
-myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
-myWindow.doModal()
+param = ""
+if len(sys.argv)>1:
+    param = urllib.unquote_plus(sys.argv[1])
+if param=="tv_mode":
+    addVideos()
+    xbmc.Player().play(playlist)
+else:
+    myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
+    myWindow.doModal()

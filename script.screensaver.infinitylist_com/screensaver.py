@@ -3,6 +3,7 @@
 import xbmc
 import xbmcgui
 import xbmcaddon
+import urllib
 import urllib2
 import re
 
@@ -75,16 +76,6 @@ def addVideos():
             playlist.add(url, listitem)
 
 
-def playYoutubeVideo(id):
-    listItem = xbmcgui.ListItem(path=getYoutubeUrl(id))
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
-
-
-def playVimeoVideo(id):
-    listItem = xbmcgui.ListItem(path=getVimeoUrl(id))
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
-
-
 def getYoutubeUrl(id):
     if xbox:
         url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + id
@@ -121,5 +112,13 @@ def getUrl(url):
     return content
 
 
-myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
-myWindow.doModal()
+param = ""
+if len(sys.argv)>1:
+    param = urllib.unquote_plus(sys.argv[1])
+if param=="tv_mode":
+    addVideos()
+    addVideos()
+    xbmc.Player().play(playlist)
+else:
+    myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
+    myWindow.doModal()
