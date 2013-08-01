@@ -43,8 +43,8 @@ def listVideos(url):
         match = re.compile('<span class="kicker">(.+?)</span>', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
         title = title.replace("„", "").replace("“", "")
-        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-        url = "http://www.bild.de/video/"+match[0]
+        match = re.compile('href="/video/clip/(.+?)"', re.DOTALL).findall(entry)
+        url = urlMain+"/video/clip/"+match[0]
         url = url.replace(".bild.html", ",view=xml.bild.xml")
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("w=323", "w=800")
