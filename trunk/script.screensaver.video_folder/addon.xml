@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.screensaver.video_folder" name="Video Screensaver" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.video_folder" name="Video Screensaver" version="1.0.2" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -7,8 +7,9 @@
   <extension point="xbmc.addon.metadata">
 	<language></language>
     <platform>all</platform>
-    <summary lang="en">Play random videos of a directory</summary>
-    <description lang="en">Play random videos of a directory</description>
+    <language></language>
+    <summary lang="en">Play random videos from a local directory</summary>
+    <description lang="en">Play random videos from a local directory</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website></website>

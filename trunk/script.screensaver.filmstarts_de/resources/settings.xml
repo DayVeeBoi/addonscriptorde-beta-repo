@@ -1,0 +1,3 @@
+<settings>
+    <setting id="jumpBack" type="number" label="30002" default="10"/>
+</settings>
