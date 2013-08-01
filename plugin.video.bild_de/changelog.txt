@@ -5,3 +5,5 @@
 1.0.2 / 2.0.2
 - Fixed site changes
 - Better thumbs
+1.0.3 / 2.0.3
+- Fixed bug with some videos
