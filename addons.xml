@@ -287,7 +287,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.reddit_com" name="Reddit.com Videos" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Reddit.com Videos" version="1.0.1" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -298,8 +298,8 @@
 	<language></language>
     <platform>all</platform>
     <language></language>
-    <summary lang="en">Play random Reddit.com videos - Choose category via add-on settings</summary>
-    <description lang="en">Play random Reddit.com videos - Choose category via add-on settings</description>
+    <summary lang="en">Play random Reddit.com videos (100) - Choose category via add-on settings</summary>
+    <description lang="en">Play random Reddit.com videos (100) - Choose category via add-on settings</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://www.reddit.com</website>

@@ -31,6 +31,7 @@ class window(xbmcgui.WindowXMLDialog):
 
 addon = xbmcaddon.Addon()
 opener = urllib2.build_opener()
+opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0')]
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 jumpBack = int(addon.getSetting("jumpBack"))
 type = int(addon.getSetting("type"))
