@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <string id="30001">Verzeichnis</string>
+  <string id="30001">SmartPlaylist</string>
   <string id="30002">Rücksprung in Sekunden bei pausierten Videos</string>
   <string id="30003">Exit Verzögerung in ms</string>
 </strings>
