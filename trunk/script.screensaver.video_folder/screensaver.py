@@ -87,7 +87,7 @@ def addVideos():
     entries = []
     for root, dirs, files in os.walk(videoDir):
         for filename in files:
-            if filename.endswith(('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mov')):
+            if filename.endswith(('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx')):
                 entries.append(os.path.join(root, filename))
     random.shuffle(entries)
     for file in entries:
