@@ -8,3 +8,5 @@
 - Fixed bug when exiting screensaver
 1.0.4
 - Fixed bug with filtering foreign trailers
+1.0.5
+- Some small improvements

@@ -246,7 +246,7 @@
     </extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.4" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.5" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
@@ -266,7 +266,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.4" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -287,7 +287,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.reddit_com" name="Video Screensaver: Reddit.com" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Video Screensaver: Reddit.com" version="1.0.3" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>

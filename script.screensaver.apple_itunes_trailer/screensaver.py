@@ -163,7 +163,13 @@ param = ""
 if len(sys.argv)>1:
     param = urllib.unquote_plus(sys.argv[1])
 if param=="tv_mode":
-    addVideos()
-    xbmc.Player().play(playlist)
+    try:
+        addVideos()
+    except:
+        pass
+    if playlist:
+        xbmc.Player().play(playlist)
+    else:
+        xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
 else:
     myWindow.doModal()
