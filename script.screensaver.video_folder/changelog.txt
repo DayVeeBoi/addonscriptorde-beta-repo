@@ -8,3 +8,5 @@
 - Bugfix with tv_mode
 1.0.4
 - Fixed bug when exiting screensaver
+1.0.5
+- Added video file extensions
