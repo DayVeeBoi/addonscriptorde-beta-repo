@@ -4,3 +4,5 @@
 - Small bugfix
 1.0.2
 - Fixed bug when exiting screensaver
+1.0.3
+- Some small improvements

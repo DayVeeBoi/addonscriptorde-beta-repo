@@ -5,6 +5,7 @@ import xbmcgui
 import xbmcaddon
 import urllib
 import urllib2
+import random
 import re
 
 
@@ -41,11 +42,15 @@ class window(xbmcgui.WindowXMLDialog):
     def onInit(self):
         try:
             addVideos()
-            addVideos()
         except:
             pass
         if playlist:
             myPlayer.play(playlist)
+            xbmc.sleep(random.randint(3000,10000))
+            try:
+                addVideos()
+            except:
+                pass
         else:
             xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
             myPlayer.stop()
@@ -149,8 +154,19 @@ param = ""
 if len(sys.argv)>1:
     param = urllib.unquote_plus(sys.argv[1])
 if param=="tv_mode":
-    addVideos()
-    addVideos()
-    xbmc.Player().play(playlist)
+    try:
+        addVideos()
+    except:
+        pass
+    if playlist:
+        xbmc.Player().play(playlist)
+        xbmc.sleep(random.randint(3000,10000))
+        try:
+            addVideos()
+        except:
+            pass
+    else:
+        xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
+    
 else:
     myWindow.doModal()
