@@ -2,4 +2,5 @@
 <strings>
   <string id="30001">Qualität</string>
   <string id="30002">Rücksprung in Sekunden bei pausierten Videos</string>
+  <string id="30003">Exit Verzögerung in ms</string>
 </strings>

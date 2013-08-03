@@ -2,3 +2,7 @@
 - Initial release
 1.0.1
 - Added tv_mode parameter for usage without Screensaver function
+1.0.2
+- Added filter for foreign trailers
+1.0.3
+- Fixed bug when exiting screensaver

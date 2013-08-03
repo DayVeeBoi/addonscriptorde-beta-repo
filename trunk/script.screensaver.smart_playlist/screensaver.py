@@ -40,17 +40,7 @@ class XBMCPlayer(xbmc.Player):
 
 class window(xbmcgui.WindowXMLDialog):
     def onInit(self):
-        try:
-            addVideos()
-        except:
-            pass
-        if playlist:
-            myPlayer.play(playlist)
-        else:
-            xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
-            myPlayer.stop()
-            myWindow.close()
-            myPlayer.close()
+        myPlayer.play(plPath)
 
     def onAction(self, action):
         ACTION_STOP = 13
@@ -59,15 +49,15 @@ class window(xbmcgui.WindowXMLDialog):
             myPlayer.stop()
 
 addon = xbmcaddon.Addon()
-addonID = "script.screensaver.video_folder"
+addonID = "script.screensaver.smart_playlist"
 translation = addon.getLocalizedString
 
-while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("videoDir") == "":
+while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("plPath") == "":
     addon.openSettings()
 
 jumpBack = int(addon.getSetting("jumpBack"))
 exitDelay = int(addon.getSetting("exitDelay"))
-videoDir = addon.getSetting("videoDir")
+plPath = addon.getSetting("plPath")
 myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
 myPlayer = XBMCPlayer()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -83,25 +73,10 @@ if xbmc.Player().isPlaying():
     playbackInterrupted = True
 
 
-def addVideos():
-    entries = []
-    for root, dirs, files in os.walk(videoDir):
-        for filename in files:
-            if filename.endswith(('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mov')):
-                entries.append(os.path.join(root, filename))
-    random.shuffle(entries)
-    for file in entries:
-        playlist.add(file)
-
-
 param = ""
 if len(sys.argv) > 1:
     param = urllib.unquote_plus(sys.argv[1])
 if param == "tv_mode":
-    addVideos()
-    if playlist:
-        xbmc.Player().play(playlist)
-    else:
-        xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30003)+'!,5000)')
+    xbmc.Player().play(plPath)
 else:
     myWindow.doModal()

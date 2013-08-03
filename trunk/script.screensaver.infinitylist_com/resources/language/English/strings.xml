@@ -2,4 +2,5 @@
 <strings>
   <string id="30001">Genre</string>
   <string id="30002">Seconds to jump back on interrupted videos</string>
+  <string id="30003">Exit delay in ms</string>
 </strings>

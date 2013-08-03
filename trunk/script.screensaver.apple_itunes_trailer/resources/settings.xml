@@ -1,7 +1,8 @@
 <settings>
     <category label="30101">
-        <setting id="jumpBack" type="number" label="30002" default="10"/>
         <setting id="quality" type="enum" label="30001" values="480p|720p|1080p" default="1"/>
+        <setting id="jumpBack" type="number" label="30002" default="10"/>
+        <setting id="exitDelay" type="number" label="30003" default="1000"/>
     </category>
     <category label="30102">
         <setting id="g_action" type="bool" label="30010" default="true"/>
