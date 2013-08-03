@@ -52,7 +52,7 @@ addon = xbmcaddon.Addon()
 addonID = "script.screensaver.smart_playlist"
 translation = addon.getLocalizedString
 
-while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("plPath") == "":
+while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("plPath") == "special://profile/playlists":
     addon.openSettings()
 
 jumpBack = int(addon.getSetting("jumpBack"))
