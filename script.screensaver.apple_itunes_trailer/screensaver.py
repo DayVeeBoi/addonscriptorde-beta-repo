@@ -9,25 +9,54 @@ import re
 import random
 
 
+class XBMCPlayer(xbmc.Player):
+    def onPlayBackStopped(self):
+        xbmc.sleep(exitDelay)
+        myWindow.close()
+        if playbackInterrupted:
+            xbmc.sleep(500)
+            xbmc.Player().play(currentUrl)
+            xbmc.Player().seekTime(currentPosition-jumpBack)
+            xbmc.Player().pause()
+        else:
+            xbmc.Player().stop()
+        self.close()
+
+    def onPlayBackEnded(self):
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        pos = playlist.getposition()
+        if pos == len(playlist)-1:
+            xbmc.sleep(5000)
+            myWindow.close()
+            if playbackInterrupted:
+                xbmc.sleep(500)
+                xbmc.Player().play(currentUrl)
+                xbmc.Player().seekTime(currentPosition-jumpBack)
+                xbmc.Player().pause()
+            else:
+                xbmc.Player().stop()
+            self.close()
+
+
 class window(xbmcgui.WindowXMLDialog):
     def onInit(self):
-        addVideos()
-        xbmc.Player().play(playlist)
+        try:
+            addVideos()
+        except:
+            pass
+        if playlist:
+            myPlayer.play(playlist)
+        else:
+            xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
+            myPlayer.stop()
+            myWindow.close()
+            myPlayer.close()
 
     def onAction(self, action):
         ACTION_STOP = 13
         ACTION_PREVIOUS_MENU = 10
         if action in [ACTION_PREVIOUS_MENU, ACTION_STOP]:
-            xbmc.Player().stop()
-            xbmc.sleep(1000)
-            xbmc.Player().stop()
-            if isPlaying:
-                xbmc.sleep(500)
-                xbmc.Player().play(currentUrl)
-                xbmc.Player().seekTime(currentPosition-jumpBack)
-                xbmc.Player().pause()
-            xbmc.sleep(500)
-            self.close()
+            myPlayer.stop()
 
 addon = xbmcaddon.Addon()
 urlMain = "http://trailers.apple.com"
@@ -45,16 +74,20 @@ g_romance = addon.getSetting("g_romance") == "true"
 g_scifi = addon.getSetting("g_scifi") == "true"
 g_thriller = addon.getSetting("g_thriller") == "true"
 opener = urllib2.build_opener()
+exitDelay = int(addon.getSetting("exitDelay"))
+myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
+myPlayer = XBMCPlayer()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 playlist.clear()
-isPlaying = False
+playbackInterrupted = False
 currentUrl = ""
 currentPosition = 0
 if xbmc.Player().isPlaying():
-    isPlaying = True
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
     xbmc.Player().stop()
+    xbmc.sleep(1000)
+    playbackInterrupted = True
 
 
 def genreCheck(genres):
@@ -114,7 +147,12 @@ def addVideos():
         for url, type in match:
             urlTemp = urlMain+url+"includes/"+type.replace('-', '').replace(' ', '').lower()+"/extralarge.html"
             url = "plugin://script.screensaver.apple_itunes_trailer/?url="+urllib.quote_plus(urlTemp)
-            if genreCheck(genres) and "International Trailer -" not in type and "Announcement -" not in type:
+            filter = ["- JP Sub","- UK","- BR Sub","- FR","- IT","- AU","- MX","- MX Sub","- BR","- RU","- DE","- ES","- FR Sub","- KR Sub","- Russian","- French","- Spanish","- German","- Latin American Spanish","- Italian"]
+            filtered = False
+            for f in filter:
+                if type in f:
+                    filtered = True
+            if genreCheck(genres) and not filtered:
                 entries.append([title+" - "+type, url, thumb])
     random.shuffle(entries)
     for title, url, thumb in entries:
@@ -128,5 +166,4 @@ if param=="tv_mode":
     addVideos()
     xbmc.Player().play(playlist)
 else:
-    myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
     myWindow.doModal()

@@ -6,3 +6,5 @@
 - Added tv_mode parameter for usage without Screensaver function
 1.0.3
 - Bugfix with tv_mode
+1.0.4
+- Fixed bug when exiting screensaver

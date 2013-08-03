@@ -1,4 +1,5 @@
 <settings>
-   <setting id="jumpBack" type="number" label="30002" default="10"/>
    <setting id="genre" type="enum" label="30001" values="All|Bike|Climb|Extra|Motor|Parkour|Skate|Sky|Snow|Water" default="0"/>
+   <setting id="jumpBack" type="number" label="30002" default="10"/>
+   <setting id="exitDelay" type="number" label="30003" default="1000"/>
 </settings>

@@ -2,6 +2,7 @@
 <strings>
   <string id="30001">Quality</string>
   <string id="30002">Seconds to jump back on interrupted videos</string>
+  <string id="30003">Exit delay in ms</string>
   <string id="30010">Action and Adventure</string>
   <string id="30011">Comedy</string>
   <string id="30012">Documentary</string>
