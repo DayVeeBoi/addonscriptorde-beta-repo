@@ -246,7 +246,7 @@
     </extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.4" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
