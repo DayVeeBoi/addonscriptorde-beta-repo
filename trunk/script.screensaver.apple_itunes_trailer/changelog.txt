@@ -6,3 +6,5 @@
 - Added filter for foreign trailers
 1.0.3
 - Fixed bug when exiting screensaver
+1.0.4
+- Fixed bug with filtering foreign trailers

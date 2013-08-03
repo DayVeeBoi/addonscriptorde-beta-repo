@@ -150,7 +150,7 @@ def addVideos():
             filter = ["- JP Sub","- UK","- BR Sub","- FR","- IT","- AU","- MX","- MX Sub","- BR","- RU","- DE","- ES","- FR Sub","- KR Sub","- Russian","- French","- Spanish","- German","- Latin American Spanish","- Italian"]
             filtered = False
             for f in filter:
-                if type in f:
+                if f in type:
                     filtered = True
             if genreCheck(genres) and not filtered:
                 entries.append([title+" - "+type, url, thumb])
