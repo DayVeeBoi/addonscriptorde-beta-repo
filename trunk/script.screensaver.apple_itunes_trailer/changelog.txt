@@ -10,3 +10,5 @@
 - Fixed bug with filtering foreign trailers
 1.0.5
 - Some small improvements
+1.0.6
+- Added setting to force volume

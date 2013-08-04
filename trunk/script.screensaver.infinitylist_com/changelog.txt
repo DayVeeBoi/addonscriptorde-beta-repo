@@ -8,3 +8,5 @@
 - Fixed bug when exiting screensaver
 1.0.4
 - Some small improvements
+1.0.5
+- Added setting to force volume

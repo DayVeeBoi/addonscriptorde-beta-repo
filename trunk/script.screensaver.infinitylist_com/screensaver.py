@@ -13,6 +13,10 @@ class XBMCPlayer(xbmc.Player):
     def onPlayBackStopped(self):
         xbmc.sleep(exitDelay)
         myWindow.close()
+        if setVolume and muted():
+            xbmc.executebuiltin('XBMC.Mute()')
+        elif setVolume:
+            xbmc.executebuiltin('XBMC.SetVolume('+str(currentVolume)+')')
         if playbackInterrupted:
             xbmc.sleep(500)
             xbmc.Player().play(currentUrl)
@@ -28,6 +32,10 @@ class XBMCPlayer(xbmc.Player):
         if pos == len(playlist)-1:
             xbmc.sleep(5000)
             myWindow.close()
+            if setVolume and muted():
+                xbmc.executebuiltin('XBMC.Mute()')
+            elif setVolume:
+                xbmc.executebuiltin('XBMC.SetVolume('+str(currentVolume)+')')
             if playbackInterrupted:
                 xbmc.sleep(500)
                 xbmc.Player().play(currentUrl)
@@ -45,6 +53,11 @@ class window(xbmcgui.WindowXMLDialog):
         except:
             pass
         if playlist:
+            if setVolume and not muted():
+                if volume==0:
+                    xbmc.executebuiltin('XBMC.Mute()')
+                else:
+                    xbmc.executebuiltin('XBMC.SetVolume('+str(volume)+')')
             myPlayer.play(playlist)
             xbmc.sleep(random.randint(3000,10000))
             try:
@@ -52,7 +65,7 @@ class window(xbmcgui.WindowXMLDialog):
             except:
                 pass
         else:
-            xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
+            xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
             myPlayer.stop()
             myWindow.close()
             myPlayer.close()
@@ -69,6 +82,11 @@ urlMain = "http://www.infinitylist.com"
 jumpBack = int(addon.getSetting("jumpBack"))
 genre = addon.getSetting("genre")
 genre = ["ALL", "bike", "climb", "extra", "motor", "parkour", "skate", "sky", "snow", "water"][int(genre)]
+setVolume = addon.getSetting("setVolume") == "true"
+volume = int(addon.getSetting("volume"))
+currentVolume = xbmc.getInfoLabel("Player.Volume")
+match=re.compile('(.+?) dB', re.DOTALL).findall(currentVolume)
+currentVolume = int((float(match[0])+60.0)/60.0*100.0)
 exitDelay = int(addon.getSetting("exitDelay"))
 myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
 myPlayer = XBMCPlayer()
@@ -83,6 +101,9 @@ if xbmc.Player().isPlaying():
     xbmc.Player().stop()
     xbmc.sleep(1000)
     playbackInterrupted = True
+
+def muted():
+    return xbmc.getCondVisibility("Player.Muted")
 
 
 def addVideos():
@@ -166,7 +187,7 @@ if param=="tv_mode":
         except:
             pass
     else:
-        xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30004)+'!,5000)')
+        xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
     
 else:
     myWindow.doModal()

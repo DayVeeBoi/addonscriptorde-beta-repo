@@ -13,6 +13,10 @@ class XBMCPlayer(xbmc.Player):
     def onPlayBackStopped(self):
         xbmc.sleep(exitDelay)
         myWindow.close()
+        if setVolume and muted():
+            xbmc.executebuiltin('XBMC.Mute()')
+        elif setVolume:
+            xbmc.executebuiltin('XBMC.SetVolume('+str(currentVolume)+')')
         if playbackInterrupted:
             xbmc.sleep(500)
             xbmc.Player().play(currentUrl)
@@ -28,6 +32,10 @@ class XBMCPlayer(xbmc.Player):
         if pos == len(playlist)-1:
             xbmc.sleep(5000)
             myWindow.close()
+            if setVolume and muted():
+                xbmc.executebuiltin('XBMC.Mute()')
+            elif setVolume:
+                xbmc.executebuiltin('XBMC.SetVolume('+str(currentVolume)+')')
             if playbackInterrupted:
                 xbmc.sleep(500)
                 xbmc.Player().play(currentUrl)
@@ -40,6 +48,11 @@ class XBMCPlayer(xbmc.Player):
 
 class window(xbmcgui.WindowXMLDialog):
     def onInit(self):
+        if setVolume and not muted():
+            if volume==0:
+                xbmc.executebuiltin('XBMC.Mute()')
+            else:
+                xbmc.executebuiltin('XBMC.SetVolume('+str(volume)+')')
         myPlayer.play(plPath)
 
     def onAction(self, action):
@@ -57,6 +70,11 @@ while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+add
 
 jumpBack = int(addon.getSetting("jumpBack"))
 exitDelay = int(addon.getSetting("exitDelay"))
+setVolume = addon.getSetting("setVolume") == "true"
+volume = int(addon.getSetting("volume"))
+currentVolume = xbmc.getInfoLabel("Player.Volume")
+match=re.compile('(.+?) dB', re.DOTALL).findall(currentVolume)
+currentVolume = int((float(match[0])+60.0)/60.0*100.0)
 plPath = addon.getSetting("plPath")
 myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
 myPlayer = XBMCPlayer()
@@ -72,6 +90,8 @@ if xbmc.Player().isPlaying():
     xbmc.sleep(1000)
     playbackInterrupted = True
 
+def muted():
+    return xbmc.getCondVisibility("Player.Muted")
 
 param = ""
 if len(sys.argv) > 1:

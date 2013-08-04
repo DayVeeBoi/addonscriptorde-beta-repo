@@ -10,3 +10,5 @@
 - Fixed bug when exiting screensaver
 1.0.5
 - Added video file extensions
+1.0.6
+- Added setting to force volume
