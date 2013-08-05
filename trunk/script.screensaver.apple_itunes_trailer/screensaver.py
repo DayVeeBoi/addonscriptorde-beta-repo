@@ -6,7 +6,9 @@ import xbmcaddon
 import urllib
 import urllib2
 import re
+import os
 import random
+import time
 
 
 class XBMCPlayer(xbmc.Player):
@@ -63,7 +65,6 @@ class window(xbmcgui.WindowXMLDialog):
             xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
             myPlayer.stop()
             myWindow.close()
-            myPlayer.close()
 
     def onAction(self, action):
         ACTION_STOP = 13
@@ -72,7 +73,11 @@ class window(xbmcgui.WindowXMLDialog):
             myPlayer.stop()
 
 addon = xbmcaddon.Addon()
-urlMain = "http://trailers.apple.com"
+translation = addon.getLocalizedString
+addonID = "script.screensaver.apple_itunes_trailer"
+addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
+cacheFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/cache")
+exitDelay = int(addon.getSetting("exitDelay"))
 jumpBack = int(addon.getSetting("jumpBack"))
 setVolume = addon.getSetting("setVolume") == "true"
 volume = int(addon.getSetting("volume"))
@@ -92,7 +97,8 @@ g_romance = addon.getSetting("g_romance") == "true"
 g_scifi = addon.getSetting("g_scifi") == "true"
 g_thriller = addon.getSetting("g_thriller") == "true"
 opener = urllib2.build_opener()
-exitDelay = int(addon.getSetting("exitDelay"))
+opener.addheaders = [('User-Agent', 'iTunes')]
+urlMain = "http://trailers.apple.com"
 myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
 myPlayer = XBMCPlayer()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -100,6 +106,9 @@ playlist.clear()
 playbackInterrupted = False
 currentUrl = ""
 currentPosition = 0
+cacheLifetime = 24
+if not os.path.isdir(addonUserDataFolder):
+  os.mkdir(addonUserDataFolder)
 if xbmc.Player().isPlaying():
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
@@ -154,7 +163,15 @@ def genreCheck(genres):
 
 def addVideos():
     entries = []
-    content = opener.open(urlMain+"/trailers/home/feeds/studios.json").read()
+    if os.path.exists(cacheFile) and (time.time()-os.path.getmtime(cacheFile) < cacheLifetime*24*60):
+        fh = open(cacheFile, 'r')
+        content = fh.read()
+        fh.close()
+    else:
+        content = opener.open(urlMain+"/trailers/home/feeds/studios.json").read()
+        fh = open(cacheFile, 'w')
+        fh.write(content)
+        fh.close()
     spl = content.split('"title"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
