@@ -58,6 +58,25 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.reddit_tv" name="Reddit.tv" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch videos from reddit.com - Add subreddits - AutoPlay latest/random videos</summary>
+        <language></language>
+        <description lang="en">Watch videos from reddit.com - Add subreddits - AutoPlay latest/random videos</description>
+        <website>http://www.reddit.tv</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.reddit_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
 <addon id="plugin.video.watchever_de" name="Watchever.de" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.webbrowser" version="1.0.0"/>
@@ -93,7 +112,7 @@
 	</extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.7" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.8" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
