@@ -19,7 +19,7 @@
         <setting id="cat_hot_m" type="bool" label="30152" default="false"/>
         <setting id="cat_hot_y" type="bool" label="30153" default="false"/>
         <setting id="cat_hot_a" type="bool" label="30154" default="false"/>
-        <setting id="cat_con_h" type="bool" label="30155" default="true"/>
+        <setting id="cat_con_h" type="bool" label="30155" default="false"/>
         <setting id="cat_con_d" type="bool" label="30156" default="true"/>
         <setting id="cat_con_w" type="bool" label="30157" default="true"/>
         <setting id="cat_con_m" type="bool" label="30158" default="false"/>

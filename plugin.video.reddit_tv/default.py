@@ -13,6 +13,7 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
+
 addon = xbmcaddon.Addon()
 addonID = 'plugin.video.reddit_tv'
 socket.setdefaulttimeout(30)
@@ -110,9 +111,10 @@ def index():
             addDir(entry.title(), "r/"+entry, 'listSorting', "")
         else:
             addDirR(entry.title(), "r/"+entry, 'listSorting', "")
-    addDir("[ Vimeo.com ]", "domain/vimeo.com", 'listSorting', "")
     addDir("[ Youtu.be ]", "domain/youtu.be", 'listSorting', "")
+    addDir("[ Vimeo.com ]", "domain/vimeo.com", 'listSorting', "")
     addDir("[ Youtube.com ]", "domain/youtube.com", 'listSorting', "")
+    addDir("[ Liveleak.com ]", "domain/liveleak.com", 'listSorting', "")
     addDir("[ Dailymotion.com ]", "domain/dailymotion.com", 'listSorting', "")
     addDir("[B]- "+translation(30001)+" -[/B]", "", 'addSubreddit', "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -186,6 +188,7 @@ def listVideos(url):
             matchYoutube = re.compile('"url": "http://www.youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(entry)
             matchVimeo = re.compile('"url": "http://vimeo.com/(.+?)"', re.DOTALL).findall(entry)
             matchDailyMotion = re.compile('"url": "http://www.dailymotion.com/video/(.+?)_', re.DOTALL).findall(entry)
+            matchLiveLeak = re.compile('"url": "http://www.liveleak.com/view\\?i=(.+?)"', re.DOTALL).findall(entry)
             url = ""
             if matchYoutube:
                 url = getYoutubeUrl(matchYoutube[0])
@@ -193,6 +196,8 @@ def listVideos(url):
                 url = getVimeoUrl(matchVimeo[0].replace("#", ""))
             elif matchDailyMotion:
                 url = getDailyMotionUrl(matchDailyMotion[0])
+            elif matchLiveLeak:
+                url = getLiveLeakUrl(matchLiveLeak[0])
             if url:
                 addLink(title, url, 'playVideo', thumb, description, date)
         except:
@@ -231,6 +236,7 @@ def playRandomly(url, type):
             matchYoutube = re.compile('"url": "http://www.youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(entry)
             matchVimeo = re.compile('"url": "http://vimeo.com/(.+?)"', re.DOTALL).findall(entry)
             matchDailyMotion = re.compile('"url": "http://www.dailymotion.com/video/(.+?)_', re.DOTALL).findall(entry)
+            matchLiveLeak = re.compile('"url": "http://www.liveleak.com/view\\?i=(.+?)"', re.DOTALL).findall(entry)
             url = ""
             if matchYoutube:
                 url = getYoutubeUrl(matchYoutube[0])
@@ -238,12 +244,14 @@ def playRandomly(url, type):
                 url = getVimeoUrl(matchVimeo[0].replace("#", ""))
             elif matchDailyMotion:
                 url = getDailyMotionUrl(matchDailyMotion[0])
+            elif matchLiveLeak:
+                url = getLiveLeakUrl(matchLiveLeak[0])
             if url:
                 url = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode=playVideo"
                 if type == "ALL":
                     listitem = xbmcgui.ListItem(title)
                     entries.append([title, url])
-                elif type == "UNWATCHED" and getPlayCount(url) <= 0:
+                elif type == "UNWATCHED" and getPlayCount(url) < 0:
                     listitem = xbmcgui.ListItem(title)
                     entries.append([title, url])
                 elif type == "UNFINISHED" and getPlayCount(url) == 0:
@@ -282,7 +290,27 @@ def getDailyMotionUrl(id):
     return url
 
 
+def getLiveLeakUrl(id):
+    if xbox:
+        url = "plugin://video/Reddit.com/?url=" + id + "&mode=playLiveLeakVideo"
+    else:
+        url = "plugin://plugin.video.reddit_tv/?url=" + id + "&mode=playLiveLeakVideo"
+    return url
+
+
 def playVideo(url):
+    listitem = xbmcgui.ListItem(path=url)
+    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+
+
+def playLiveLeakVideo(id):
+    content = opener.open("http://www.liveleak.com/view?i="+id).read()
+    matchHD = re.compile('hd_file_url=(.+?)&', re.DOTALL).findall(content)
+    matchSD = re.compile('file: "(.+?)"', re.DOTALL).findall(content)
+    if matchHD:
+        url = urllib.unquote_plus(matchHD[0])
+    elif matchSD:
+        url = matchSD[0]
     listitem = xbmcgui.ListItem(path=url)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
@@ -342,6 +370,8 @@ elif mode == 'listSorting':
     listSorting(url)
 elif mode == 'playVideo':
     playVideo(url)
+elif mode == 'playLiveLeakVideo':
+    playLiveLeakVideo(url)
 elif mode == 'addSubreddit':
     addSubreddit()
 elif mode == 'removeSubreddit':
