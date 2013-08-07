@@ -5,7 +5,9 @@ import xbmcgui
 import xbmcaddon
 import urllib
 import urllib2
+import sqlite3
 import re
+import os
 import random
 
 
@@ -24,7 +26,6 @@ class XBMCPlayer(xbmc.Player):
             xbmc.Player().pause()
         else:
             xbmc.Player().stop()
-        self.close()
 
     def onPlayBackEnded(self):
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -43,7 +44,6 @@ class XBMCPlayer(xbmc.Player):
                 xbmc.Player().pause()
             else:
                 xbmc.Player().stop()
-            self.close()
 
 
 class window(xbmcgui.WindowXMLDialog):
@@ -63,7 +63,6 @@ class window(xbmcgui.WindowXMLDialog):
             xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
             myPlayer.stop()
             myWindow.close()
-            myPlayer.close()
 
     def onAction(self, action):
         ACTION_STOP = 13
@@ -73,11 +72,13 @@ class window(xbmcgui.WindowXMLDialog):
 
 addon = xbmcaddon.Addon()
 opener = urllib2.build_opener()
-opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0')]
+opener.addheaders = [('User-Agent', 'XBMC | script.screensaver.reddit_com | v1.0.6')]
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
+translation = addon.getLocalizedString
 jumpBack = int(addon.getSetting("jumpBack"))
 type = int(addon.getSetting("type"))
 type = ["hot","day","week","month"][int(type)]
+playUnwatched = addon.getSetting("playUnwatched") == "true"
 setVolume = addon.getSetting("setVolume") == "true"
 volume = int(addon.getSetting("volume"))
 currentVolume = xbmc.getInfoLabel("Player.Volume")
@@ -102,6 +103,28 @@ def muted():
     return xbmc.getCondVisibility("Player.Muted")
 
 
+def getDbPath():
+    path = xbmc.translatePath("special://userdata/Database")
+    files = os.listdir(path)
+    latest = ""
+    for file in files:
+        if file[:8] == 'MyVideos' and file[-3:] == '.db':
+            if file > latest:
+                latest = file
+    return os.path.join(path, latest)
+
+
+def getPlayCount(url):
+    c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
+    result = c.fetchone()
+    if result:
+        result = result[0]
+        if result:
+            return int(result)
+        return 0
+    return -1
+
+
 def addVideos():
     entries = []
     if type=="hot":
@@ -122,7 +145,12 @@ def addVideos():
         elif matchVimeo:
             url = getVimeoUrl(matchVimeo[0].replace("#", ""))
         if url:
-            entries.append([title, url])
+            url = "plugin://plugin.video.reddit_tv/?url="+urllib.quote_plus(url)+"&mode=playVideo"
+            if playUnwatched:
+                if getPlayCount(url) < 0:
+                    entries.append([title, url])
+            else:
+                entries.append([title, url])
     random.shuffle(entries)
     for title, url in entries:
         listitem = xbmcgui.ListItem(title)
@@ -144,6 +172,10 @@ def getVimeoUrl(id):
         url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
     return url
 
+
+dbPath = getDbPath()
+conn = sqlite3.connect(dbPath)
+c = conn.cursor()
 
 param = ""
 if len(sys.argv)>1:
