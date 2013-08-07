@@ -15,9 +15,17 @@ import xbmcaddon
 
 
 addon = xbmcaddon.Addon()
-addonID = 'plugin.video.reddit_tv'
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
+addonID = 'plugin.video.reddit_tv'
+xbox = xbmc.getCondVisibility("System.Platform.xbox")
+translation = addon.getLocalizedString
+
+opener = urllib2.build_opener()
+userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0"
+opener.addheaders = [('User-Agent', userAgent)]
+urlMain = "http://www.reddit.com"
+
 cat_hot = addon.getSetting("cat_hot") == "true"
 cat_new = addon.getSetting("cat_new") == "true"
 cat_top_d = addon.getSetting("cat_top_d") == "true"
@@ -31,22 +39,25 @@ cat_con_w = addon.getSetting("cat_con_w") == "true"
 cat_con_m = addon.getSetting("cat_con_m") == "true"
 cat_con_y = addon.getSetting("cat_con_y") == "true"
 cat_con_a = addon.getSetting("cat_con_a") == "true"
-addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
-subredditsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/subreddits")
-xbox = xbmc.getCondVisibility("System.Platform.xbox")
-forceViewMode = addon.getSetting("forceViewMode") == "true"
-showAll = addon.getSetting("showAll") == "true"
-showUnwatched = addon.getSetting("showUnwatched") == "true"
-showUnfinished = addon.getSetting("showUnfinished") == "true"
-viewMode = str(addon.getSetting("viewMode"))
+
 filter = addon.getSetting("filter") == "true"
 filterRating = int(addon.getSetting("filterRating"))
 filterVoteThreshold = int(addon.getSetting("filterVoteThreshold"))
-translation = addon.getLocalizedString
-urlMain = "http://www.reddit.com"
-userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0"
-opener = urllib2.build_opener()
-opener.addheaders = [('User-Agent', userAgent)]
+
+showAll = addon.getSetting("showAll") == "true"
+showUnwatched = addon.getSetting("showUnwatched") == "true"
+showUnfinished = addon.getSetting("showUnfinished") == "true"
+
+forceViewMode = addon.getSetting("forceViewMode") == "true"
+viewMode = str(addon.getSetting("viewMode"))
+
+searchSort = int(addon.getSetting("searchSort"))
+searchSort = ["ask", "relevance", "new", "hot", "top", "comments"][searchSort]
+searchTime = int(addon.getSetting("searchTime"))
+searchTime = ["ask", "hour", "day", "week", "month", "year", "all"][searchTime]
+
+addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
+subredditsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/subreddits")
 if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
 
@@ -94,8 +105,16 @@ def removeSubreddit(subreddit):
 
 
 def index():
-    defaultEntries = ["videos", "trailers", "documentaries", "music"]
-    entries = defaultEntries[:]
+    content = ""
+    if os.path.exists(subredditsFile):
+        fh = open(subredditsFile, 'r')
+        content = fh.read()
+        fh.close()
+    if "videos\n" not in content:
+        fh = open(subredditsFile, 'a')
+        fh.write('videos\n')
+        fh.close()
+    entries = []
     if os.path.exists(subredditsFile):
         fh = open(subredditsFile, 'r')
         content = fh.read()
@@ -107,7 +126,7 @@ def index():
                 entries.append(subreddit)
     entries.sort()
     for entry in entries:
-        if entry in defaultEntries:
+        if entry == "videos":
             addDir(entry.title(), "r/"+entry, 'listSorting', "")
         else:
             addDirR(entry.title(), "r/"+entry, 'listSorting', "")
@@ -116,7 +135,7 @@ def index():
     addDir("[ Youtube.com ]", "domain/youtube.com", 'listSorting', "")
     addDir("[ Liveleak.com ]", "domain/liveleak.com", 'listSorting', "")
     addDir("[ Dailymotion.com ]", "domain/dailymotion.com", 'listSorting', "")
-    addDir("[B]- "+translation(30001)+" -[/B]", "", 'addSubreddit', "")
+    addDir("[B]- "+translation(30001)+"[/B]", "", 'addSubreddit', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -147,6 +166,7 @@ def listSorting(subreddit):
         addDir(translation(30005)+": "+translation(30010), urlMain+"/"+subreddit+"/controversial/.json?limit=100&t=year", 'listVideos', "")
     if cat_con_a:
         addDir(translation(30005)+": "+translation(30011), urlMain+"/"+subreddit+"/controversial/.json?limit=100&t=all", 'listVideos', "")
+    addDir("[B]- "+translation(30017)+"[/B]", subreddit, "search", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -154,11 +174,11 @@ def listVideos(url):
     currentUrl = url
     xbmcplugin.setContent(pluginhandle, "episodes")
     if showAll:
-        addDir("[B]- "+translation(30012)+" -[/B]", url, 'playRandomly', "", "ALL")
+        addDir("[B]- "+translation(30012)+"[/B]", url, 'playRandomly', "", "ALL")
     if showUnwatched:
-        addDir("[B]- "+translation(30014)+" -[/B]", url, 'playRandomly', "", "UNWATCHED")
+        addDir("[B]- "+translation(30014)+"[/B]", url, 'playRandomly', "", "UNWATCHED")
     if showUnfinished:
-        addDir("[B]- "+translation(30015)+" -[/B]", url, 'playRandomly', "", "UNFINISHED")
+        addDir("[B]- "+translation(30015)+"[/B]", url, 'playRandomly', "", "UNFINISHED")
     content = opener.open(url).read()
     spl = content.split('"content"')
     for i in range(1, len(spl), 1):
@@ -315,6 +335,49 @@ def playLiveLeakVideo(id):
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
+def queueVideo(url, name):
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    listitem = xbmcgui.ListItem(name)
+    playlist.add(url, listitem)
+
+
+def search(subreddit):
+    keyboard = xbmc.Keyboard('', translation(30017))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        search_string = keyboard.getText().replace(" ", "+")
+        url = ""
+        if searchSort == "ask":
+            searchAskOne(urlMain+"/"+subreddit+"/search.json?q="+search_string+"&restrict_sr=on&sort=")
+        else:
+            if searchTime == "ask":
+                searchAskTwo(urlMain+"/"+subreddit+"/search.json?q="+search_string+"&restrict_sr=on&sort="+searchSort+"&t=")
+            else:
+                listVideos(urlMain+"/"+subreddit+"/search.json?q="+search_string+"&restrict_sr=on&sort="+searchSort+"&t="+searchTime)
+
+
+def searchAskOne(url):
+    addDir(translation(30114), url+"relevance", 'searchAskTwo', "")
+    addDir(translation(30115), url+"new", 'searchAskTwo', "")
+    addDir(translation(30116), url+"hot", 'searchAskTwo', "")
+    addDir(translation(30117), url+"top", 'searchAskTwo', "")
+    addDir(translation(30118), url+"comments", 'searchAskTwo', "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def searchAskTwo(url):
+    if searchTime == "ask":
+        addDir(translation(30119), url+"&t=hour", 'listVideos', "")
+        addDir(translation(30120), url+"&t=day", 'listVideos', "")
+        addDir(translation(30121), url+"&t=week", 'listVideos', "")
+        addDir(translation(30122), url+"&t=month", 'listVideos', "")
+        addDir(translation(30123), url+"&t=year", 'listVideos', "")
+        addDir(translation(30124), url+"&t=all", 'listVideos', "")
+        xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        listVideos(url+"&t="+searchTime)
+
+
 def parameters_string_to_dict(parameters):
     paramDict = {}
     if parameters:
@@ -332,6 +395,7 @@ def addLink(name, url, mode, iconimage, description, date):
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description, "Aired": date})
     liz.setProperty('IsPlayable', 'true')
+    liz.addContextMenuItems([(translation(30018), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
@@ -363,6 +427,7 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 type = urllib.unquote_plus(params.get('type', ''))
+name = urllib.unquote_plus(params.get('name', ''))
 
 if mode == 'listVideos':
     listVideos(url)
@@ -378,5 +443,13 @@ elif mode == 'removeSubreddit':
     removeSubreddit(url)
 elif mode == 'playRandomly':
     playRandomly(url, type)
+elif mode == 'queueVideo':
+    queueVideo(url, name)
+elif mode == 'searchAskOne':
+    searchAskOne(url)
+elif mode == 'searchAskTwo':
+    searchAskTwo(url)
+elif mode == 'search':
+    search(url)
 else:
     index()

@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
   <string id="30001">Subreddit hinzufügen</string>
+  <string id="30002">Beliebt</string>
+  <string id="30003">Neu</string>
+  <string id="30004">Top</string>
+  <string id="30005">Kontrovers</string>
+  <string id="30006">Diese Stunde</string>
+  <string id="30007">Heute</string>
+  <string id="30008">Diese Woche</string>
+  <string id="30009">Diesen Monat</string>
+  <string id="30010">Dieses Jahr</string>
+  <string id="30011">Aller Zeiten</string>
   <string id="30012">Alle zufällig abspielen</string>
   <string id="30013">Subreddit entfernen</string>
   <string id="30014">Ungesehene zufällig abspielen</string>
   <string id="30015">Unbeendete zufällig abspielen</string>
   <string id="30016">Nächste Seite</string>
+  <string id="30017">Suchen</string>
+  <string id="30018">In Abspielliste einreihen</string>
   <string id="30101">Bewertungsfilter</string>
   <string id="30102">View erzwingen</string>
+  <string id="30103">ViewID</string>
   <string id="30104">Minimale Bewertung in %</string>
   <string id="30105">Minimale Anzahl der Stimmen für den Filter</string>
   <string id="30106">"Alle zufällig abspielen" anzeigen</string>
@@ -15,4 +28,29 @@
   <string id="30108">"Unbeendete zufällig abspielen" anzeigen</string>
   <string id="30109">Allgemein</string>
   <string id="30110">Kategorien</string>
+  <string id="30111">Suche: Sortierung</string>
+  <string id="30112">Suche: Zeitraum</string>
+  <string id="30113">Ask</string>
+  <string id="30114">Relevanz</string>
+  <string id="30115">Neu</string>
+  <string id="30116">Beliebt</string>
+  <string id="30117">Top</string>
+  <string id="30118">Kommentare</string>
+  <string id="30119">Diese Stunde</string>
+  <string id="30120">Heute</string>
+  <string id="30121">Diese Woche</string>
+  <string id="30122">Diesen Monat</string>
+  <string id="30123">Dieses Jahr</string>
+  <string id="30124">Aller Zeiten</string>
+  <string id="30150">Top: Heute</string>
+  <string id="30151">Top: Diese Woche</string>
+  <string id="30152">Top: Diesen Monat</string>
+  <string id="30153">Top: Dieses Jahr</string>
+  <string id="30154">Top: Aller Zeiten</string>
+  <string id="30155">Kontrovers: Diese Stunde</string>
+  <string id="30156">Kontrovers: Heute</string>
+  <string id="30157">Kontrovers: Diese Woche</string>
+  <string id="30158">Kontrovers: Diesen Monat</string>
+  <string id="30159">Kontrovers: Dieses Jahr</string>
+  <string id="30160">Kontrovers: Aller Zeiten</string>
 </strings>
