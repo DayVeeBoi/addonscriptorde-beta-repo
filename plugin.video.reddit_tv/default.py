@@ -17,12 +17,12 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.reddit_tv'
+addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 translation = addon.getLocalizedString
 
 opener = urllib2.build_opener()
-userAgent = "XBMC | plugin.video.reddit_tv | v1.0.5"
+userAgent = "XBMC | "+addonID+" | "+addon.getAddonInfo('version')
 opener.addheaders = [('User-Agent', userAgent)]
 urlMain = "http://www.reddit.com"
 
@@ -122,13 +122,13 @@ def index():
         for i in range(0, len(spl), 1):
             if spl[i]:
                 subreddit = spl[i].strip()
-                entries.append(subreddit)
+                entries.append(subreddit.title())
     entries.sort()
     for entry in entries:
         if entry == "all":
-            addDir(entry.title(), entry, 'listSorting', "")
+            addDir(entry, entry.lower(), 'listSorting', "")
         else:
-            addDirR(entry.title(), entry, 'listSorting', "")
+            addDirR(entry, entry.lower(), 'listSorting', "")
     addDir("[ Vimeo.com ]", "all", 'listSorting', "", "site:vimeo.com")
     addDir("[ Youtube.com ]", "all", 'listSorting', "", "site:youtu.be+OR+site:youtube.com")
     addDir("[ Liveleak.com ]", "all", 'listSorting', "", "site:liveleak.com")
