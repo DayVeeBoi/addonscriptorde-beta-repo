@@ -1,5 +1,6 @@
 <settings>
     <setting id="type" type="enum" label="30001" values="Hot|Top: Day|Top: Week|Top: Month" default="0"/>
+    <setting id="playUnwatched" type="bool" label="30007" default="true"/>
     <setting id="setVolume" type="bool" label="30004" default="false"/>
     <setting id="volume" type="number" label="30006" enable="!eq(-1,false)" default="1"/>
     <setting id="jumpBack" type="number" label="30002" default="10"/>

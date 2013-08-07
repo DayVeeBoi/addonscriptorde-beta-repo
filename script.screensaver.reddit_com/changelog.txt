@@ -8,3 +8,5 @@
 - Some small improvements
 1.0.4
 - Added setting to force volume
+1.0.6
+- Changed User-Agent
