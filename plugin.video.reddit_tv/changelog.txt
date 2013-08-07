@@ -11,3 +11,6 @@
 1.0.4
 - Added search
 - Added context menu "Queue video"
+1.0.5
+- Changed User-Agent
+- Changed reddit requests to list only supported content
