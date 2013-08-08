@@ -15,12 +15,12 @@ import xbmcaddon
 
 
 addon = xbmcaddon.Addon()
-socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
-xbox = xbmc.getCondVisibility("System.Platform.xbox")
 translation = addon.getLocalizedString
+xbox = xbmc.getCondVisibility("System.Platform.xbox")
 
+socket.setdefaulttimeout(30)
 opener = urllib2.build_opener()
 userAgent = "XBMC | "+addonID+" | "+addon.getAddonInfo('version')
 opener.addheaders = [('User-Agent', userAgent)]
@@ -33,9 +33,15 @@ cat_hot_w = addon.getSetting("cat_hot_w") == "true"
 cat_hot_m = addon.getSetting("cat_hot_m") == "true"
 cat_top_d = addon.getSetting("cat_top_d") == "true"
 cat_top_w = addon.getSetting("cat_top_w") == "true"
-cat_hot_m = addon.getSetting("cat_hot_m") == "true"
-cat_hot_y = addon.getSetting("cat_hot_y") == "true"
-cat_hot_a = addon.getSetting("cat_hot_a") == "true"
+cat_top_m = addon.getSetting("cat_top_m") == "true"
+cat_top_y = addon.getSetting("cat_top_y") == "true"
+cat_top_a = addon.getSetting("cat_top_a") == "true"
+cat_com_h = addon.getSetting("cat_com_h") == "true"
+cat_com_d = addon.getSetting("cat_com_d") == "true"
+cat_com_w = addon.getSetting("cat_com_w") == "true"
+cat_com_m = addon.getSetting("cat_com_m") == "true"
+cat_com_y = addon.getSetting("cat_com_y") == "true"
+cat_com_a = addon.getSetting("cat_com_a") == "true"
 
 filter = addon.getSetting("filter") == "true"
 filterRating = int(addon.getSetting("filterRating"))
@@ -47,6 +53,9 @@ showUnfinished = addon.getSetting("showUnfinished") == "true"
 
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
+
+itemsPerPage = int(addon.getSetting("itemsPerPage"))
+itemsPerPage = ["25", "50", "75", "100"][itemsPerPage]
 
 searchSort = int(addon.getSetting("searchSort"))
 searchSort = ["ask", "relevance", "new", "hot", "top", "comments"][searchSort]
@@ -83,14 +92,24 @@ def getPlayCount(url):
     return -1
 
 
-def addSubreddit():
-    keyboard = xbmc.Keyboard('', translation(30001))
-    keyboard.doModal()
-    if keyboard.isConfirmed() and keyboard.getText():
-        subreddit = keyboard.getText()
-        fh = open(subredditsFile, 'a')
-        fh.write(subreddit+'\n')
-        fh.close()
+def addSubreddit(subreddit):
+    fh = open(subredditsFile, 'r')
+    content = fh.read().lower()
+    fh.close()
+    if subreddit:
+        if subreddit.lower()+"\n" not in content:
+            fh = open(subredditsFile, 'a')
+            fh.write(subreddit+'\n')
+            fh.close()
+    else:
+        keyboard = xbmc.Keyboard('', translation(30001))
+        keyboard.doModal()
+        if keyboard.isConfirmed() and keyboard.getText():
+            subreddit = keyboard.getText()
+            if subreddit.lower()+"\n" not in content:
+                fh = open(subredditsFile, 'a')
+                fh.write(subreddit+'\n')
+                fh.close()
 
 
 def removeSubreddit(subreddit):
@@ -130,10 +149,11 @@ def index():
         else:
             addDirR(entry, entry.lower(), 'listSorting', "")
     addDir("[ Vimeo.com ]", "all", 'listSorting', "", "site:vimeo.com")
-    addDir("[ Youtube.com ]", "all", 'listSorting', "", "site:youtu.be+OR+site:youtube.com")
+    addDir("[ Youtube.com ]", "all", 'listSorting', "", "site:youtu.be OR site:youtube.com")
     addDir("[ Liveleak.com ]", "all", 'listSorting', "", "site:liveleak.com")
     addDir("[ Dailymotion.com ]", "all", 'listSorting', "", "site:dailymotion.com")
     addDir("[B]- "+translation(30001)+"[/B]", "", 'addSubreddit', "")
+    addDir("[B]- "+translation(30019)+"[/B]", "", 'searchReddits', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -142,26 +162,38 @@ def listSorting(subreddit, hosterQuery):
     if not hosterQuery:
         hosterQuery = allHosterQuery
     if cat_new:
-        addDir(translation(30003), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=new&restrict_sr=on&limit=100", 'listVideos', "")
+        addDir(translation(30003), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=new&restrict_sr=on&limit="+itemsPerPage, 'listVideos', "")
     if cat_hot_h:
-        addDir(translation(30002)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit=100&t=hour", 'listVideos', "")
+        addDir(translation(30002)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "")
     if cat_hot_d:
-        addDir(translation(30002)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit=100&t=day", 'listVideos', "")
+        addDir(translation(30002)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "")
     if cat_hot_w:
-        addDir(translation(30002)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit=100&t=week", 'listVideos', "")
+        addDir(translation(30002)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "")
     if cat_hot_m:
-        addDir(translation(30002)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit=100&t=month", 'listVideos', "")
+        addDir(translation(30002)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "")
     if cat_top_d:
-        addDir(translation(30004)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=day", 'listVideos', "")
+        addDir(translation(30004)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "")
     if cat_top_w:
-        addDir(translation(30004)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=week", 'listVideos', "")
-    if cat_hot_m:
-        addDir(translation(30004)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=month", 'listVideos', "")
-    if cat_hot_y:
-        addDir(translation(30004)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=year", 'listVideos', "")
-    if cat_hot_a:
-        addDir(translation(30004)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=all", 'listVideos', "")
-    addDir("[B]- "+translation(30017)+"[/B]", subreddit, "search", "", hosterQuery)
+        addDir(translation(30004)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "")
+    if cat_top_m:
+        addDir(translation(30004)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "")
+    if cat_top_y:
+        addDir(translation(30004)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "")
+    if cat_top_a:
+        addDir(translation(30004)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "")
+    if cat_com_h:
+        addDir(translation(30005)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "")
+    if cat_com_d:
+        addDir(translation(30005)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "")
+    if cat_com_w:
+        addDir(translation(30005)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "")
+    if cat_com_m:
+        addDir(translation(30005)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "")
+    if cat_com_y:
+        addDir(translation(30005)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "")
+    if cat_com_a:
+        addDir(translation(30005)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "")
+    addDir("[B]- "+translation(30017)+"[/B]", subreddit, "searchVideos", "", hosterQuery)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -182,7 +214,9 @@ def listVideos(url):
             match = re.compile('"title": "(.+?)"', re.DOTALL).findall(entry)
             title = cleanTitle(match[0])
             match = re.compile('"description": "(.+?)"', re.DOTALL).findall(entry)
-            description = cleanTitle(match[0])
+            description = ""
+            if match:
+                description = cleanTitle(match[0])
             match = re.compile('"created_utc": (.+?),', re.DOTALL).findall(entry)
             date = match[0].split(".")[0]
             dateTime = str(datetime.datetime.fromtimestamp(int(date)).strftime('%Y-%m-%d %H:%M'))
@@ -198,7 +232,9 @@ def listVideos(url):
             comments = match[0]
             description = dateTime+"  |  "+str(ups+downs)+" votes: "+str(rating)+"% Up  |  "+comments+" comments\n"+description
             match = re.compile('"thumbnail_url": "(.+?)"', re.DOTALL).findall(entry)
-            thumb = match[0]
+            thumb = ""
+            if match:
+                thumb = match[0]
             matchYoutube = re.compile('"url": "http://www.youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(entry)
             matchVimeo = re.compile('"url": "http://vimeo.com/(.+?)"', re.DOTALL).findall(entry)
             matchDailyMotion = re.compile('"url": "http://www.dailymotion.com/video/(.+?)_', re.DOTALL).findall(entry)
@@ -213,7 +249,7 @@ def listVideos(url):
             elif matchLiveLeak:
                 url = getLiveLeakUrl(matchLiveLeak[0])
             if url:
-                addLink(title, url, 'playVideo', thumb, description, date)
+                addLink(title, url, 'playVideo', thumb, description, date, i)
         except:
             pass
     match = re.compile('"after": "(.+?)"', re.DOTALL).findall(content)
@@ -224,9 +260,9 @@ def listVideos(url):
         else:
             nextUrl = currentUrl+"&after="+after
         addDir(translation(30016), nextUrl, 'listVideos', "")
-    xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+    xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def playRandomly(url, type):
@@ -335,7 +371,7 @@ def queueVideo(url, name):
     playlist.add(url, listitem)
 
 
-def search(subreddit, hosterQuery):
+def searchVideos(subreddit, hosterQuery):
     hosterQuery = urllib.quote_plus(hosterQuery)
     if not hosterQuery:
         hosterQuery = allHosterQuery
@@ -344,12 +380,25 @@ def search(subreddit, hosterQuery):
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = keyboard.getText().replace(" ", "+")
         if searchSort == "ask":
-            searchAskOne(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit=100&sort=")
+            searchAskOne(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort=")
         else:
             if searchTime == "ask":
-                searchAskTwo(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit=100&sort="+searchSort+"&t=")
+                searchAskTwo(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t=")
             else:
-                listVideos(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit=100&sort="+searchSort+"&t="+searchTime)
+                listVideos(urlMain+"/r/"+subreddit+"/search.json?q="+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t="+searchTime)
+
+
+def searchReddits():
+    keyboard = xbmc.Keyboard('', translation(30017))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        search_string = keyboard.getText().replace(" ", "+")
+        content = opener.open(urlMain+'/r/all/search?q='+search_string+'+site%3Ayoutu.be+OR+site%3Ayoutube.com+OR+site%3Avimeo.com+OR+site%3Aliveleak.com+OR+site%3Adailymotion.com&restrict_sr=on&sort=new&t=all').read()
+        match = re.compile('<li class="searchfacet reddit"><a class="facet title word" href=".+?">/r/(.+?)</a>&nbsp;<span class="facet count number">\\((.+?)\\)</span></li>', re.DOTALL).findall(content)
+        for subreddit, count in match:
+            title = subreddit.title() + " ("+count+" "+translation(30020)+")"
+            addDirA(title, subreddit, "listSorting", "")
+        xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def searchAskOne(url):
@@ -391,11 +440,11 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage, description, date):
+def addLink(name, url, mode, iconimage, description, date, nr):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description, "Aired": date})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description, "Aired": date, "Episode": nr})
     liz.setProperty('IsPlayable', 'true')
     liz.addContextMenuItems([(translation(30018), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -407,6 +456,16 @@ def addDir(name, url, mode, iconimage, type=""):
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    return ok
+
+
+def addDirA(name, url, mode, iconimage):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    ok = True
+    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz.setInfo(type="Video", infoLabels={"Title": name})
+    liz.addContextMenuItems([(translation(30001), 'RunPlugin(plugin://'+addonID+'/?mode=addSubreddit&url='+urllib.quote_plus(url)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -440,7 +499,7 @@ elif mode == 'playVideo':
 elif mode == 'playLiveLeakVideo':
     playLiveLeakVideo(url)
 elif mode == 'addSubreddit':
-    addSubreddit()
+    addSubreddit(url)
 elif mode == 'removeSubreddit':
     removeSubreddit(url)
 elif mode == 'playRandomly':
@@ -451,7 +510,9 @@ elif mode == 'searchAskOne':
     searchAskOne(url)
 elif mode == 'searchAskTwo':
     searchAskTwo(url)
-elif mode == 'search':
-    search(url, type)
+elif mode == 'searchVideos':
+    searchVideos(url, type)
+elif mode == 'searchReddits':
+    searchReddits()
 else:
     index()

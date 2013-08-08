@@ -16,3 +16,7 @@
 - Changed reddit requests to list only supported content
 1.0.6
 - Small bugfix
+1.0.7
+- Added category: Comments
+- Added setting: Items per page
+- Implemented functionality to search for reddits
