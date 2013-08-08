@@ -3,6 +3,7 @@
 import xbmc
 import xbmcgui
 import xbmcaddon
+import xbmcvfs
 import urllib
 import re
 import os
@@ -24,7 +25,6 @@ class XBMCPlayer(xbmc.Player):
             xbmc.Player().pause()
         else:
             xbmc.Player().stop()
-        self.close()
 
     def onPlayBackEnded(self):
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -43,7 +43,6 @@ class XBMCPlayer(xbmc.Player):
                 xbmc.Player().pause()
             else:
                 xbmc.Player().stop()
-            self.close()
 
 
 class window(xbmcgui.WindowXMLDialog):
@@ -64,7 +63,6 @@ class window(xbmcgui.WindowXMLDialog):
             xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
             myPlayer.stop()
             myWindow.close()
-            myPlayer.close()
 
     def onAction(self, action):
         ACTION_STOP = 13
@@ -73,7 +71,7 @@ class window(xbmcgui.WindowXMLDialog):
             myPlayer.stop()
 
 addon = xbmcaddon.Addon()
-addonID = "script.screensaver.video_folder"
+addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 
 while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("videoDir") == "":
@@ -94,7 +92,7 @@ playlist.clear()
 playbackInterrupted = False
 currentUrl = ""
 currentPosition = 0
-if xbmc.Player().isPlaying():
+if xbmc.Player().isPlayingVideo():
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
     xbmc.Player().stop()
@@ -106,10 +104,22 @@ def muted():
 
 def addVideos():
     entries = []
-    for root, dirs, files in os.walk(videoDir):
-        for filename in files:
-            if filename.endswith(('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx')):
-                entries.append(os.path.join(root, filename))
+    fileTypes = ('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx', '.pls', '.strm', '.m3u', '.mp3', '.aac', '.flac', '.ogg', '.wma', '.wav')
+    if videoDir.startswith(('smb://', 'nfs://', 'upnp://')):
+        dirs, files = xbmcvfs.listdir(videoDir)
+        for file in files:
+            if file.endswith(fileTypes):
+                entries.append(os.path.join(videoDir, file))
+        for dir in dirs:
+            dirs2, files = xbmcvfs.listdir(os.path.join(videoDir, dir))
+            for file in files:
+                if file.endswith(fileTypes):
+                    entries.append(os.path.join(videoDir, os.path.join(dir, file)))
+    else:
+        for root, dirs, files in os.walk(videoDir):
+            for filename in files:
+                if filename.endswith(fileTypes):
+                    entries.append(os.path.join(root, filename))
     random.shuffle(entries)
     for file in entries:
         playlist.add(file)
@@ -124,5 +134,5 @@ if param == "tv_mode":
         xbmc.Player().play(playlist)
     else:
         xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
-else:
+elif not xbmc.Player().isPlayingAudio():
     myWindow.doModal()

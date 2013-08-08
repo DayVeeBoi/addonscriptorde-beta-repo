@@ -12,3 +12,6 @@
 - Added video file extensions
 1.0.6
 - Added setting to force volume
+1.0.8
+- Added support for network shares
+- Added audio & playlist filetypes

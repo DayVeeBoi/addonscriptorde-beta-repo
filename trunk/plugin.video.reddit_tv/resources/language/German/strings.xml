@@ -4,6 +4,7 @@
   <string id="30002">Hot</string>
   <string id="30003">Neu</string>
   <string id="30004">Top</string>
+  <string id="30005">Kommentare</string>
   <string id="30006">Stunde</string>
   <string id="30007">Heute</string>
   <string id="30008">Woche</string>
@@ -17,6 +18,9 @@
   <string id="30016">Nächste Seite</string>
   <string id="30017">Suchen</string>
   <string id="30018">In Abspielliste einreihen</string>
+  <string id="30019">Nach reddits suchen</string>
+  <string id="30020">Treffer</string>
+  <string id="30100">Einträge pro Seite</string>
   <string id="30101">Bewertungsfilter</string>
   <string id="30102">View erzwingen</string>
   <string id="30103">ViewID</string>
@@ -50,4 +54,10 @@
   <string id="30156">Hot: Heute</string>
   <string id="30157">Hot: Woche</string>
   <string id="30158">Hot: Monat</string>
+  <string id="30159">Kommentare: Stunde</string>
+  <string id="30160">Kommentare: Heute</string>
+  <string id="30161">Kommentare: Woche</string>
+  <string id="30162">Kommentare: Monat</string>
+  <string id="30163">Kommentare: Jahr</string>
+  <string id="30164">Kommentare: AllTime</string>
 </strings>

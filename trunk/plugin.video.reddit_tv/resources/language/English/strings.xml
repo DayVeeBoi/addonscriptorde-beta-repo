@@ -4,6 +4,7 @@
   <string id="30002">Hot</string>
   <string id="30003">New</string>
   <string id="30004">Top</string>
+  <string id="30005">Comments</string>
   <string id="30006">Hour</string>
   <string id="30007">Today</string>
   <string id="30008">Week</string>
@@ -16,7 +17,10 @@
   <string id="30015">Randomly play unfinished</string>
   <string id="30016">Next Page</string>
   <string id="30017">Search</string>
-  <string id="30018">Queue video</string>
+  <string id="30018">Add to queue</string>
+  <string id="30019">Search for reddits</string>
+  <string id="30020">Results</string>
+  <string id="30100">Items per page</string>
   <string id="30101">Rating filter</string>
   <string id="30102">Force View</string>
   <string id="30103">ViewID</string>
@@ -50,4 +54,10 @@
   <string id="30156">Hot: Today</string>
   <string id="30157">Hot: Week</string>
   <string id="30158">Hot: Month</string>
+  <string id="30159">Comments: Hour</string>
+  <string id="30160">Comments: Today</string>
+  <string id="30161">Comments: Week</string>
+  <string id="30162">Comments: Month</string>
+  <string id="30163">Comments: Year</string>
+  <string id="30164">Comments: AllTime</string>
 </strings>

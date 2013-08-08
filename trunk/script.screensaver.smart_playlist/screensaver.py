@@ -24,7 +24,6 @@ class XBMCPlayer(xbmc.Player):
             xbmc.Player().pause()
         else:
             xbmc.Player().stop()
-        self.close()
 
     def onPlayBackEnded(self):
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -43,7 +42,6 @@ class XBMCPlayer(xbmc.Player):
                 xbmc.Player().pause()
             else:
                 xbmc.Player().stop()
-            self.close()
 
 
 class window(xbmcgui.WindowXMLDialog):
@@ -62,7 +60,7 @@ class window(xbmcgui.WindowXMLDialog):
             myPlayer.stop()
 
 addon = xbmcaddon.Addon()
-addonID = "script.screensaver.smart_playlist"
+addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 
 while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))) or addon.getSetting("plPath") == "special://profile/playlists":
@@ -83,7 +81,7 @@ playlist.clear()
 playbackInterrupted = False
 currentUrl = ""
 currentPosition = 0
-if xbmc.Player().isPlaying():
+if xbmc.Player().isPlayingVideo():
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
     xbmc.Player().stop()
@@ -98,5 +96,5 @@ if len(sys.argv) > 1:
     param = urllib.unquote_plus(sys.argv[1])
 if param == "tv_mode":
     xbmc.Player().play(plPath)
-else:
+elif not xbmc.Player().isPlayingAudio():
     myWindow.doModal()
