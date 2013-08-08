@@ -105,7 +105,7 @@ def muted():
 def addVideos():
     entries = []
     fileTypes = ('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx', '.pls', '.strm', '.m3u', '.mp3', '.aac', '.flac', '.ogg', '.wma', '.wav')
-    if videoDir.startswith(('smb://', 'nfs://', 'upnp://')):
+    if videoDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')):
         dirs, files = xbmcvfs.listdir(videoDir)
         for file in files:
             if file.endswith(fileTypes):
