@@ -10,3 +10,7 @@
 - Added setting to force volume
 1.0.6
 - Changed User-Agent
+- Added functionality to only play unwatched videos
+1.0.7
+- Added setting to choose reddit
+- Added categories: new, comments

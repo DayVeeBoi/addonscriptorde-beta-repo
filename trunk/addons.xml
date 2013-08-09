@@ -156,7 +156,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.reddit_com" name="Video Screensaver: Reddit.com" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Video Screensaver: Reddit.com" version="1.0.7" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
     <import addon="plugin.video.reddit_tv" version="1.0.0"/>
@@ -168,8 +168,8 @@
 	<language></language>
     <platform>all</platform>
     <language></language>
-    <summary lang="en">Play random Reddit.com videos (100) - Choose category via add-on settings</summary>
-    <description lang="en">Play random Reddit.com videos (100) - Choose category via add-on settings</description>
+    <summary lang="en">Randomly play Hot100 Reddit.com videos - Choose reddit and category (Hot, Top, Comments, New)</summary>
+    <description lang="en">Randomly play Hot100 Reddit.com videos - Choose reddit and category (Hot, Top, Comments, New)</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://www.reddit.com</website>
