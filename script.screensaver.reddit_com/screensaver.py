@@ -71,15 +71,20 @@ class window(xbmcgui.WindowXMLDialog):
             myPlayer.stop()
 
 addon = xbmcaddon.Addon()
+addonID = addon.getAddonInfo('id')
+urlMain = "http://www.reddit.com"
 opener = urllib2.build_opener()
-opener.addheaders = [('User-Agent', 'XBMC | script.screensaver.reddit_com | v1.0.6')]
+userAgent = "XBMC | "+addonID+" | "+addon.getAddonInfo('version')
+opener.addheaders = [('User-Agent', userAgent)]
+hosterQuery = urllib.quote_plus("site:youtu.be OR site:youtube.com OR site:vimeo.com OR site:liveleak.com OR site:dailymotion.com")
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 translation = addon.getLocalizedString
 jumpBack = int(addon.getSetting("jumpBack"))
 type = int(addon.getSetting("type"))
-type = ["hot","day","week","month"][int(type)]
+type = ["hot","top","new","comments"][int(type)]
 playUnwatched = addon.getSetting("playUnwatched") == "true"
 setVolume = addon.getSetting("setVolume") == "true"
+reddit = addon.getSetting("reddit")
 volume = int(addon.getSetting("volume"))
 currentVolume = xbmc.getInfoLabel("Player.Volume")
 match=re.compile('(.+?) dB', re.DOTALL).findall(currentVolume)
@@ -92,7 +97,7 @@ playlist.clear()
 playbackInterrupted = False
 currentUrl = ""
 currentPosition = 0
-if xbmc.Player().isPlaying():
+if xbmc.Player().isPlayingVideo():
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
     xbmc.Player().stop()
@@ -127,10 +132,14 @@ def getPlayCount(url):
 
 def addVideos():
     entries = []
-    if type=="hot":
-        url = "http://www.reddit.com/r/videos/hot/.json?limit=100"
-    else:
-        url = "http://www.reddit.com/r/videos/top/.json?limit=100&t="+type
+    if type=="new":
+        url = urlMain+"/r/"+reddit+"/search.json?q="+hosterQuery+"&sort=new&restrict_sr=on&limit=100"
+    elif type=="hot":
+        url = urlMain+"/r/"+reddit+"/search.json?q="+hosterQuery+"&sort=hot&restrict_sr=on&limit=100&t=day"
+    elif type=="top":
+        url = urlMain+"/r/"+reddit+"/search.json?q="+hosterQuery+"&sort=top&restrict_sr=on&limit=100&t=week"
+    elif type=="comments":
+        url = urlMain+"/r/"+reddit+"/search.json?q="+hosterQuery+"&sort=comments&restrict_sr=on&limit=100&t=day"
     content = opener.open(url).read()
     spl = content.split('"content"')
     for i in range(1, len(spl), 1):
@@ -139,11 +148,17 @@ def addVideos():
         title = match[0]
         matchYoutube = re.compile('"url": "http://www.youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(entry)
         matchVimeo = re.compile('"url": "http://vimeo.com/(.+?)"', re.DOTALL).findall(entry)
+        matchDailyMotion = re.compile('"url": "http://www.dailymotion.com/video/(.+?)_', re.DOTALL).findall(entry)
+        matchLiveLeak = re.compile('"url": "http://www.liveleak.com/view\\?i=(.+?)"', re.DOTALL).findall(entry)
         url = ""
         if matchYoutube:
             url = getYoutubeUrl(matchYoutube[0])
         elif matchVimeo:
             url = getVimeoUrl(matchVimeo[0].replace("#", ""))
+        elif matchDailyMotion:
+            url = getDailyMotionUrl(matchDailyMotion[0])
+        elif matchLiveLeak:
+            url = getLiveLeakUrl(matchLiveLeak[0])
         if url:
             url = "plugin://plugin.video.reddit_tv/?url="+urllib.quote_plus(url)+"&mode=playVideo"
             if playUnwatched:
@@ -173,6 +188,22 @@ def getVimeoUrl(id):
     return url
 
 
+def getDailyMotionUrl(id):
+    if xbox:
+        url = "plugin://video/DailyMotion.com/?url=" + id + "&mode=playVideo"
+    else:
+        url = "plugin://plugin.video.dailymotion_com/?url=" + id + "&mode=playVideo"
+    return url
+
+
+def getLiveLeakUrl(id):
+    if xbox:
+        url = "plugin://video/Reddit.com/?url=" + id + "&mode=playLiveLeakVideo"
+    else:
+        url = "plugin://plugin.video.reddit_tv/?url=" + id + "&mode=playLiveLeakVideo"
+    return url
+
+
 dbPath = getDbPath()
 conn = sqlite3.connect(dbPath)
 c = conn.cursor()
@@ -189,5 +220,5 @@ if param=="tv_mode":
         xbmc.Player().play(playlist)
     else:
         xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
-else:
+elif not xbmc.Player().isPlayingAudio():
     myWindow.doModal()
