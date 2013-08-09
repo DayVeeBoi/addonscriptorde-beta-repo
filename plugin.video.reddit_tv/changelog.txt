@@ -22,3 +22,5 @@
 - Implemented functionality to search for reddits
 1.0.8
 - Added autoplay modes: Play latest all/unwatched/unfinished
+1.0.9
+- Fixed bug when adding/removing reddits
