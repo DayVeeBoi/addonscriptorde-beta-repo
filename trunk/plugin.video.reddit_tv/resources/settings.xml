@@ -23,7 +23,7 @@
     </category>
     <category label="30110">
         <setting id="cat_new" type="bool" label="30003" default="true"/>
-        <setting id="cat_hot_h" type="bool" label="30155" default="false"/>
+        <setting id="cat_hot_h" type="bool" label="30155" default="true"/>
         <setting id="cat_hot_d" type="bool" label="30156" default="true"/>
         <setting id="cat_hot_w" type="bool" label="30157" default="false"/>
         <setting id="cat_hot_m" type="bool" label="30158" default="false"/>
@@ -32,7 +32,7 @@
         <setting id="cat_top_m" type="bool" label="30152" default="true"/>
         <setting id="cat_top_y" type="bool" label="30153" default="false"/>
         <setting id="cat_top_a" type="bool" label="30154" default="false"/>
-        <setting id="cat_com_h" type="bool" label="30159" default="true"/>
+        <setting id="cat_com_h" type="bool" label="30159" default="false"/>
         <setting id="cat_com_d" type="bool" label="30160" default="true"/>
         <setting id="cat_com_w" type="bool" label="30161" default="true"/>
         <setting id="cat_com_m" type="bool" label="30162" default="true"/>

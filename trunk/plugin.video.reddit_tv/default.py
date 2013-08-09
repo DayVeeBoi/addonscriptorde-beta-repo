@@ -96,11 +96,15 @@ def getPlayCount(url):
 
 
 def addSubreddit(subreddit):
+    alreadyIn = False
     fh = open(subredditsFile, 'r')
-    content = fh.read().lower()
+    content = fh.readlines()
     fh.close()
     if subreddit:
-        if subreddit.lower()+"\n" not in content:
+        for line in content:
+            if line.lower()==subreddit.lower():
+                alreadyIn = True
+        if not alreadyIn:
             fh = open(subredditsFile, 'a')
             fh.write(subreddit+'\n')
             fh.close()
@@ -109,7 +113,10 @@ def addSubreddit(subreddit):
         keyboard.doModal()
         if keyboard.isConfirmed() and keyboard.getText():
             subreddit = keyboard.getText()
-            if subreddit.lower()+"\n" not in content:
+            for line in content:
+                if line.lower()==subreddit.lower()+"\n":
+                    alreadyIn = True
+            if not alreadyIn:
                 fh = open(subredditsFile, 'a')
                 fh.write(subreddit+'\n')
                 fh.close()
@@ -117,10 +124,14 @@ def addSubreddit(subreddit):
 
 def removeSubreddit(subreddit):
     fh = open(subredditsFile, 'r')
-    content = fh.read()
+    content = fh.readlines()
     fh.close()
+    contentNew = ""
+    for line in content:
+        if line!=subreddit+'\n':
+            contentNew+=line
     fh = open(subredditsFile, 'w')
-    fh.write(content.replace(subreddit+'\n', ''))
+    fh.write(contentNew)
     fh.close()
     xbmc.executebuiltin("Container.Refresh")
 
@@ -403,7 +414,7 @@ def searchReddits():
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = keyboard.getText().replace(" ", "+")
-        content = opener.open(urlMain+'/r/all/search?q='+search_string+'+site%3Ayoutu.be+OR+site%3Ayoutube.com+OR+site%3Avimeo.com+OR+site%3Aliveleak.com+OR+site%3Adailymotion.com&restrict_sr=on&sort=new&t=all').read()
+        content = opener.open(urlMain+'/r/all/search?q='+search_string+'+'+allHosterQuery+'&restrict_sr=on&sort=new&t=all').read()
         match = re.compile('<li class="searchfacet reddit"><a class="facet title word" href=".+?">/r/(.+?)</a>&nbsp;<span class="facet count number">\\((.+?)\\)</span></li>', re.DOTALL).findall(content)
         for subreddit, count in match:
             title = subreddit.title() + " ("+count+" "+translation(30020)+")"
