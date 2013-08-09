@@ -50,6 +50,9 @@ filterThreshold = int(addon.getSetting("filterThreshold"))
 showAll = addon.getSetting("showAll") == "true"
 showUnwatched = addon.getSetting("showUnwatched") == "true"
 showUnfinished = addon.getSetting("showUnfinished") == "true"
+showAllNewest = addon.getSetting("showAllNewest") == "true"
+showUnwatchedNewest = addon.getSetting("showUnwatchedNewest") == "true"
+showUnfinishedNewest = addon.getSetting("showUnfinishedNewest") == "true"
 
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
@@ -200,12 +203,18 @@ def listSorting(subreddit, hosterQuery):
 def listVideos(url):
     currentUrl = url
     xbmcplugin.setContent(pluginhandle, "episodes")
+    if showAllNewest:
+        addDir("[B]- "+translation(30166)+"[/B]", url, 'autoPlay', "", "ALL_NEW")
+    if showUnwatchedNewest:
+        addDir("[B]- "+translation(30167)+"[/B]", url, 'autoPlay', "", "UNWATCHED_NEW")
+    if showUnfinishedNewest:
+        addDir("[B]- "+translation(30168)+"[/B]", url, 'autoPlay', "", "UNFINISHED_NEW")
     if showAll:
-        addDir("[B]- "+translation(30012)+"[/B]", url, 'playRandomly', "", "ALL")
+        addDir("[B]- "+translation(30012)+"[/B]", url, 'autoPlay', "", "ALL_RANDOM")
     if showUnwatched:
-        addDir("[B]- "+translation(30014)+"[/B]", url, 'playRandomly', "", "UNWATCHED")
+        addDir("[B]- "+translation(30014)+"[/B]", url, 'autoPlay', "", "UNWATCHED_RANDOM")
     if showUnfinished:
-        addDir("[B]- "+translation(30015)+"[/B]", url, 'playRandomly', "", "UNFINISHED")
+        addDir("[B]- "+translation(30015)+"[/B]", url, 'autoPlay', "", "UNFINISHED_RANDOM")
     content = opener.open(url).read()
     spl = content.split('"content"')
     for i in range(1, len(spl), 1):
@@ -265,7 +274,7 @@ def listVideos(url):
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def playRandomly(url, type):
+def autoPlay(url, type):
     entries = []
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
@@ -298,18 +307,19 @@ def playRandomly(url, type):
                 url = getLiveLeakUrl(matchLiveLeak[0])
             if url:
                 url = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode=playVideo"
-                if type == "ALL":
+                if type.startswith("ALL_"):
                     listitem = xbmcgui.ListItem(title)
                     entries.append([title, url])
-                elif type == "UNWATCHED" and getPlayCount(url) < 0:
+                elif type.startswith("UNWATCHED_") and getPlayCount(url) < 0:
                     listitem = xbmcgui.ListItem(title)
                     entries.append([title, url])
-                elif type == "UNFINISHED" and getPlayCount(url) == 0:
+                elif type.startswith("UNFINISHED_") and getPlayCount(url) == 0:
                     listitem = xbmcgui.ListItem(title)
                     entries.append([title, url])
         except:
             pass
-    random.shuffle(entries)
+    if type.endswith("_RANDOM"):
+        random.shuffle(entries)
     for title, url in entries:
         listitem = xbmcgui.ListItem(title)
         playlist.add(url, listitem)
@@ -502,8 +512,8 @@ elif mode == 'addSubreddit':
     addSubreddit(url)
 elif mode == 'removeSubreddit':
     removeSubreddit(url)
-elif mode == 'playRandomly':
-    playRandomly(url, type)
+elif mode == 'autoPlay':
+    autoPlay(url, type)
 elif mode == 'queueVideo':
     queueVideo(url, name)
 elif mode == 'searchAskOne':

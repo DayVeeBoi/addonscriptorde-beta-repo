@@ -60,4 +60,11 @@
   <string id="30162">Comments: Month</string>
   <string id="30163">Comments: Year</string>
   <string id="30164">Comments: AllTime</string>
+  <string id="30165">Autoplay-Modes</string>
+  <string id="30166">Play latest</string>
+  <string id="30167">Play latest unwatched</string>
+  <string id="30168">Play latest unfinished</string>
+  <string id="30169">Show "Play latest"</string>
+  <string id="30170">Show "Play latest unwatched"</string>
+  <string id="30171">Show "Play latest unfinished"</string>
 </strings>

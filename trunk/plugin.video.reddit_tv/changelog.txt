@@ -3,7 +3,7 @@
 1.0.1
 - Added support for browsing all videos by hoster
 - Added selectable categories via add-on settings
-- Added autoplay mode for unwatched/unfinished videos
+- Added autoplay modes: Randomly play all/unwatched/unfinished
 1.0.2
 - Some small improvements
 1.0.3
@@ -20,3 +20,5 @@
 - Added category: Comments
 - Added setting: Items per page
 - Implemented functionality to search for reddits
+1.0.8
+- Added autoplay modes: Play latest all/unwatched/unfinished
