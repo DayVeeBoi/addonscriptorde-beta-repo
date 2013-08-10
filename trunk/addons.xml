@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
+<addon id="plugin.program.chrome.launcher" name="Chrome Launcher" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Open websites via Chrome in kiosk mode</summary>
+        <language></language>
+        <description lang="en">Open websites via Chrome in kiosk mode</description>
+        <website></website>
+        <source>https://github.com/AddonScriptorDE/plugin.program.chrome.starter</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
 <addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.8" provider-name="AddonScriptorDE">
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>executable</provides>
@@ -58,7 +77,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.0.9" provider-name="AddonScriptorDE">
+<addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.1.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -70,9 +89,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Watch videos from reddit.com - Add/remove reddits - Search for videos/reddits - AutoPlay all/unwatched/unfinished videos randomly - Filter out low rated videos</summary>
+        <summary lang="en">Watch videos from reddit.com - Add/remove reddits - Search for videos/reddits - AutoPlay all/unwatched/unfinished videos</summary>
         <language></language>
-        <description lang="en">Watch videos from reddit.com - Add/remove reddits - Search for videos/reddits - AutoPlay all/unwatched/unfinished videos randomly - Filter out low rated videos</description>
+        <description lang="en">Watch videos from reddit.com - Add/remove reddits - Search for videos/reddits - AutoPlay all/unwatched/unfinished videos</description>
         <website>http://www.reddit.com</website>
         <source>https://github.com/AddonScriptorDE/plugin.video.reddit_tv</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=170603</forum>
