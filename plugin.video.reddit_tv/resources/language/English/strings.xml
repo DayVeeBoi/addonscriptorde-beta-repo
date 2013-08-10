@@ -20,6 +20,10 @@
   <string id="30018">Add to queue</string>
   <string id="30019">Search for reddits</string>
   <string id="30020">Results</string>
+  <string id="30021">Show comments via Browser</string>
+  <string id="30022">Add to addon favourites</string>
+  <string id="30023">Favourites</string>
+  <string id="30024">Remove from addon favourites</string>
   <string id="30100">Items per page</string>
   <string id="30101">Rating filter</string>
   <string id="30102">Force View</string>
@@ -60,11 +64,18 @@
   <string id="30162">Comments: Month</string>
   <string id="30163">Comments: Year</string>
   <string id="30164">Comments: AllTime</string>
-  <string id="30165">Autoplay-Modes</string>
+  <string id="30165">Autoplay</string>
   <string id="30166">Play latest</string>
   <string id="30167">Play latest unwatched</string>
   <string id="30168">Play latest unfinished</string>
   <string id="30169">Show "Play latest"</string>
   <string id="30170">Show "Play latest unwatched"</string>
   <string id="30171">Show "Play latest unfinished"</string>
+  <string id="30172">Windows</string>
+  <string id="30173">MacOSX</string>
+  <string id="30174">Linux</string>
+  <string id="30175">XBMC WebBrowser: Zoom</string>
+  <string id="30176">XBMC WebBrowser: Map Keys</string>
+  <string id="30177">Show Browser context menu</string>
+  <string id="30178">Show NSFW content</string>
 </strings>
