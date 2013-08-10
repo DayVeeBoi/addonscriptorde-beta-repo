@@ -25,6 +25,6 @@
 1.0.9
 - Fixed bug when adding/removing reddits
 1.1.0
-- Added NSFW setting
-- Added context menu "Show NSFW content"
-- Added context menu "Show comments via Browser"
+- Added setting: Show NSFW content
+- Added context menu: Add to Addon favourites
+- Added context menu: Show comments via Browser
