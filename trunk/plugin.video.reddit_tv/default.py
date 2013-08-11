@@ -18,7 +18,6 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
-translation = addon.getLocalizedString
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 osWin = xbmc.getCondVisibility('system.platform.windows')
 osOsx = xbmc.getCondVisibility('system.platform.osx')
@@ -473,7 +472,7 @@ def searchVideos(subreddit, hosterQuery):
     keyboard = xbmc.Keyboard('', translation(30017))
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
-        search_string = keyboard.getText().replace(" ", "+")
+        search_string = urllib.quote_plus(keyboard.getText().replace(" ", "+"))
         if searchSort == "ask":
             searchAskOne(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort=", subreddit)
         else:
@@ -487,12 +486,11 @@ def searchReddits():
     keyboard = xbmc.Keyboard('', translation(30017))
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
-        search_string = keyboard.getText().replace(" ", "+")
+        search_string = urllib.quote_plus(keyboard.getText().replace(" ", "+"))
         content = opener.open(urlMain+'/r/all/search?q='+search_string+'+'+nsfw+"+"+allHosterQuery+'&restrict_sr=on&sort=new&t=all').read()
         match = re.compile('<li class="searchfacet reddit"><a class="facet title word" href=".+?">/r/(.+?)</a>&nbsp;<span class="facet count number">\\((.+?)\\)</span></li>', re.DOTALL).findall(content)
         for subreddit, count in match:
-            title = subreddit.title() + " ("+count+" "+translation(30020)+")"
-            addDirA(title, subreddit, "listSorting", "")
+            addDirA(subreddit.title(), subreddit, "listSorting", "")
         xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -516,6 +514,10 @@ def searchAskTwo(url, subreddit):
         xbmcplugin.endOfDirectory(pluginhandle)
     else:
         listVideos(url+"&t="+searchTime, subreddit)
+
+
+def translation(id):
+    return addon.getLocalizedString(id).encode('utf-8')
 
 
 def cleanTitle(title):
