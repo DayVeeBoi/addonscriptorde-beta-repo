@@ -28,3 +28,5 @@
 - Added setting: Show NSFW content
 - Added context menu: Add to Addon favourites
 - Added context menu: Show comments via Browser
+1.1.1
+- Fixed video search bug (urlencoding)
