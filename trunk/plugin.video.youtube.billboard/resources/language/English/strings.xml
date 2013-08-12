@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+  <string id="30001">Play all</string>
+  <string id="30002">Play all (randomly)</string>
+  <string id="30003">Play all (unwatched)</string>
+</strings>

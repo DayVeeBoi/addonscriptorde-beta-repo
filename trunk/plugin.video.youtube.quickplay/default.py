@@ -23,10 +23,10 @@ opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0"
 opener.addheaders = [('User-Agent', userAgent)]
 
-playRandomly = addon.getSetting("playRandomly") == "true"
+playRandom = addon.getSetting("playRandom") == "true"
 
-filter = int(addon.getSetting("filter"))
-filter = ["all", "unwatched", "custom"][filter]
+filterMode = int(addon.getSetting("filterMode"))
+filterMode = ["all", "unwatched", "custom"][filterMode]
 filterCustom = int(addon.getSetting("filterCustom"))
 
 searchSort = int(addon.getSetting("searchSort"))
@@ -137,18 +137,18 @@ def autoPlay(query):
             title=match[0]
             title=cleanTitle(title)
             url = sys.argv[0]+"?url="+urllib.quote_plus(getYoutubeUrl(id))+"&mode=playVideo"
-            if filter=="all":
+            if filterMode=="all":
                 listitem = xbmcgui.ListItem(title)
                 entries.append([title, url])
-            elif filter=="unwatched" and getPlayCount(url) < 0:
+            elif filterMode=="unwatched" and getPlayCount(url) < 0:
                 listitem = xbmcgui.ListItem(title)
                 entries.append([title, url])
-            elif filter=="custom" and getPlayCount(url) < filterCustom:
+            elif filterMode=="custom" and getPlayCount(url) < filterCustom:
                 listitem = xbmcgui.ListItem(title)
                 entries.append([title, url])
         except:
             pass
-    if playRandomly:
+    if playRandom:
         random.shuffle(entries)
     for title, url in entries:
         listitem = xbmcgui.ListItem(title)
