@@ -46,14 +46,39 @@ def getPlayCount(url):
 
 
 def index():
-    addDir("Hot100", urlMain+"/rss/charts/hot-100", "listVideos")
-    addDir("Pop", urlMain+"/rss/charts/pop-songs", "listVideos")
-    addDir("Rock", urlMain+"/rss/charts/rock-songs", "listVideos")
-    addDir("Alternative", urlMain+"/rss/charts/alternative-songs", "listVideos")
-    addDir("R&B/Hip-Hop", urlMain+"/rss/charts/r-b-hip-hop-songs", "listVideos")
-    addDir("Country", urlMain+"/rss/charts/country-songs", "listVideos")
-    addDir("Latin", urlMain+"/rss/charts/latin-songs", "listVideos")
-    addDir("Dance/Electronic", urlMain+"/rss/charts/dance-electronic-songs", "listVideos")
+    addDir(translation(30005), urlMain+"/rss/charts/hot-100", "listVideos")
+    addDir(translation(30006), "genre", "listCharts")
+    addDir(translation(30007), "country", "listCharts")
+    addDir(translation(30008), "other", "listCharts")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listCharts(type):
+    if type=="genre":
+        addDir(translation(30009), urlMain+"/rss/charts/pop-songs", "listVideos")
+        addDir(translation(30010), urlMain+"/rss/charts/rock-songs", "listVideos")
+        addDir(translation(30011), urlMain+"/rss/charts/alternative-songs", "listVideos")
+        addDir(translation(30012), urlMain+"/rss/charts/r-b-hip-hop-songs", "listVideos")
+        addDir(translation(30013), urlMain+"/rss/charts/r-and-b-songs", "listVideos")
+        addDir(translation(30014), urlMain+"/rss/charts/rap-songs", "listVideos")
+        addDir(translation(30015), urlMain+"/rss/charts/country-songs", "listVideos")
+        addDir(translation(30016), urlMain+"/rss/charts/latin-songs", "listVideos")
+        addDir(translation(30017), urlMain+"/rss/charts/jazz-songs", "listVideos")
+        addDir(translation(30018), urlMain+"/rss/charts/dance-club-play-songs", "listVideos")
+        addDir(translation(30019), urlMain+"/rss/charts/dance-electronic-songs", "listVideos")
+        addDir(translation(30020), urlMain+"/rss/charts/heatseekers-songs", "listVideos")
+    elif type=="country":
+        addDir(translation(30021), urlMain+"/rss/charts/canadian-hot-100", "listVideos")
+        addDir(translation(30022), urlMain+"/rss/charts/k-pop-hot-100", "listVideos")
+        addDir(translation(30023), urlMain+"/rss/charts/japan-hot-100", "listVideos")
+        addDir(translation(30024), urlMain+"/rss/charts/germany-songs", "listVideos")
+        addDir(translation(30025), urlMain+"/rss/charts/france-songs", "listVideos")
+        addDir(translation(30026), urlMain+"/rss/charts/united-kingdom-songs", "listVideos")
+    elif type=="other":
+        addDir(translation(30028), urlMain+"/rss/charts/radio-songs", "listVideos")
+        addDir(translation(30029), urlMain+"/rss/charts/digital-songs", "listVideos")
+        addDir(translation(30030), urlMain+"/rss/charts/streaming-songs", "listVideos")
+        addDir(translation(30031), urlMain+"/rss/charts/on-demand-songs", "listVideos")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -65,13 +90,13 @@ def listVideos(url):
     content = opener.open(url).read()
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     for title in match:
-        title = cleanTitle(title[title.find(":")+1:])
+        title = cleanTitle(title[title.find(":")+1:]).replace("Feat.", "Featuring")
         addLink(cleanTitle(title), title, "playVideo", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def playVideo(title):
-    #API sometimes delivers other results when sorting by relevance than site search!?!
+    #API sometimes delivers other results (when sorting by relevance) than site search!?!
     #content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2").read()
     #match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
     content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(title)+"&lclk=video").read()
@@ -85,6 +110,12 @@ def playVideo(title):
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
+def queueVideo(url, name):
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    listitem = xbmcgui.ListItem(name)
+    playlist.add(url, listitem)
+
+
 def autoPlay(url, type):
     entries = []
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -92,7 +123,7 @@ def autoPlay(url, type):
     content = opener.open(url).read()
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     for title in match:
-        title = cleanTitle(title[title.find(":")+1:])
+        title = cleanTitle(title[title.find(":")+1:]).replace("Feat.", "Featuring")
         url = sys.argv[0]+"?url="+urllib.quote_plus(title)+"&mode=playVideo"
         if type in ["all", "random"]:
             listitem = xbmcgui.ListItem(title)
@@ -120,11 +151,12 @@ def cleanTitle(title):
 
 
 def addLink(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     liz.setProperty('IsPlayable', 'true')
+    liz.addContextMenuItems([(translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
@@ -157,11 +189,16 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 type = urllib.unquote_plus(params.get('type', ''))
+name = urllib.unquote_plus(params.get('name', ''))
 
 if mode == 'listVideos':
     listVideos(url)
+elif mode == 'listCharts':
+    listCharts(url)
 elif mode == 'playVideo':
     playVideo(url)
+elif mode == 'queueVideo':
+    queueVideo(url, name)
 elif mode == 'autoPlay':
     autoPlay(url, type)
 else:
