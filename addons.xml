@@ -120,7 +120,27 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.youtube.quickplay" name="YouTube QuickPlay" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.youtube.billboard" name="YouTube Billboard" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Play Billboard charts via YouTube</summary>
+        <language></language>
+        <description lang="en">Play Billboard charts via YouTube</description>
+        <website>http://www.youtube.com</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.billboard</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.youtube.quickplay" name="YouTube QuickPlay" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
