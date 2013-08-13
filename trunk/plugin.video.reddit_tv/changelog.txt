@@ -30,3 +30,6 @@
 - Added context menu: Show comments via Browser
 1.1.1
 - Fixed video search bug (urlencoding)
+1.1.2
+- Added download function
+- Fixed bug with NSFW content

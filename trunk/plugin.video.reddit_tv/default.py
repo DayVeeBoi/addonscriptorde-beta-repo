@@ -13,6 +13,7 @@ import datetime
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
+import SimpleDownloader
 
 
 addon = xbmcaddon.Addon()
@@ -73,6 +74,10 @@ showBrowser = addon.getSetting("showBrowser") == "true"
 browser_win = int(addon.getSetting("browser_win"))
 browser_wb_zoom = str(addon.getSetting("browser_wb_zoom"))
 
+ll_qualiy = int(addon.getSetting("ll_qualiy"))
+ll_qualiy = ["480p", "720p"][ll_qualiy]
+ll_downDir = str(addon.getSetting("ll_downDir"))
+
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 subredditsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/subreddits")
 if not os.path.isdir(addonUserDataFolder):
@@ -80,9 +85,9 @@ if not os.path.isdir(addonUserDataFolder):
 
 allHosterQuery = urllib.quote_plus("site:youtu.be OR site:youtube.com OR site:vimeo.com OR site:liveleak.com OR site:dailymotion.com")
 if showNSFW:
-    nsfw = "nsfw:yes"
+    nsfw = ""
 else:
-    nsfw = "nsfw:no"
+    nsfw = "nsfw:no+"
 
 
 def getDbPath():
@@ -188,37 +193,37 @@ def listSorting(subreddit, hosterQuery):
     if not hosterQuery:
         hosterQuery = allHosterQuery
     if cat_new:
-        addDir(translation(30003), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=new&restrict_sr=on&limit="+itemsPerPage, 'listVideos', "", subreddit)
+        addDir(translation(30003), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=new&restrict_sr=on&limit="+itemsPerPage, 'listVideos', "", subreddit)
     if cat_hot_h:
-        addDir(translation(30002)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "", subreddit)
+        addDir(translation(30002)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "", subreddit)
     if cat_hot_d:
-        addDir(translation(30002)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
+        addDir(translation(30002)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
     if cat_hot_w:
-        addDir(translation(30002)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
+        addDir(translation(30002)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
     if cat_hot_m:
-        addDir(translation(30002)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
+        addDir(translation(30002)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=hot&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
     if cat_top_d:
-        addDir(translation(30004)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
+        addDir(translation(30004)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
     if cat_top_w:
-        addDir(translation(30004)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
+        addDir(translation(30004)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
     if cat_top_m:
-        addDir(translation(30004)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
+        addDir(translation(30004)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
     if cat_top_y:
-        addDir(translation(30004)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "", subreddit)
+        addDir(translation(30004)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "", subreddit)
     if cat_top_a:
-        addDir(translation(30004)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "", subreddit)
+        addDir(translation(30004)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=top&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "", subreddit)
     if cat_com_h:
-        addDir(translation(30005)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30006), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=hour", 'listVideos', "", subreddit)
     if cat_com_d:
-        addDir(translation(30005)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30007), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=day", 'listVideos', "", subreddit)
     if cat_com_w:
-        addDir(translation(30005)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30008), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=week", 'listVideos', "", subreddit)
     if cat_com_m:
-        addDir(translation(30005)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30009), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=month", 'listVideos', "", subreddit)
     if cat_com_y:
-        addDir(translation(30005)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30010), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=year", 'listVideos', "", subreddit)
     if cat_com_a:
-        addDir(translation(30005)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "", subreddit)
+        addDir(translation(30005)+": "+translation(30011), urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"&sort=comments&restrict_sr=on&limit="+itemsPerPage+"&t=all", 'listVideos', "", subreddit)
     addDir("[B]- "+translation(30023)+"[/B]", subreddit, "listFavourites", "")
     addDir("[B]- "+translation(30017)+"[/B]", subreddit, "searchVideos", "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -280,19 +285,24 @@ def listVideos(url, subreddit):
             matchDailyMotion = re.compile('dailymotion.com/video/(.+?)_', re.DOTALL).findall(url)
             matchDailyMotion2 = re.compile('dailymotion.com/.+?video=(.+?)', re.DOTALL).findall(url)
             matchLiveLeak = re.compile('liveleak.com/view\\?i=(.+?)"', re.DOTALL).findall(url)
-            url = ""
+            hoster = ""
             if matchYoutube:
-                url = getYoutubeUrl(matchYoutube[0])
+                hoster = "youtube"
+                videoID = matchYoutube[0]
             elif matchVimeo:
-                url = getVimeoUrl(matchVimeo[0].replace("#", "").split("?")[0])
+                hoster = "vimeo"
+                videoID = matchVimeo[0].replace("#", "").split("?")[0]
             elif matchDailyMotion:
-                url = getDailyMotionUrl(matchDailyMotion[0])
+                hoster = "dailymotion"
+                videoID = matchDailyMotion[0]
             elif matchDailyMotion2:
-                url = getDailyMotionUrl(matchDailyMotion2[0])
+                hoster = "dailymotion"
+                videoID = matchDailyMotion2[0]
             elif matchLiveLeak:
-                url = getLiveLeakUrl(matchLiveLeak[0])
-            if url:
-                addLink(title, url, 'playVideo', thumb, description, date, count, commentsUrl, subreddit)
+                hoster = "liveleak"
+                videoID = matchLiveLeak[0].split("#")[0]
+            if hoster:
+                addLink(title, 'playVideo', thumb, description, date, count, commentsUrl, subreddit, hoster, videoID)
                 count+=1
         except:
             pass
@@ -353,15 +363,15 @@ def autoPlay(url, type):
             matchLiveLeak = re.compile('liveleak.com/view\\?i=(.+?)"', re.DOTALL).findall(url)
             url = ""
             if matchYoutube:
-                url = getYoutubeUrl(matchYoutube[0])
+                url = getYoutubePlayPluginUrl(matchYoutube[0])
             elif matchVimeo:
-                url = getVimeoUrl(matchVimeo[0].replace("#", "").split("?")[0])
+                url = getVimeoPlayPluginUrl(matchVimeo[0].replace("#", "").split("?")[0])
             elif matchDailyMotion:
-                url = getDailyMotionUrl(matchDailyMotion[0])
+                url = getDailymotionPlayPluginUrl(matchDailyMotion[0])
             elif matchDailyMotion2:
-                url = getDailyMotionUrl(matchDailyMotion2[0])
+                url = getDailymotionPlayPluginUrl(matchDailyMotion2[0])
             elif matchLiveLeak:
-                url = getLiveLeakUrl(matchLiveLeak[0])
+                url = getLiveleakPlayPluginUrl(matchLiveLeak[0].split("#")[0])
             if url:
                 url = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode=playVideo"
                 if type.startswith("ALL_"):
@@ -383,7 +393,18 @@ def autoPlay(url, type):
     xbmc.Player().play(playlist)
 
 
-def getYoutubeUrl(id):
+def getPluginUrl(hoster, videoID):
+    if hoster=="youtube":
+        return getYoutubePlayPluginUrl(videoID)
+    elif hoster=="vimeo":
+        return getVimeoPlayPluginUrl(videoID)
+    elif hoster=="dailymotion":
+        return getDailymotionPlayPluginUrl(videoID)
+    elif hoster=="liveleak":
+        return getLiveleakPlayPluginUrl(videoID)
+
+
+def getYoutubePlayPluginUrl(id):
     if xbox:
         url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + id
     else:
@@ -391,7 +412,7 @@ def getYoutubeUrl(id):
     return url
 
 
-def getVimeoUrl(id):
+def getVimeoPlayPluginUrl(id):
     if xbox:
         url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
     else:
@@ -399,19 +420,62 @@ def getVimeoUrl(id):
     return url
 
 
-def getDailyMotionUrl(id):
+def getDailymotionPlayPluginUrl(id):
     if xbox:
-        url = "plugin://video/DailyMotion.com/?url=" + id + "&mode=playVideo"
+        url = "plugin://video/DailyMotion.com/?mode=playVideo&url=" + id
     else:
-        url = "plugin://plugin.video.dailymotion_com/?url=" + id + "&mode=playVideo"
+        url = "plugin://plugin.video.dailymotion_com/?mode=playVideo&url=" + id
     return url
 
 
-def getLiveLeakUrl(id):
+def getLiveleakPlayPluginUrl(id):
     if xbox:
-        url = "plugin://video/Reddit.com/?url=" + id + "&mode=playLiveLeakVideo"
+        url = "plugin://video/Reddit.com/?mode=playLiveLeakVideo&url=" + id
     else:
-        url = "plugin://plugin.video.reddit_tv/?url=" + id + "&mode=playLiveLeakVideo"
+        url = "plugin://plugin.video.reddit_tv/?mode=playLiveLeakVideo&url=" + id
+    return url
+
+
+def getYoutubeDownloadPluginUrl(id):
+    if xbox:
+        url = "plugin://video/YouTube/?path=/root/search&action=download&videoid=" + id
+    else:
+        url = "plugin://plugin.video.youtube/?path=/root/search&action=download&videoid=" + id
+    return url
+
+
+def getVimeoDownloadPluginUrl(id):
+    if xbox:
+        url = "plugin://video/Vimeo/?path=/root/search/new/search&action=download&videoid=" + id
+    else:
+        url = "plugin://plugin.video.vimeo/?path=/root/search/new/search&action=download&videoid=" + id
+    return url
+
+
+def getDailymotionDownloadPluginUrl(id):
+    if xbox:
+        url = "plugin://video/DailyMotion.com/?mode=downloadVideo&url=" + id
+    else:
+        url = "plugin://plugin.video.dailymotion_com/?mode=downloadVideo&url=" + id
+    return url
+
+
+def getLiveleakDownloadPluginUrl(id):
+    if xbox:
+        url = "plugin://video/Reddit.com/?mode=downloadLiveLeakVideo&url=" + id
+    else:
+        url = "plugin://plugin.video.reddit_tv/?mode=downloadLiveLeakVideo&url=" + id
+    return url
+
+
+def getLiveLeakStreamUrl(id):
+    content = opener.open("http://www.liveleak.com/view?i="+id).read()
+    matchHD = re.compile('hd_file_url=(.+?)&', re.DOTALL).findall(content)
+    matchSD = re.compile('file: "(.+?)"', re.DOTALL).findall(content)
+    if matchHD and ll_qualiy=="720p":
+        url = urllib.unquote_plus(matchHD[0])
+    elif matchSD:
+        url = matchSD[0]
     return url
 
 
@@ -421,15 +485,30 @@ def playVideo(url):
 
 
 def playLiveLeakVideo(id):
+    playVideo(getLiveLeakStreamUrl(id))
+
+
+def downloadLiveLeakVideo(id):
+    downloader = SimpleDownloader.SimpleDownloader()
     content = opener.open("http://www.liveleak.com/view?i="+id).read()
-    matchHD = re.compile('hd_file_url=(.+?)&', re.DOTALL).findall(content)
-    matchSD = re.compile('file: "(.+?)"', re.DOTALL).findall(content)
-    if matchHD:
-        url = urllib.unquote_plus(matchHD[0])
-    elif matchSD:
-        url = matchSD[0]
-    listitem = xbmcgui.ListItem(path=url)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    match = re.compile('<title>LiveLeak.com - (.+?)</title>', re.DOTALL).findall(content)
+    global ll_downDir
+    while not ll_downDir:
+        xbmc.executebuiltin('XBMC.Notification(Download:,Liveleak '+translation(30186)+'!,5000)')
+        addon.openSettings()
+        ll_downDir = addon.getSetting("ll_downDir")
+    url = getLiveLeakStreamUrl(id)
+    filename = ""
+    try:
+        filename = (''.join(c for c in unicode(match[0], 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    except:
+        filename = id
+    filename+=".mp4"
+    if not os.path.exists(os.path.join(ll_downDir, filename)):
+        params = { "url": url, "download_path": ll_downDir }
+        downloader.download(filename, params)
+    else:
+        xbmc.executebuiltin('XBMC.Notification(Download:,'+translation(30185)+'!,5000)')
 
 
 def queueVideo(url, name):
@@ -474,12 +553,12 @@ def searchVideos(subreddit, hosterQuery):
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = urllib.quote_plus(keyboard.getText().replace(" ", "+"))
         if searchSort == "ask":
-            searchAskOne(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort=", subreddit)
+            searchAskOne(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort=", subreddit)
         else:
             if searchTime == "ask":
-                searchAskTwo(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t=", subreddit)
+                searchAskTwo(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t=", subreddit)
             else:
-                listVideos(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+"+"+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t="+searchTime, subreddit)
+                listVideos(urlMain+"/r/"+subreddit+"/search.json?q="+nsfw+hosterQuery+"%20"+search_string+"&restrict_sr=on&limit="+itemsPerPage+"&sort="+searchSort+"&t="+searchTime, subreddit)
 
 
 def searchReddits():
@@ -487,7 +566,7 @@ def searchReddits():
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = urllib.quote_plus(keyboard.getText().replace(" ", "+"))
-        content = opener.open(urlMain+'/r/all/search?q='+search_string+'+'+nsfw+"+"+allHosterQuery+'&restrict_sr=on&sort=new&t=all').read()
+        content = opener.open(urlMain+'/r/all/search?q='+search_string+'+'+nsfw+allHosterQuery+'&restrict_sr=on&sort=new&t=all').read()
         match = re.compile('<li class="searchfacet reddit"><a class="facet title word" href=".+?">/r/(.+?)</a>&nbsp;<span class="facet count number">\\((.+?)\\)</span></li>', re.DOTALL).findall(content)
         for subreddit, count in match:
             addDirA(subreddit.title(), subreddit, "listSorting", "")
@@ -525,6 +604,16 @@ def cleanTitle(title):
         return title.strip()
 
 
+def openSettings(id):
+    if id=="youtube":
+        addonY = xbmcaddon.Addon(id='plugin.video.youtube')
+    elif id=="vimeo":
+        addonY = xbmcaddon.Addon(id='plugin.video.vimeo')
+    elif id=="dailymotion":
+        addonY = xbmcaddon.Addon(id='plugin.video.dailymotion_com')
+    addonY.openSettings()
+
+
 def parameters_string_to_dict(parameters):
     paramDict = {}
     if parameters:
@@ -536,14 +625,21 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage, description, date, nr, site, subreddit):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+def addLink(name, mode, iconimage, description, date, nr, site, subreddit, hoster, videoID):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(getPluginUrl(hoster, videoID))+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description, "Aired": date, "Episode": nr})
     liz.setProperty('IsPlayable', 'true')
     entries = []
-    entries.append((translation(30018), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
+    if hoster=="youtube":
+        entries.append((translation(30025), 'RunPlugin('+getYoutubeDownloadPluginUrl(videoID)+')',))
+    elif hoster=="vimeo":
+        entries.append((translation(30025), 'RunPlugin('+getVimeoDownloadPluginUrl(videoID)+')',))
+    elif hoster=="dailymotion":
+        entries.append((translation(30025), 'RunPlugin('+getDailymotionDownloadPluginUrl(videoID)+')',))
+    elif hoster=="liveleak":
+        entries.append((translation(30025), 'RunPlugin('+getLiveleakDownloadPluginUrl(videoID)+')',))
     favEntry = '<favourite name="'+name+'" url="'+u+'" description="'+description+'" thumb="'+iconimage+'" date="'+date+'" site="'+site+'" />'
     entries.append((translation(30022), 'RunPlugin(plugin://'+addonID+'/?mode=addToFavs&url='+urllib.quote_plus(favEntry)+'&type='+urllib.quote_plus(subreddit)+')',))
     if showBrowser and (osWin or osOsx or osLinux):
@@ -624,6 +720,8 @@ elif mode == 'playVideo':
     playVideo(url)
 elif mode == 'playLiveLeakVideo':
     playLiveLeakVideo(url)
+elif mode == 'downloadLiveLeakVideo':
+    downloadLiveLeakVideo(url)
 elif mode == 'addSubreddit':
     addSubreddit(url)
 elif mode == 'removeSubreddit':
@@ -644,5 +742,7 @@ elif mode == 'searchVideos':
     searchVideos(url, type)
 elif mode == 'searchReddits':
     searchReddits()
+elif mode == 'openSettings':
+    openSettings(url)
 else:
     index()
