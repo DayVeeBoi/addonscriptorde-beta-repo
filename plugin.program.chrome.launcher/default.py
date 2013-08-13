@@ -94,8 +94,8 @@ def addSite(site="", title=""):
 def getFullPath(path, url):
     profile = ""
     if useOwnProfile:
-        profile = '--user-data-dir="'+profileFolder+'"'
-    return '"'+path+'"'+profile+' --kiosk "'+url+'"'
+        profile = ' --user-data-dir="'+profileFolder+'"'
+    return '"'+path+'"'+profile+' --no-default-browser-check --no-first-run --kiosk "'+url+'"'
 
 
 def showSite(url, stopPlayback):
