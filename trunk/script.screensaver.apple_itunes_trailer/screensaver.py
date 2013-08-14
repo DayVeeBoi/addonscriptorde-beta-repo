@@ -26,7 +26,6 @@ class XBMCPlayer(xbmc.Player):
             xbmc.Player().pause()
         else:
             xbmc.Player().stop()
-        self.close()
 
     def onPlayBackEnded(self):
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -45,7 +44,6 @@ class XBMCPlayer(xbmc.Player):
                 xbmc.Player().pause()
             else:
                 xbmc.Player().stop()
-            self.close()
 
 
 class window(xbmcgui.WindowXMLDialog):
@@ -109,7 +107,7 @@ currentPosition = 0
 cacheLifetime = 24
 if not os.path.isdir(addonUserDataFolder):
   os.mkdir(addonUserDataFolder)
-if xbmc.Player().isPlaying():
+if xbmc.Player().isPlayingVideo():
     currentUrl = xbmc.Player().getPlayingFile()
     currentPosition = xbmc.Player().getTime()
     xbmc.Player().stop()
@@ -209,5 +207,5 @@ if param=="tv_mode":
         xbmc.Player().play(playlist)
     else:
         xbmc.executebuiltin('XBMC.Notification(Video Screensaver:,'+translation(30005)+'!,5000)')
-else:
+elif not xbmc.Player().isPlayingAudio():
     myWindow.doModal()

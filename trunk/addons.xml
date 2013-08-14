@@ -196,7 +196,7 @@
 	</extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.8" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.9" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
@@ -206,8 +206,8 @@
 	<language></language>
     <platform>all</platform>
     <language>en</language>
-    <summary lang="en">Play random trailers from Apple iTunes - Choose quality and genres via the add-on settings</summary>
-    <description lang="en">Play random trailers from Apple iTunes - Choose quality and genres via the add-on settings</description>
+    <summary lang="en">Randomly play current trailers/teasers/clips from Apple iTunes - Choose quality and genres</summary>
+    <description lang="en">Randomly play current trailers/teasers/clips from Apple iTunes - Choose quality and genres</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://trailers.apple.com</website>
@@ -216,7 +216,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.7" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -227,8 +227,8 @@
 	<language></language>
     <platform>all</platform>
     <language></language>
-    <summary lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</summary>
-    <description lang="en">Play random videos from InfinityList.com - Choose genre via the add-on settings</description>
+    <summary lang="en">Randomly play videos from InfinityList.com - Choose genre via the add-on settings</summary>
+    <description lang="en">Randomly play videos from InfinityList.com - Choose genre via the add-on settings</description>
 	  <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	  <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
     <website>http://www.infinitylist.com</website>
