@@ -16,11 +16,18 @@ addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
+userDataFolder=xbmc.translatePath("special://profile/addon_data/"+addonID)
+searchHistoryFolder=os.path.join(userDataFolder, "history")
 socket.setdefaulttimeout(30)
 opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMain = "http://www.billboard.com"
+
+if not os.path.isdir(userDataFolder):
+  os.mkdir(userDataFolder)
+if not os.path.isdir(searchHistoryFolder):
+  os.mkdir(searchHistoryFolder)
 
 
 def getDbPath():
@@ -46,43 +53,43 @@ def getPlayCount(url):
 
 
 def index():
-    addDir(translation(30005), urlMain+"/rss/charts/hot-100", "listVideos")
-    addDir(translation(30006), "genre", "listCharts")
-    addDir(translation(30007), "country", "listCharts")
-    addDir(translation(30008), "other", "listCharts")
+    addDir(translation(30005), urlMain+"/rss/charts/hot-100", "listCharts")
+    addDir(translation(30006), "genre", "listChartsTypes")
+    addDir(translation(30007), "country", "listChartsTypes")
+    addDir(translation(30008), "other", "listChartsTypes")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listCharts(type):
+def listChartsTypes(type):
     if type=="genre":
-        addDir(translation(30009), urlMain+"/rss/charts/pop-songs", "listVideos")
-        addDir(translation(30010), urlMain+"/rss/charts/rock-songs", "listVideos")
-        addDir(translation(30011), urlMain+"/rss/charts/alternative-songs", "listVideos")
-        addDir(translation(30012), urlMain+"/rss/charts/r-b-hip-hop-songs", "listVideos")
-        addDir(translation(30013), urlMain+"/rss/charts/r-and-b-songs", "listVideos")
-        addDir(translation(30014), urlMain+"/rss/charts/rap-songs", "listVideos")
-        addDir(translation(30015), urlMain+"/rss/charts/country-songs", "listVideos")
-        addDir(translation(30016), urlMain+"/rss/charts/latin-songs", "listVideos")
-        addDir(translation(30017), urlMain+"/rss/charts/jazz-songs", "listVideos")
-        addDir(translation(30018), urlMain+"/rss/charts/dance-club-play-songs", "listVideos")
-        addDir(translation(30019), urlMain+"/rss/charts/dance-electronic-songs", "listVideos")
-        addDir(translation(30020), urlMain+"/rss/charts/heatseekers-songs", "listVideos")
+        addDir(translation(30009), urlMain+"/rss/charts/pop-songs", "listCharts")
+        addDir(translation(30010), urlMain+"/rss/charts/rock-songs", "listCharts")
+        addDir(translation(30011), urlMain+"/rss/charts/alternative-songs", "listCharts")
+        addDir(translation(30012), urlMain+"/rss/charts/r-b-hip-hop-songs", "listCharts")
+        addDir(translation(30013), urlMain+"/rss/charts/r-and-b-songs", "listCharts")
+        addDir(translation(30014), urlMain+"/rss/charts/rap-songs", "listCharts")
+        addDir(translation(30015), urlMain+"/rss/charts/country-songs", "listCharts")
+        addDir(translation(30016), urlMain+"/rss/charts/latin-songs", "listCharts")
+        addDir(translation(30017), urlMain+"/rss/charts/jazz-songs", "listCharts")
+        addDir(translation(30018), urlMain+"/rss/charts/dance-club-play-songs", "listCharts")
+        addDir(translation(30019), urlMain+"/rss/charts/dance-electronic-songs", "listCharts")
+        addDir(translation(30020), urlMain+"/rss/charts/heatseekers-songs", "listCharts")
     elif type=="country":
-        addDir(translation(30021), urlMain+"/rss/charts/canadian-hot-100", "listVideos")
-        addDir(translation(30022), urlMain+"/rss/charts/k-pop-hot-100", "listVideos")
-        addDir(translation(30023), urlMain+"/rss/charts/japan-hot-100", "listVideos")
-        addDir(translation(30024), urlMain+"/rss/charts/germany-songs", "listVideos")
-        addDir(translation(30025), urlMain+"/rss/charts/france-songs", "listVideos")
-        addDir(translation(30026), urlMain+"/rss/charts/united-kingdom-songs", "listVideos")
+        addDir(translation(30021), urlMain+"/rss/charts/canadian-hot-100", "listCharts")
+        addDir(translation(30022), urlMain+"/rss/charts/k-pop-hot-100", "listCharts")
+        addDir(translation(30023), urlMain+"/rss/charts/japan-hot-100", "listCharts")
+        addDir(translation(30024), urlMain+"/rss/charts/germany-songs", "listCharts")
+        addDir(translation(30025), urlMain+"/rss/charts/france-songs", "listCharts")
+        addDir(translation(30026), urlMain+"/rss/charts/united-kingdom-songs", "listCharts")
     elif type=="other":
-        addDir(translation(30028), urlMain+"/rss/charts/radio-songs", "listVideos")
-        addDir(translation(30029), urlMain+"/rss/charts/digital-songs", "listVideos")
-        addDir(translation(30030), urlMain+"/rss/charts/streaming-songs", "listVideos")
-        addDir(translation(30031), urlMain+"/rss/charts/on-demand-songs", "listVideos")
+        addDir(translation(30028), urlMain+"/rss/charts/radio-songs", "listCharts")
+        addDir(translation(30029), urlMain+"/rss/charts/digital-songs", "listCharts")
+        addDir(translation(30030), urlMain+"/rss/charts/streaming-songs", "listCharts")
+        addDir(translation(30031), urlMain+"/rss/charts/on-demand-songs", "listCharts")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listVideos(url):
+def listCharts(url):
     xbmcplugin.setContent(pluginhandle, "episodes")
     addDir("[B]- "+translation(30001)+"[/B]", url, "autoPlay", "all")
     addDir("[B]- "+translation(30002)+"[/B]", url, "autoPlay", "random")
@@ -95,19 +102,72 @@ def listVideos(url):
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
+def cache(id, chartTitle):
+    fileTitle = (''.join(c for c in unicode(chartTitle, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    cacheFile = os.path.join(searchHistoryFolder, fileTitle)
+    fh = open(cacheFile, 'w')
+    fh.write(id)
+    fh.close()
+    listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(id))
+    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+
+
 def playVideo(title):
+    fileTitle = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    cacheFile = os.path.join(searchHistoryFolder, fileTitle)
+    if os.path.exists(cacheFile):
+        fh = open(cacheFile, 'r')
+        id = fh.read()
+        fh.close()
+        listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(id))
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    else:
+        id = getYoutubeId(title)
+        cache(id, title)
+
+
+def getYoutubeId(title):
     #API sometimes delivers other results (when sorting by relevance) than site search!?!
     #content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2").read()
     #match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
     content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(title)+"&lclk=video").read()
     content = content[content.find('id="search-results"'):]
     match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(content)
+    return match[0]
+
+
+def listVideos(chartTitle):
+    #API sometimes delivers other results (when sorting by relevance) than site search!?!
+    content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(chartTitle)+"&lclk=video").read()
+    content = content[content.find('id="search-results"'):]
+    content = content[:content.find('<div class="pyv-afc-ads-container">')]
+    spl=content.split('<li class="yt-lockup clearfix')
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(entry)
+        id=match[0]
+        match=re.compile('data-context-item-title="(.+?)"', re.DOTALL).findall(entry)
+        title=match[0]
+        title = cleanTitle(title)
+        match=re.compile('data-context-item-views="(.+?)"', re.DOTALL).findall(entry)
+        views=match[0]
+        match=re.compile('data-context-item-time="(.+?)"', re.DOTALL).findall(entry)
+        length=match[0]
+        match=re.compile('<div class="yt-lockup-description.+?>(.+?)</div>', re.DOTALL).findall(entry)
+        desc = ""
+        if match:
+            desc=cleanTitle(match[0].replace("<b>","").replace("</b>",""))
+        desc = views+"\n"+desc
+        thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
+        addLink(title, id, "cache", thumb, desc, length, chartTitle)
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def getYoutubePluginUrl(id):
     if xbox:
-        url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + match[0]
+        return "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + id
     else:
-        url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + match[0]
-    listitem = xbmcgui.ListItem(path=url)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+        return "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + id
 
 
 def queueVideo(url, name):
@@ -144,19 +204,22 @@ def translation(id):
 
 
 def cleanTitle(title):
-    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#039;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
+    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
     title = title.replace("&Auml;", "Ä").replace("&Uuml;", "Ü").replace("&Ouml;", "Ö").replace("&auml;", "ä").replace("&uuml;", "ü").replace("&ouml;", "ö")
     title = title.strip()
     return title
 
 
-def addLink(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)
+def addLink(name, url, mode, iconimage, desc="", length="", chartTitle=""):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&chartTitle="+str(chartTitle)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
     liz.setProperty('IsPlayable', 'true')
-    liz.addContextMenuItems([(translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
+    entries = []
+    entries.append((translation(30032), 'Container.Update(plugin://'+addonID+'/?mode=listVideos&url='+urllib.quote_plus(url)+')',))
+    entries.append((translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
+    liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
@@ -188,13 +251,18 @@ c = conn.cursor()
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
-type = urllib.unquote_plus(params.get('type', ''))
 name = urllib.unquote_plus(params.get('name', ''))
+type = urllib.unquote_plus(params.get('type', ''))
+chartTitle = urllib.unquote_plus(params.get('chartTitle', ''))
 
-if mode == 'listVideos':
-    listVideos(url)
-elif mode == 'listCharts':
+if mode == 'listCharts':
     listCharts(url)
+elif mode == 'listChartsTypes':
+    listChartsTypes(url)
+elif mode == 'listVideos':
+    listVideos(url)
+elif mode == 'cache':
+    cache(url, chartTitle)
 elif mode == 'playVideo':
     playVideo(url)
 elif mode == 'queueVideo':

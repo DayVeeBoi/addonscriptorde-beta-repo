@@ -3,3 +3,6 @@
 1.0.1
 - Added various charts
 - Added context menu "Add to queue"
+1.0.2
+- Search results are now stored for later playback
+- Added context menu to manually select youtube video
