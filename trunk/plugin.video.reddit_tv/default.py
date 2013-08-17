@@ -175,7 +175,7 @@ def index():
                 entries.append(subreddit.title())
     entries.sort()
     for entry in entries:
-        if entry == "all":
+        if entry.lower() == "all":
             addDir(entry, entry.lower(), 'listSorting', "")
         else:
             addDirR(entry, entry.lower(), 'listSorting', "")
