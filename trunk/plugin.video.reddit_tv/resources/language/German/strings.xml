@@ -73,7 +73,7 @@
   <string id="30170">"Ungesehene abspielen" anzeigen</string>
   <string id="30171">"Unbeendete abspielen" anzeigen</string>
   <string id="30177">Browser-Kontextmenü anzeigen</string>
-  <string id="30178">NSFW Inhalte anzeigen</string>
+  <string id="30178">NSFW Inhalte aktivieren/deaktivieren</string>
   <string id="30180">Youtube: Qualität / Verzeichnis</string>
   <string id="30181">Vimeo: Qualität / Verzeichnis</string>
   <string id="30182">Dailymotion: Qualität / Verzeichnis</string>
@@ -81,4 +81,9 @@
   <string id="30184">Liveleak: Verzeichnis</string>
   <string id="30185">Datei existiert bereits</string>
   <string id="30186">Downloadverzeichnis wählen</string>
+  <string id="30187">NSFW Inhalte aktiviert!</string>
+  <string id="30188">NSFW Inhalte deaktiviert!</string>
+  <string id="30189">NSFW Inhalte deaktivieren?</string>
+  <string id="30190">NSFW Inhalte aktivieren?</string>
+  <string id="30191">Bist Du über achtzehn und möchtest Inhalte für Erwachsene sehen?</string>
 </strings>
