@@ -320,7 +320,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.smart_playlist" name="Video/Audio Screensaver: SmartPlaylist" version="1.0.4" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.smart_playlist" name="Video/Audio Screensaver: SmartPlaylist" version="1.0.5" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
@@ -339,7 +339,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.0.9" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.0" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>
