@@ -33,3 +33,5 @@
 1.1.2
 - Added download function
 - Fixed bug with NSFW content
+1.1.3
+- Added NSFW age check

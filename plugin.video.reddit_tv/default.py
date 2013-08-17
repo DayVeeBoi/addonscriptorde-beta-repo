@@ -50,7 +50,6 @@ cat_com_a = addon.getSetting("cat_com_a") == "true"
 filter = addon.getSetting("filter") == "true"
 filterRating = int(addon.getSetting("filterRating"))
 filterThreshold = int(addon.getSetting("filterThreshold"))
-showNSFW = addon.getSetting("showNSFW") == "true"
 
 showAll = addon.getSetting("showAll") == "true"
 showUnwatched = addon.getSetting("showUnwatched") == "true"
@@ -80,11 +79,12 @@ ll_downDir = str(addon.getSetting("ll_downDir"))
 
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 subredditsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/subreddits")
+nsfwFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/nsfw")
 if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
 
 allHosterQuery = urllib.quote_plus("site:youtu.be OR site:youtube.com OR site:vimeo.com OR site:liveleak.com OR site:dailymotion.com")
-if showNSFW:
+if os.path.exists(nsfwFile):
     nsfw = ""
 else:
     nsfw = "nsfw:no+"
@@ -614,6 +614,19 @@ def openSettings(id):
     addonY.openSettings()
 
 
+def toggleNSFW():
+    if os.path.exists(nsfwFile):
+        dialog = xbmcgui.Dialog()
+        if dialog.yesno(translation(30187), translation(30189)):
+            os.remove(nsfwFile)
+    else:
+        dialog = xbmcgui.Dialog()
+        if dialog.yesno(translation(30188), translation(30190)+"\n"+translation(30191)):
+            fh = open(nsfwFile, 'w')
+            fh.write("")
+            fh.close()
+
+
 def parameters_string_to_dict(parameters):
     paramDict = {}
     if parameters:
@@ -744,5 +757,7 @@ elif mode == 'searchReddits':
     searchReddits()
 elif mode == 'openSettings':
     openSettings(url)
+elif mode == 'toggleNSFW':
+    toggleNSFW()
 else:
     index()
