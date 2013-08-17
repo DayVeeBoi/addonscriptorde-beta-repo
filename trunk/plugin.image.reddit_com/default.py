@@ -224,13 +224,12 @@ def listImages(url, subreddit):
             if filter and (ups+downs) > filterThreshold and rating < filterRating:
                 continue
             comments = entry['data']['num_comments']
-            description = dateTime+"  |  "+str(ups+downs)+" votes: "+str(rating)+"% Up  |  "+str(comments)+" comments\n"+description
             try:
                 thumb = entry['data']['thumbnail'].encode('utf-8')
             except:
                 thumb = ""
+            url = entry['data']['url']+'"'
             matchImgur = re.compile('imgur.com/(.+?)"', re.DOTALL).findall(url)
-            url = ""
             if matchImgur:
                 url = matchImgur[0]
             if url:
