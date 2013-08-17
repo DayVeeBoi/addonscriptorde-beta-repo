@@ -98,7 +98,7 @@ def listCharts(url):
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     for title in match:
         title = cleanTitle(title[title.find(":")+1:]).replace("Featuring", "Feat.")
-        addLink(cleanTitle(title), title, "playVideo", "")
+        addLink(title, title, "playVideo", "", "", "", title)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -184,7 +184,7 @@ def autoPlay(url, type):
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     for title in match:
         title = cleanTitle(title[title.find(":")+1:]).replace("Featuring", "Feat.")
-        url = sys.argv[0]+"?url="+urllib.quote_plus(title)+"&mode=playVideo"
+        url = sys.argv[0]+"?url="+urllib.quote_plus(title)+"&mode=playVideo&name="+str(title)+"&chartTitle="+str(title)
         if type in ["all", "random"]:
             listitem = xbmcgui.ListItem(title)
             entries.append([title, url])
