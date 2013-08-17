@@ -8,3 +8,5 @@
 - Added context menu to manually select youtube video
 1.0.3
 - Changed search query
+1.0.4
+- Fixed bug with play unwatched mode
