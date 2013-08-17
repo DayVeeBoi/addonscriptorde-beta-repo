@@ -6,3 +6,5 @@
 - Added setting to force volume
 1.0.4
 - Changed addon name
+1.0.5
+- New icon (thx@djtoll)
