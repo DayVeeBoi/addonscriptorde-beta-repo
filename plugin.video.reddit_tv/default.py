@@ -98,17 +98,21 @@ def getDbPath():
         if file[:8] == 'MyVideos' and file[-3:] == '.db':
             if file > latest:
                 latest = file
-    return os.path.join(path, latest)
+    if latest:
+        return os.path.join(path, latest)
+    else:
+        return ""
 
 
 def getPlayCount(url):
-    c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
-    result = c.fetchone()
-    if result:
-        result = result[0]
+    if dbPath:
+        c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
+        result = c.fetchone()
         if result:
-            return int(result)
-        return 0
+            result = result[0]
+            if result:
+                return int(result)
+            return 0
     return -1
 
 
@@ -714,8 +718,9 @@ def addDirR(name, url, mode, iconimage):
 
 
 dbPath = getDbPath()
-conn = sqlite3.connect(dbPath)
-c = conn.cursor()
+if dbPath:
+    conn = sqlite3.connect(dbPath)
+    c = conn.cursor()
 
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))

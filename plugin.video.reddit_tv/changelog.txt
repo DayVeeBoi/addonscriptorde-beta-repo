@@ -37,3 +37,5 @@
 - Added NSFW age check
 1.1.4
 - Some small fixes
+1.1.5
+- Fixed bug with mysql dbs
