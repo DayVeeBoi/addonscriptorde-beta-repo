@@ -39,3 +39,5 @@
 - Some small fixes
 1.1.5
 - Fixed bug with mysql dbs
+1.1.6
+- Fixed bug with Chrome Launcher
