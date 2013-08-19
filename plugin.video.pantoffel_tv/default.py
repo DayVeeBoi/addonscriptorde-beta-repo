@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import urllib
 import urllib2
+import random
 import re
 import xbmc
 import xbmcgui
@@ -12,38 +13,59 @@ addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
+urlMain = "http://pantoffel.tv"
 
 
 def index():
     xbmcplugin.setContent(pluginhandle, "episodes")
-    content = getUrl("http://pantoffel.tv/magazin/")
+    content = getUrl(urlMain+"/magazin/")
     spl = content.split('<h1 class="magtitle"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('>(.+?)<', re.DOTALL).findall(entry)
-        title = match[0]
+        title = cleanTitle(match[0])
         match = re.compile('<small class="pull-right">(.+?)</small>', re.DOTALL).findall(entry)
-        desc1 = match[0]
+        desc1 = cleanTitle(match[0])
         match = re.compile('<p style=".+?">(.+?)</p>', re.DOTALL).findall(entry)
-        desc2 = match[0]
+        desc2 = cleanTitle(match[0])
         desc = desc1+"\n"+desc2
+        if " " in title:
+            nr = title.split(" ")[1]
+        else:
+            nr = "1"
         length = desc1.split(" ")[0]
         date = desc1.split("/")[1].strip()
         splDate = date.split(".")
         date = splDate[2]+"-"+splDate[1]+"-"+splDate[0]
-        match = re.compile('<a href="/hd.php\\?ep=(.+?)"', re.DOTALL).findall(entry)
-        url = "http://pantoffel.tv/hd.php?ep="+match[0]
+        match = re.compile('<a href="/watch/(.+?)"', re.DOTALL).findall(entry)
+        url = urlMain+"/watch/"+match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0]
-        addLink(title, url, 'playVideo', thumb, length, desc, date)
+        addLink(title, url, 'playVideo', thumb, length, desc, date, nr)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def playVideo(url):
-    listitem = xbmcgui.ListItem(path=url)
+    content = getUrl(url)
+    content  = content[content.find('playlist = ['):]
+    content  = content[:content.find('];')]
+    match = re.compile("'(.+?)'", re.DOTALL).findall(content)
+    urlFull="stack://"
+    for file in match:
+        urlFull += 'http://dl' + str(random.randint(2, 3)) + '.fernsehkritik.tv/deliver/ptv/limited/ptv' + file + " , "
+    urlFull=urlFull[:-3]
+    listitem = xbmcgui.ListItem(path=urlFull)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+
+
+def cleanTitle(title):
+    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
+    title = title.replace("&#38;", "&").replace("&#8230;", "...").replace("&#8211;", "-").replace("&#8220;", "-").replace("&#8221;", "-").replace("&#8217;", "'")
+    title = title.replace("&#196;", "Ä").replace("&#220;", "Ü").replace("&#214;", "Ö").replace("&#228;", "ä").replace("&#252;", "ü").replace("&#246;", "ö").replace("&#223;", "ß").replace("&#176;", "°").replace("&#233;", "é").replace("&#224;", "à")
+    title = title.strip()
+    return title
 
 
 def getUrl(url):
@@ -66,11 +88,11 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage, length, desc, date):
+def addLink(name, url, mode, iconimage, length, desc, date, nr):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": length, "Plot": desc, "Aired": date})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": length, "Plot": desc, "Aired": date, "Episode": nr})
     liz.setProperty('IsPlayable', 'true')
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
