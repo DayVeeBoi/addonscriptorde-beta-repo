@@ -38,17 +38,21 @@ def getDbPath():
         if file[:8] == 'MyVideos' and file[-3:] == '.db':
             if file > latest:
                 latest = file
-    return os.path.join(path, latest)
+    if latest:
+        return os.path.join(path, latest)
+    else:
+        return ""
 
 
 def getPlayCount(url):
-    c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
-    result = c.fetchone()
-    if result:
-        result = result[0]
+    if dbPath:
+        c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
+        result = c.fetchone()
         if result:
-            return int(result)
-        return 0
+            result = result[0]
+            if result:
+                return int(result)
+            return 0
     return -1
 
 
@@ -98,7 +102,15 @@ def listCharts(url):
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     for title in match:
         title = cleanTitle(title[title.find(":")+1:]).replace("Featuring", "Feat.")
-        addLink(title, title, "playVideo", "", "", "", title)
+        fileTitle = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+        cacheFile = os.path.join(searchHistoryFolder, fileTitle)
+        thumb = ""
+        if os.path.exists(cacheFile):
+            fh = open(cacheFile, 'r')
+            id = fh.read()
+            fh.close()
+            thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
+        addLink(title, title, "playVideo", thumb, "", "", title)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -245,8 +257,9 @@ def parameters_string_to_dict(parameters):
 
 
 dbPath = getDbPath()
-conn = sqlite3.connect(dbPath)
-c = conn.cursor()
+if dbPath:
+    conn = sqlite3.connect(dbPath)
+    c = conn.cursor()
 
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
