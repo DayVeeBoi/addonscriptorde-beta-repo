@@ -663,7 +663,7 @@ def addLink(name, mode, iconimage, description, date, nr, site, subreddit, hoste
         if osWin and browser_win==0:
             entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(site)+'&mode=showSite&zoom='+browser_wb_zoom+'&stopPlayback=no&showPopups=no&showScrollbar=no)',))
         else:
-            entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.chrome.starter/?url='+urllib.quote_plus(site)+'&mode=showSite)',))
+            entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.chrome.launcher/?url='+urllib.quote_plus(site)+'&mode=showSite)',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -682,7 +682,7 @@ def addFavLink(name, url, mode, iconimage, description, date, site, subreddit):
         if osWin and browser_win==0:
             entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(site)+'&mode=showSite&zoom='+browser_wb_zoom+'&stopPlayback=no&showPopups=no&showScrollbar=no)',))
         else:
-            entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.chrome.starter/?url='+urllib.quote_plus(site)+'&mode=showSite)',))
+            entries.append((translation(30021), 'RunPlugin(plugin://plugin.program.chrome.launcher/?url='+urllib.quote_plus(site)+'&mode=showSite)',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=liz)
     return ok

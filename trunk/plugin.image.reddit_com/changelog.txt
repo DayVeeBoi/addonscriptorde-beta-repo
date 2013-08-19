@@ -2,3 +2,6 @@
 - Initial release
 1.0.1
 - Fixed some stupid bugs
+1.0.2
+- New icon (thx@djtoll)
+- Fixed bug with Chrome Launcher
