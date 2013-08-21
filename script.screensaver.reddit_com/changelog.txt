@@ -14,3 +14,6 @@
 1.0.7
 - Added setting to choose reddit
 - Added categories: new, comments
+1.0.8
+- New icon (thx@djtoll)
+- Added image screensaver function
