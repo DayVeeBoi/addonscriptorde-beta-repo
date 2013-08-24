@@ -235,7 +235,7 @@ def listImages(url, subreddit):
             if url:
                 if url.startswith("a/"):
                     addDir("Album: "+title, url.split("/")[1], "listImgurAlbum", thumb)
-                elif not url.endswith(".gif"):
+                elif not url.lower().endswith(".gif"):
                     if "." not in url:
                         url = url+".jpg"
                     url = ("http://i.imgur.com/"+url).replace("/gallery/","/")
@@ -258,15 +258,16 @@ def listImages(url, subreddit):
 
 def listImgurAlbum(album, title):
     content = opener.open("http://imgur.com/a/"+album).read()
-    match = re.compile('<div class="image" id="(.+?)">', re.DOTALL).findall(content)
-    match2 = re.compile('<img id="thumb-(.+?)"', re.DOTALL).findall(content)
+    match1 = re.compile('<img class="unloaded" data-src="(.+?)"', re.DOTALL).findall(content)
+    match2 = re.compile('class="unloaded thumb-title" title=".*?" alt=".*?" data-src="(.+?)"', re.DOTALL).findall(content)
+    if match1:
+        match = match1
+    elif match2:
+        match = match2
     count = 1
-    for id in match:
-        addLink2(str(count)+". "+title.replace("Album: ", ""), "http://i.imgur.com/"+id+".jpg")
-        count+=1
-    if count==1:
-        for id in match2:
-            addLink2(str(count)+". "+title.replace("Album: ", ""), "http://i.imgur.com/"+id+".jpg")
+    for url in match:
+        if not url.lower().endswith(".gif"):
+            addLink2(str(count)+". "+title.replace("Album: ", ""), url)
             count+=1
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
