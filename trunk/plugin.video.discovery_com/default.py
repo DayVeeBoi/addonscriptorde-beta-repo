@@ -18,11 +18,11 @@ addonID = addon.getAddonInfo('id')
 thumbsDir = xbmc.translatePath('special://home/addons/'+addonID+'/resources/thumbs')
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
-autoPlay=int(addon.getSetting("autoPlay"))
+autoPlay = int(addon.getSetting("autoPlay"))
 viewModeNewsShows = str(addon.getSetting("viewModeNewsShows"))
 viewModeVideos = str(addon.getSetting("viewModeVideos"))
 bitrate = addon.getSetting("bitrate")
-bitrate = ["600k", "800k", "1500k", "3500k"][int(bitrate)]
+bitrate = [600, 800, 1500, 3500][int(bitrate)]
 itemsPerPage = addon.getSetting("itemsPerPage")
 itemsPerPage = ["25", "50", "75", "100"][int(itemsPerPage)]
 urlMain = "http://dsc.discovery.com"
@@ -46,7 +46,7 @@ def index():
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeNewsShows+')')
     xbmcplugin.endOfDirectory(pluginhandle)
-    
+
 
 def listNewsMain():
     addDir("Latest", "latest", 'listNews', iconPathNews)
@@ -59,12 +59,12 @@ def listNewsMain():
 
 def listNews(type):
     content = getUrl(urlMainNews+"/videos")
-    if type=="latest":
+    if type == "latest":
         splStr = '<div class="fragment-media  media-vertical grid-member'
-    elif type=="mostWatched":
+    elif type == "mostWatched":
         content = content[content.find('<div class="module module-slider slider-paged pre " data-current="0" >'):]
         splStr = '<div class="fragment-media  media-vertical paged-member'
-    elif type=="collectionsMain":
+    elif type == "collectionsMain":
         content = content[:content.find('<div class="module module-slider slider-paged pre " data-current="0" >')]
         splStr = '<div class="fragment-media  media-vertical paged-member'
     spl = content.split(splStr)
@@ -83,7 +83,7 @@ def listNews(type):
         url = match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace(" ", "%20")
-        if type=="collectionsMain":
+        if type == "collectionsMain":
             addDir(title, url, 'listNewsCollections', thumb, "", desc)
         else:
             addLink(title, url, 'playVideo', thumb, desc)
@@ -121,7 +121,7 @@ def listShows(url):
         if match:
             id = match[0]
             if "/" in id:
-                id=id[:id.find("/")]
+                id = id[:id.find("/")]
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
             if currentUrl.endswith("/videos"):
                 url = currentUrl[:currentUrl.find("/videos")]+match[0]
@@ -129,7 +129,7 @@ def listShows(url):
                 url = currentUrl[:currentUrl.find("/tv-shows")]+match[0]
             match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
             if match:
-                title = cleanTitle(match[0]).replace(" Videos","")
+                title = cleanTitle(match[0]).replace(" Videos", "")
             else:
                 title = id.replace("-", " ").title()
             match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
@@ -158,7 +158,7 @@ def listVideos(url, type="clip"):
     if "/services/taxonomy/" in url or "data-service-uri=" in content:
         if "/services/taxonomy/" not in url:
             match = re.compile('data-service-uri="(.+?)"', re.DOTALL).findall(content)
-            url=urlMain+match[0]+"?num="+itemsPerPage+"&page=0&filter="+type+"&tpl=dds%2Fmodules%2Fvideo%2Fall_assets_list.html&sort=date&order=desc&feedGroup=video"
+            url = urlMain+match[0]+"?num="+itemsPerPage+"&page=0&filter="+type+"&tpl=dds%2Fmodules%2Fvideo%2Fall_assets_list.html&sort=date&order=desc&feedGroup=video"
             content = getUrl(url)
         currentUrl = url
         spl = content.split('<div class="thumbnail still-small">')
@@ -181,7 +181,7 @@ def listVideos(url, type="clip"):
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
             url = match[0]
             if not url.startswith("http://"):
-              url = urlMain+url
+                url = urlMain+url
             match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
             thumb = match[0].replace(" ", "%20")
             addLink(title, url, 'playVideo', thumb, desc, length, date, str(i))
@@ -189,7 +189,7 @@ def listVideos(url, type="clip"):
             match = re.compile('page=(.+?)&', re.DOTALL).findall(currentUrl)
             currentPage = int(match[0])
             nextPage = currentPage+1
-            addDir(translation(30001)+" ("+str(nextPage+1)+")", currentUrl.replace("page="+str(currentPage),"page="+str(nextPage)), 'listVideos', "")
+            addDir(translation(30001)+" ("+str(nextPage+1)+")", currentUrl.replace("page="+str(currentPage), "page="+str(nextPage)), 'listVideos', "")
         if forceViewMode:
             xbmc.executebuiltin('Container.SetViewMode('+viewModeVideos+')')
         xbmcplugin.endOfDirectory(pluginhandle)
@@ -199,48 +199,60 @@ def listVideos(url, type="clip"):
 
 def playVideo(url):
     if url.endswith(".m3u8"):
-        url = url.split(",")[0]+","+bitrate+",.mp4.csmil/master.m3u8"
+        match = re.compile(',(.+?)k,', re.DOTALL).findall(url)
+        maxBitrate = 0
+        for br in match:
+            br = int(br)
+            if br <= bitrate:
+                maxBitrate = br
+        url = url.split(",")[0]+","+str(maxBitrate)+"k,.mp4.csmil/master.m3u8"
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     else:
         content = getUrl(url)
         match1 = re.compile('"m3u8": "(.*?)"', re.DOTALL).findall(content)
-        match2 = re.compile("m3u8.+?: '(.*?)'", re.DOTALL).findall(content)
-        finalUrl=""
+        match2 = re.compile("m3u8 			: '(.*?)'", re.DOTALL).findall(content)
+        finalUrl = ""
         if match1 and match1[0]:
-            finalUrl=match1[0]
+            finalUrl = match1[0]
         elif match2 and match2[0]:
-            finalUrl=match2[0]
+            finalUrl = match2[0]
         if finalUrl:
-            finalUrl = finalUrl.split(",")[0]+","+bitrate+",.mp4.csmil/master.m3u8"
+            match = re.compile(',(.+?)k,', re.DOTALL).findall(finalUrl)
+            maxBitrate = 0
+            for br in match:
+                br = int(br)
+                if br <= bitrate:
+                    maxBitrate = br
+            finalUrl = finalUrl.split(",")[0]+","+str(maxBitrate)+"k,.mp4.csmil/master.m3u8"
             listitem = xbmcgui.ListItem(path=finalUrl)
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         else:
-            match=re.compile('"contentId": "(.+?)"', re.DOTALL).findall(content)
+            match = re.compile('"contentId": "(.+?)"', re.DOTALL).findall(content)
             content = getUrl("http://services.media.dp.discovery.com/videos/"+match[0]+"/smil-service.smil")
-            match=re.compile('<meta name="httpBase".+?content="(.+?)"', re.DOTALL).findall(content)
-            base=match[0]
-            maxBitrate=0
-            match=re.compile('<video src="(.+?)" system-bitrate="(.+?)"', re.DOTALL).findall(content)
+            match = re.compile('<meta name="httpBase".+?content="(.+?)"', re.DOTALL).findall(content)
+            base = match[0]
+            maxBitrate = 0
+            match = re.compile('<video src="(.+?)" system-bitrate="(.+?)"', re.DOTALL).findall(content)
             for urlTemp, bitrateTemp in match:
-              bitrateTemp=int(bitrateTemp)
-              if bitrateTemp>maxBitrate:
-                maxBitrate=bitrateTemp
-                finalUrl=urlTemp
-            finalUrl=base+"/"+finalUrl+"?v=2.6.8&fp=&r=&g="
+                bitrateTemp = int(bitrateTemp)
+                if bitrateTemp > maxBitrate:
+                    maxBitrate = bitrateTemp
+                    finalUrl = urlTemp
+            finalUrl = base+"/"+finalUrl+"?v=2.6.8&fp=&r=&g="
             listitem = xbmcgui.ListItem(path=finalUrl)
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-            if autoPlay>0:
-              xbmc.sleep(autoPlay*1000)
-              if xbmc.Player().isPlaying()==True and int(xbmc.Player().getTime())==0:
-                xbmc.Player().pause()
+            if autoPlay > 0:
+                xbmc.sleep(autoPlay*1000)
+                if xbmc.Player().isPlaying() == True and int(xbmc.Player().getTime()) == 0:
+                    xbmc.Player().pause()
 
 
 def listAPL():
     content = getUrl("http://www.apl.tv/")
-    match=re.compile('<div data-num=".+?">.*?<a href="(.+?)" title="(.+?)".+?<img src="(.+?)">', re.DOTALL).findall(content)
+    match = re.compile('<div data-num=".+?">.*?<a href="(.+?)" title="(.+?)".+?<img src="(.+?)">', re.DOTALL).findall(content)
     for url, title, thumb in match:
-        if title!="TV Highlights":
+        if title != "TV Highlights":
             addLink("LIVE: "+title, url, "playVideoLive", thumb, "")
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeNewsShows+')')
@@ -249,7 +261,7 @@ def listAPL():
 
 def playVideoLive(url):
     content = getUrl(url)
-    match=re.compile('content="https://www.ustream.tv/embed/(.+?)"', re.DOTALL).findall(content)
+    match = re.compile('content="https://www.ustream.tv/embed/(.+?)"', re.DOTALL).findall(content)
     m3u8_url = "http://iphone-streaming.ustream.tv/ustreamVideo/"+match[0]+"/streams/live/playlist.m3u8"
     listitem = xbmcgui.ListItem(path=m3u8_url)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
@@ -292,7 +304,7 @@ def addLink(name, url, mode, iconimage, desc, length="", date="", nr=""):
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Aired": date, "Episode": nr})
     if length:
-        liz.addStreamInfo('video', { 'duration': int(length) })
+        liz.addStreamInfo('video', {'duration': int(length)})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart:
         liz.setProperty("fanart_image", iconimage)
@@ -307,6 +319,7 @@ def addDir(name, url, mode, iconimage, type="", desc=""):
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
+
 
 def addPluginDir(name, url, iconimage):
     ok = True
