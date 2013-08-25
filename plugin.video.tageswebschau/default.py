@@ -14,15 +14,15 @@ xbox = xbmc.getCondVisibility("System.Platform.xbox")
 
 def index():
     content = getUrl("http://wochenwebschau.tumblr.com/")
-    spl = content.split('<div class="post-panel">')
+    spl = content.split('<div class="post-panel"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('<div class="copy">(.+?)</div>', re.DOTALL).findall(entry)
         title = match[0]
-        match = re.compile('<span>(.+?)</span>', re.DOTALL).findall(title)
+        match = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(title)
         if match:
             title = match[0]
-        title = title.replace("<p>", "").replace("</p>", "")
+        title = title.replace("<p>", "").replace("</p>", "").replace("<span>", "").replace("</span>", "")
         if ">" in title:
             title = title[title.find(">")+1:]
             if ">" in title:
@@ -57,7 +57,7 @@ def cleanTitle(title):
 
 def getUrl(url):
     req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0')
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0')
     response = urllib2.urlopen(req)
     link = response.read()
     response.close()
