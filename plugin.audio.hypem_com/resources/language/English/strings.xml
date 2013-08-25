@@ -12,5 +12,11 @@
   <string id="30010">Remixes</string>
   <string id="30011">No Remixes</string>
   <string id="30012">All</string>
+  <string id="30013">Search</string>
+  <string id="30014">My Artists</string>
+  <string id="30015">Love/unlove Song</string>
+  <string id="30016">Follow/unfollow Artist</string>
+  <string id="30017">Unfollow Artist</string>
   <string id="30101">Username</string>
+  <string id="30102">Password</string>
 </strings>
