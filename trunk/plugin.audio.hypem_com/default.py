@@ -45,7 +45,7 @@ def index():
     addDir(translation(30003) + " (" + translation(30010) + ")", urlMain+"/popular/remix/1?ax=1", 'listSongs', "")
     addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
     addDir(translation(30004), urlMain+"/popular/lastweek/1?ax=1", 'listSongs', "")
-    addDir("Zeitgeist", "", 'listZeitgeist', "")
+    addDir(translation(30019), "", 'listZeitgeist', "")
     addDir(translation(30005), "", 'listGenres', "")
     addDir(translation(30013), "", 'search', "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -67,7 +67,8 @@ def listSongs(url):
     jsonContent = json.loads(match[0].strip())
     for track in jsonContent['tracks']:
         url = "/serve/source/"+track['id']+"/"+track['key']
-        addLink((track['artist'].encode('utf-8')+" - "+track['song'].encode('utf-8')).strip(), url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'))
+        title = (track['artist'].encode('utf-8')+" - "+track['song'].encode('utf-8')).strip()
+        addLink(title, url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'))
     match = re.compile('"page_next":"(.+?)"', re.DOTALL).findall(content)
     if match:
         url = match[0].replace("\\","")
@@ -95,6 +96,9 @@ def playSong(url):
     url = match[0].replace("\\","")
     listitem = xbmcgui.ListItem(path=url+"|User-Agent="+userAgent)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    if username and password:
+        session = getSession()
+        opener.open("http://hypem.com/inc/user_action.php?act=log_action&type=listen&session="+session+"&val="+id+"&playback_manual=1")
 
 
 def search():
@@ -123,13 +127,13 @@ def getSession():
 
 def toggleLike(songID):
     session = getSession()
-    content = opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=item&val="+songID).read()
+    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=item&val="+songID)
     xbmc.executebuiltin("Container.Refresh")
 
 
 def toggleFollow(artist):
     session = getSession()
-    content = opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=query&val="+artist).read()
+    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=query&val="+artist)
     xbmc.executebuiltin("Container.Refresh")
 
 
