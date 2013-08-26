@@ -45,12 +45,14 @@ def index():
     addDir(translation(30003) + " (" + translation(30010) + ")", urlMain+"/popular/remix/1?ax=1", 'listSongs', "")
     addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
     addDir(translation(30004), urlMain+"/popular/lastweek/1?ax=1", 'listSongs', "")
+    addDir("Zeitgeist", "", 'listZeitgeist', "")
     addDir(translation(30005), "", 'listGenres', "")
     addDir(translation(30013), "", 'search', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def myMain():
+    addDir(translation(30018), urlMain+"/"+username+"/feed/1?ax=1", 'listSongs', "")
     addDir(translation(30014), "", 'listMyArtists', "")
     addDir(translation(30007), urlMain+"/"+username+"/1?ax=1", 'listSongs', "")
     addDir(translation(30008), urlMain+"/"+username+"/history/1?ax=1", 'listSongs', "")
@@ -65,7 +67,7 @@ def listSongs(url):
     jsonContent = json.loads(match[0].strip())
     for track in jsonContent['tracks']:
         url = "/serve/source/"+track['id']+"/"+track['key']
-        addLink((track['artist']+" - "+track['song']).strip(), url, 'playSong', track['time'], track['id'], track['artist'])
+        addLink((track['artist'].encode('utf-8')+" - "+track['song'].encode('utf-8')).strip(), url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'))
     match = re.compile('"page_next":"(.+?)"', re.DOTALL).findall(content)
     if match:
         url = match[0].replace("\\","")
@@ -135,7 +137,13 @@ def listMyArtists():
     content = opener.open(urlMain+"/"+username+"/list_artists").read()
     match = re.compile('<a href="/search/(.+?)">(.+?)<', re.DOTALL).findall(content)
     for id, title in match:
-        addDirR(title.title(), urlMain+"/search/"+id+"/1?ax=1&sortby=fav", 'listSongs', "", title)
+        addDirR(title.title(), urlMain+"/search/"+id+"/1?ax=1", 'listSongs', "", title)
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listZeitgeist():
+    addDir("2011", urlMain+"/zeitgeist/2011/songs_list?ax=1", 'listSongs', "")
+    addDir("2012", urlMain+"/zeitgeist/2012/tracks_list?ax=1", 'listSongs', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -207,6 +215,8 @@ elif mode == 'toggleFollow':
     toggleFollow(url)
 elif mode == 'listMyArtists':
     listMyArtists()
+elif mode == 'listZeitgeist':
+    listZeitgeist()
 elif mode == 'playSong':
     playSong(url)
 elif mode == 'search':

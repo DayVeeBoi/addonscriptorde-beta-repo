@@ -3,3 +3,8 @@
 1.0.1
 - Added search
 - Added personal stuff
+1.0.2
+- Added more personal stuff
+1.0.3
+- Fixed encoding problem
+- Added category: Zeitgeist
