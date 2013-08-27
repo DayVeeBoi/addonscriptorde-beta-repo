@@ -10,3 +10,7 @@
 - Added category: Zeitgeist
 1.0.4
 - Account: Songs are now added to history when played via xbmc
+1.0.5
+- Improved loving/unloving songs
+- Removed category: Zeitgeist
+- Added category: Time Machine

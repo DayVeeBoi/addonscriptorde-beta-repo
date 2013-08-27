@@ -7,11 +7,13 @@ import cookielib
 import sys
 import re
 import os
+import time
 import json
 import base64
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
+from datetime import datetime
 
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
@@ -36,8 +38,7 @@ if os.path.exists(cookieFile):
 def index():
     if username and password:
         login()
-    if username:
-        addDir(translation(30006), "", 'myMain', "")
+    addDir(translation(30006), "", 'myMain', "")
     addDir(translation(30002) + " (" + translation(30012) + ")", urlMain+"/latest/1?ax=1", 'listSongs', "")
     addDir(translation(30002) + " (" + translation(30010) + ")", urlMain+"/latest/remix/1?ax=1", 'listSongs', "")
     addDir(translation(30002) + " (" + translation(30011) + ")", urlMain+"/latest/noremix/1?ax=1", 'listSongs', "")
@@ -45,19 +46,24 @@ def index():
     addDir(translation(30003) + " (" + translation(30010) + ")", urlMain+"/popular/remix/1?ax=1", 'listSongs', "")
     addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
     addDir(translation(30004), urlMain+"/popular/lastweek/1?ax=1", 'listSongs', "")
-    addDir(translation(30019), "", 'listZeitgeist', "")
+    #addDir(translation(30019), "", 'listZeitgeist', "")
+    addDir(translation(30021), "", 'listTimeMachineYears', "")
     addDir(translation(30005), "", 'listGenres', "")
     addDir(translation(30013), "", 'search', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def myMain():
-    addDir(translation(30018), urlMain+"/"+username+"/feed/1?ax=1", 'listSongs', "")
-    addDir(translation(30014), "", 'listMyArtists', "")
-    addDir(translation(30007), urlMain+"/"+username+"/1?ax=1", 'listSongs', "")
-    addDir(translation(30008), urlMain+"/"+username+"/history/1?ax=1", 'listSongs', "")
-    addDir(translation(30009), urlMain+"/"+username+"/obsessed/1?ax=1", 'listSongs', "")
-    xbmcplugin.endOfDirectory(pluginhandle)
+    if username:
+        addDir(translation(30018), urlMain+"/"+username+"/feed/1?ax=1", 'listSongs', "")
+        addDir(translation(30014), "", 'listMyArtists', "")
+        addDir(translation(30007), urlMain+"/"+username+"/1?ax=1", 'listSongs', "")
+        addDir(translation(30008), urlMain+"/"+username+"/history/1?ax=1", 'listSongs', "")
+        addDir(translation(30009), urlMain+"/"+username+"/obsessed/1?ax=1", 'listSongs', "")
+        xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30022)+',5000)')
+        addon.openSettings()
 
 
 def listSongs(url):
@@ -68,7 +74,13 @@ def listSongs(url):
     for track in jsonContent['tracks']:
         url = "/serve/source/"+track['id']+"/"+track['key']
         title = (track['artist'].encode('utf-8')+" - "+track['song'].encode('utf-8')).strip()
-        addLink(title, url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'))
+        if track['fav']==1:
+            title = "[B]*[/B] " + title + " [B]*[/B]"
+        thumb = ""
+        #match = re.compile('href="/track/'+track['id']+'/.+?background:url\\((.+?)\\)', re.DOTALL).findall(content)
+        #if match:
+        #    thumb = match[0].replace(".jpg", "_320.jpg")
+        addLink(title, url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'), track['fav'], thumb)
     match = re.compile('"page_next":"(.+?)"', re.DOTALL).findall(content)
     if match:
         url = match[0].replace("\\","")
@@ -85,20 +97,22 @@ def listGenres():
 
 
 def playSong(url):
-    spl = url.split("/")
-    id = spl[-2]
-    key = spl[-1]
-    content = opener.open(urlMain+url).read()
-    match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
-    url = match[0].replace("\\","")
-    content = opener.open(urlMain+"/serve/source/"+id+"/"+key+"?retry=1&bytesLoaded=null&duration=0&transferTime=0&prev_url="+base64.b64encode(url)).read()
-    match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
-    url = match[0].replace("\\","")
-    listitem = xbmcgui.ListItem(path=url+"|User-Agent="+userAgent)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    if username and password:
-        session = getSession()
-        opener.open("http://hypem.com/inc/user_action.php?act=log_action&type=listen&session="+session+"&val="+id+"&playback_manual=1")
+    try:
+        spl = url.split("/")
+        id = spl[-2]
+        key = spl[-1]
+        content = opener.open(urlMain+url).read()
+        match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
+        url = match[0].replace("\\","")
+        content = opener.open(urlMain+"/serve/source/"+id+"/"+key+"?retry=1&bytesLoaded=null&duration=0&transferTime=0&prev_url="+base64.b64encode(url)).read()
+        match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
+        url = match[0].replace("\\","")
+        listitem = xbmcgui.ListItem(path=url+"|User-Agent="+userAgent)
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+        if username and password:
+            opener.open("http://hypem.com/inc/user_action.php?act=log_action&type=listen&session="+getSession()+"&val="+id+"&playback_manual=1")
+    except:
+        pass
 
 
 def search():
@@ -109,14 +123,6 @@ def search():
         listSongs(urlMain+"/search/"+search_string+"/1?ax=1&sortby=fav")
 
 
-def login():
-    content = opener.open(urlMain+"/1?ax=1").read()
-    if "show_lightbox('account')" not in content:
-        cj.save(cookieFile)
-        session = getSession()
-        content = opener.open("https://hypem.com/inc/user_action.php", "act=login&session="+session+"&user_screen_name="+username+"&user_password="+password).read()
-
-
 def getSession():
     fh = open(cookieFile, 'r')
     cookies = fh.read()
@@ -125,15 +131,20 @@ def getSession():
     return match[0]
 
 
+def login():
+    content = opener.open(urlMain+"/1?ax=1").read()
+    if "show_lightbox('account')" not in content:
+        cj.save(cookieFile)
+        content = opener.open("https://hypem.com/inc/user_action.php", "act=login&session="+getSession()+"&user_screen_name="+username+"&user_password="+password).read()
+
+
 def toggleLike(songID):
-    session = getSession()
-    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=item&val="+songID)
+    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+getSession()+"&type=item&val="+songID)
     xbmc.executebuiltin("Container.Refresh")
 
 
 def toggleFollow(artist):
-    session = getSession()
-    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+session+"&type=query&val="+artist)
+    opener.open("https://hypem.com/inc/user_action.php", "act=toggle_favorite&session="+getSession()+"&type=query&val="+artist)
     xbmc.executebuiltin("Container.Refresh")
 
 
@@ -148,6 +159,37 @@ def listMyArtists():
 def listZeitgeist():
     addDir("2011", urlMain+"/zeitgeist/2011/songs_list?ax=1", 'listSongs', "")
     addDir("2012", urlMain+"/zeitgeist/2012/tracks_list?ax=1", 'listSongs', "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listTimeMachineYears():
+    #addDir("2008", "2008", 'listTimeMachineWeeks', "")
+    #addDir("2009", "2009", 'listTimeMachineWeeks', "")
+    addDir("2010", "2010", 'listTimeMachineWeeks', "")
+    addDir("2011", "2011", 'listTimeMachineWeeks', "")
+    addDir("2012", "2012", 'listTimeMachineWeeks', "")
+    addDir("2013", "2013", 'listTimeMachineWeeks', "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listTimeMachineWeeks(year):
+    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    for i in range(1, 53, 1):
+        now = datetime.date(datetime.now())
+        date_string = year+' '+str(i)+' 1'
+        format = '%Y %W %w'
+        try:
+            d = datetime.strptime(date_string, format)
+        except TypeError:
+            d = datetime(*(time.strptime(date_string, format)[0:6]))
+        month = int(d.strftime("%m"))-1
+        other = d.strftime("-%d-%Y")
+        title = months[month]+other
+        if year==now.strftime("%Y"):
+            if i<=int(now.strftime("%U")):
+                addDir(title, urlMain+"/popular/week:"+title+"/1?ax=1", 'listSongs', "")
+        else:
+            addDir(title, urlMain+"/popular/week:"+title+"/1?ax=1", 'listSongs', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -166,16 +208,19 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, duration, songID, artist):
+def addLink(name, url, mode, duration, songID, artist, fav, thumb):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultAudio.png")
+    liz = xbmcgui.ListItem(name, iconImage="DefaultAudio.png", thumbnailImage=thumb)
     liz.setInfo(type="music", infoLabels={"title": name})
     liz.addStreamInfo('video', { 'duration': int(duration) })
     liz.setProperty('IsPlayable', 'true')
     entries = []
     if username and password:
-        entries.append((translation(30015), 'RunPlugin(plugin://'+addonID+'/?mode=toggleLike&url='+urllib.quote_plus(songID)+')',))
+        if fav==0:
+            entries.append((translation(30015), 'RunPlugin(plugin://'+addonID+'/?mode=toggleLike&url='+urllib.quote_plus(songID)+')',))
+        else:
+            entries.append((translation(30020), 'RunPlugin(plugin://'+addonID+'/?mode=toggleLike&url='+urllib.quote_plus(songID)+')',))
         entries.append((translation(30016), 'RunPlugin(plugin://'+addonID+'/?mode=toggleFollow&url='+urllib.quote_plus(artist)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -221,6 +266,10 @@ elif mode == 'listMyArtists':
     listMyArtists()
 elif mode == 'listZeitgeist':
     listZeitgeist()
+elif mode == 'listTimeMachineYears':
+    listTimeMachineYears()
+elif mode == 'listTimeMachineWeeks':
+    listTimeMachineWeeks(url)
 elif mode == 'playSong':
     playSong(url)
 elif mode == 'search':
