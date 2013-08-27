@@ -152,26 +152,28 @@ def listVideos(chartTitle):
     #API sometimes delivers other results (when sorting by relevance) than site search!?!
     content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(chartTitle)+"&lclk=video").read()
     content = content[content.find('id="search-results"'):]
-    content = content[:content.find('<div class="pyv-afc-ads-container">')]
     spl=content.split('<li class="yt-lockup clearfix')
-    for i in range(1,len(spl),1):
-        entry=spl[i]
-        match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(entry)
-        id=match[0]
-        match=re.compile('data-context-item-title="(.+?)"', re.DOTALL).findall(entry)
-        title=match[0]
-        title = cleanTitle(title)
-        match=re.compile('data-context-item-views="(.+?)"', re.DOTALL).findall(entry)
-        views=match[0]
-        match=re.compile('data-context-item-time="(.+?)"', re.DOTALL).findall(entry)
-        length=match[0]
-        match=re.compile('<div class="yt-lockup-description.+?>(.+?)</div>', re.DOTALL).findall(entry)
-        desc = ""
-        if match:
-            desc=cleanTitle(match[0].replace("<b>","").replace("</b>",""))
-        desc = views+"\n"+desc
-        thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-        addLink(title, id, "cache", thumb, desc, length, chartTitle)
+    for i in range(1, len(spl), 1):
+        try:
+            entry=spl[i]
+            match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(entry)
+            id=match[0]
+            match=re.compile('data-context-item-title="(.+?)"', re.DOTALL).findall(entry)
+            title=match[0]
+            title = cleanTitle(title)
+            match=re.compile('data-context-item-views="(.+?)"', re.DOTALL).findall(entry)
+            views=match[0]
+            match=re.compile('data-context-item-time="(.+?)"', re.DOTALL).findall(entry)
+            length=match[0]
+            match=re.compile('<div class="yt-lockup-description.+?>(.+?)</div>', re.DOTALL).findall(entry)
+            desc = ""
+            if match:
+                desc=cleanTitle(match[0].replace("<b>","").replace("</b>",""))
+            desc = views+"\n"+desc
+            thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
+            addLink(title, id, "cache", thumb, desc, length, chartTitle)
+        except:
+            pass
     xbmcplugin.endOfDirectory(pluginhandle)
 
 

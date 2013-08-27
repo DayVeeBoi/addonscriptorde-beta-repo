@@ -12,3 +12,5 @@
 - Fixed bug with play unwatched mode
 1.0.5
 - Thumbs are now displayed (only for watched videos)
+1.0.6
+- Fixed site changes while choosing video manually
