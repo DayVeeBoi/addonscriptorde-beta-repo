@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
     </requires>
@@ -399,7 +399,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.0" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.1" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.0"/>
   </requires>

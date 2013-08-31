@@ -104,21 +104,21 @@ def muted():
 
 def addVideos():
     entries = []
-    fileTypes = ('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx', '.pls', '.strm', '.m3u', '.mp3', '.aac', '.flac', '.ogg', '.wma', '.wav')
+    fileTypes = ('.mkv', '.avi', '.mp4', '.wmv', '.flv', '.mpg', '.mpeg', '.mov', '.ts', '.m2ts', '.m4v', '.m2v', '.rm', '.3gp', '.asf', '.asx', '.amv', '.divx', '.pls', '.strm', '.m3u', '.mp3', '.aac', '.flac', '.ogg', '.wma', '.wav')
     if videoDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')):
         dirs, files = xbmcvfs.listdir(videoDir)
         for file in files:
-            if file.endswith(fileTypes):
+            if file.lower().endswith(fileTypes):
                 entries.append(os.path.join(videoDir, file))
         for dir in dirs:
             dirs2, files = xbmcvfs.listdir(os.path.join(videoDir, dir))
             for file in files:
-                if file.endswith(fileTypes):
+                if file.lower().endswith(fileTypes):
                     entries.append(os.path.join(videoDir, os.path.join(dir, file)))
     else:
         for root, dirs, files in os.walk(videoDir):
             for filename in files:
-                if filename.endswith(fileTypes):
+                if filename.lower().endswith(fileTypes):
                     entries.append(os.path.join(root, filename))
     random.shuffle(entries)
     for file in entries:
