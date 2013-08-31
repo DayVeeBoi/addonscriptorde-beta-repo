@@ -14,3 +14,5 @@
 - Thumbs are now displayed (only for watched videos)
 1.0.6
 - Fixed site changes while choosing video manually
+1.0.7
+- Fixed billboard.com site changes

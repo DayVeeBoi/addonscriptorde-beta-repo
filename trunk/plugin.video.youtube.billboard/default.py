@@ -99,9 +99,9 @@ def listCharts(url):
     addDir("[B]- "+translation(30002)+"[/B]", url, "autoPlay", "random")
     addDir("[B]- "+translation(30003)+"[/B]", url, "autoPlay", "unwatched")
     content = opener.open(url).read()
-    match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
-    for title in match:
-        title = cleanTitle(title[title.find(":")+1:]).replace("Featuring", "Feat.")
+    match = re.compile('<item>.+?<artist>(.+?)</artist>.+?<chart_item_title>(.+?)</chart_item_title>', re.DOTALL).findall(content)
+    for artist, title in match:
+        title = cleanTitle(artist+" - "+title[title.find(":")+1:]).replace("Featuring", "Feat.")
         fileTitle = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
         cacheFile = os.path.join(searchHistoryFolder, fileTitle)
         thumb = ""
@@ -218,7 +218,7 @@ def translation(id):
 
 
 def cleanTitle(title):
-    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
+    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&#039;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
     title = title.replace("&Auml;", "Ä").replace("&Uuml;", "Ü").replace("&Ouml;", "Ö").replace("&auml;", "ä").replace("&uuml;", "ü").replace("&ouml;", "ö")
     title = title.strip()
     return title
