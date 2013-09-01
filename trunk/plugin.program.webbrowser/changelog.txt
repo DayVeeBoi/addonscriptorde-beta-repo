@@ -24,3 +24,6 @@
 - Improved magnifier (Zoom In/Out)
 - Some Usability improvements
 - Some small bugfixes
+1.0.9
+- Added IE10 support (HTML5,...)
+- Fixed bug with watchever.de login

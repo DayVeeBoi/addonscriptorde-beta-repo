@@ -7,3 +7,7 @@
 - Fixed bug with --user-data-dir parameter
 - Added --no-default-browser-check parameter
 - Added --no-first-run parameter
+1.0.3
+- Added --start-maximized parameter
+- Added --disable-translate parameter
+- Added --disable-new-tab-first-run parameter

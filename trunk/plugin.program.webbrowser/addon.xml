@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.8" provider-name="AddonScriptorDE">
+<addon id="plugin.program.webbrowser" name="XBMC WebBrowser" version="1.0.9" provider-name="AddonScriptorDE">
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
+        <platform>windx</platform>
         <summary lang="en">A WebBrowser with mouse control via keyboard/remote and some other useful features</summary>
         <summary lang="de">Ein WebBrowser mit Maussteuerung per Tastatur/Fernbedienung und ein paar weiteren Features</summary>
         <language></language>
