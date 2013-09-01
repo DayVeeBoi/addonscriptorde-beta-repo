@@ -95,7 +95,7 @@ def getFullPath(path, url):
     profile = ""
     if useOwnProfile:
         profile = ' --user-data-dir="'+profileFolder+'"'
-    return '"'+path+'"'+profile+' --no-default-browser-check --no-first-run --kiosk "'+url+'"'
+    return '"'+path+'"'+profile+' --start-maximized --disable-translate --disable-new-tab-first-run --no-default-browser-check --no-first-run --kiosk "'+url+'"'
 
 
 def showSite(url, stopPlayback):
