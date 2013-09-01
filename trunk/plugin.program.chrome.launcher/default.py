@@ -20,7 +20,9 @@ osOsx = xbmc.getCondVisibility('system.platform.osx')
 osLinux = xbmc.getCondVisibility('system.platform.linux')
 useOwnProfile = addon.getSetting("useOwnProfile") == "true"
 useCustomPath = addon.getSetting("useCustomPath") == "true"
+startScriptBefore = addon.getSetting("startScriptBefore") == "true"
 customPath = str(addon.getSetting("customPath"))
+scriptPath = str(addon.getSetting("scriptPath"))
 
 userDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 profileFolder = os.path.join(userDataFolder, 'profile')
@@ -102,6 +104,8 @@ def showSite(url, stopPlayback):
     if stopPlayback == "yes":
         xbmc.Player().stop()
     if osWin:
+        if startScriptBefore and scriptPath:
+            subprocess.Popen(scriptPath, shell=False)
         path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
         path64 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
         if useCustomPath and os.path.exists(customPath):
@@ -117,6 +121,8 @@ def showSite(url, stopPlayback):
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
             addon.openSettings()
     elif osOsx:
+        if startScriptBefore and scriptPath:
+            subprocess.Popen(scriptPath, shell=True)
         path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url)
@@ -128,6 +134,8 @@ def showSite(url, stopPlayback):
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
             addon.openSettings()
     elif osLinux:
+        if startScriptBefore and scriptPath:
+            subprocess.Popen(scriptPath, shell=True)
         path = "/usr/bin/google-chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url)

@@ -11,3 +11,5 @@
 - Added --start-maximized parameter
 - Added --disable-translate parameter
 - Added --disable-new-tab-first-run parameter
+1.0.4
+- Added setting to start a custom user script before chrome
