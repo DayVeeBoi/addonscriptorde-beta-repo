@@ -11,6 +11,7 @@ import sqlite3
 import sys
 import re
 import os
+import json
 
 addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
@@ -20,7 +21,7 @@ userDataFolder=xbmc.translatePath("special://profile/addon_data/"+addonID)
 searchHistoryFolder=os.path.join(userDataFolder, "history")
 socket.setdefaulttimeout(30)
 opener = urllib2.build_opener()
-userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0"
+userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMain = "http://www.billboard.com"
 
@@ -97,7 +98,8 @@ def listCharts(url):
     xbmcplugin.setContent(pluginhandle, "episodes")
     addDir("[B]- "+translation(30001)+"[/B]", url, "autoPlay", "all")
     addDir("[B]- "+translation(30002)+"[/B]", url, "autoPlay", "random")
-    addDir("[B]- "+translation(30003)+"[/B]", url, "autoPlay", "unwatched")
+    if dbPath:
+        addDir("[B]- "+translation(30003)+"[/B]", url, "autoPlay", "unwatched")
     content = opener.open(url).read()
     match = re.compile('<item>.+?<artist>(.+?)</artist>.+?<chart_item_title>(.+?)</chart_item_title>', re.DOTALL).findall(content)
     for artist, title in match:
@@ -139,41 +141,26 @@ def playVideo(title):
 
 
 def getYoutubeId(title):
-    #API sometimes delivers other results (when sorting by relevance) than site search!?!
-    #content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2").read()
-    #match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
-    content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(title)+"&lclk=video").read()
-    content = content[content.find('id="search-results"'):]
-    match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(content)
+    content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&alt=json&time=all_time&v=2").read()
+    match=re.compile(':video:(.+?)"', re.DOTALL).findall(content)
     return match[0]
 
 
 def listVideos(chartTitle):
-    #API sometimes delivers other results (when sorting by relevance) than site search!?!
-    content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(chartTitle)+"&lclk=video").read()
-    content = content[content.find('id="search-results"'):]
-    spl=content.split('<li class="yt-lockup clearfix')
-    for i in range(1, len(spl), 1):
-        try:
-            entry=spl[i]
-            match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(entry)
-            id=match[0]
-            match=re.compile('data-context-item-title="(.+?)"', re.DOTALL).findall(entry)
-            title=match[0]
-            title = cleanTitle(title)
-            match=re.compile('data-context-item-views="(.+?)"', re.DOTALL).findall(entry)
-            views=match[0]
-            match=re.compile('data-context-item-time="(.+?)"', re.DOTALL).findall(entry)
-            length=match[0]
-            match=re.compile('<div class="yt-lockup-description.+?>(.+?)</div>', re.DOTALL).findall(entry)
-            desc = ""
-            if match:
-                desc=cleanTitle(match[0].replace("<b>","").replace("</b>",""))
-            desc = views+"\n"+desc
-            thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-            addLink(title, id, "cache", thumb, desc, length, chartTitle)
-        except:
-            pass
+    content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(chartTitle)+"&max-results=20&start-index=1&orderby=relevance&alt=json&time=all_time&v=2").read()
+    content = json.loads(content)
+    for entry in content['feed']['entry']:
+        id=entry['media$group']['yt$videoid']['$t']
+        title=entry['title']['$t'].encode('utf-8')
+        views=str(entry['yt$statistics']['viewCount'])
+        rUp=entry['yt$rating']['numLikes']
+        rDown=entry['yt$rating']['numDislikes']
+        rating=str(int((float(rUp)/(float(rUp)+float(rDown)))*100)) + " % like it"
+        length= str(entry['media$group']['yt$duration']['seconds'])
+        desc= entry['media$group']['media$description']['$t'].encode('utf-8')
+        desc = views+" Views   |   "+rating+"\n"+desc
+        thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
+        addLink(title, id, "cache", thumb, desc, length, chartTitle)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -228,8 +215,10 @@ def addLink(name, url, mode, iconimage, desc="", length="", chartTitle=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&chartTitle="+str(chartTitle)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     liz.setProperty('IsPlayable', 'true')
+    if length:
+        liz.addStreamInfo('video', {'duration': int(length)})
     entries = []
     entries.append((translation(30032), 'Container.Update(plugin://'+addonID+'/?mode=listVideos&url='+urllib.quote_plus(url)+')',))
     entries.append((translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
