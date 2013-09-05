@@ -75,44 +75,21 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dailymotion_com" name="DailyMotion.com" version="2.1.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.atv_at" name="ATV.at" version="2.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.simple.downloader" version="1.0.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Movies, TV, Music, User-Clips, 3D and Livestreams</summary>
-        <language></language>
-        <description lang="en">Movies, TV, Music, User-Clips, 3D and Livestreams</description>
-        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
-        <website>http://www.dailymotion.com</website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.dailymotion_com</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=142626</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-    </extension>
-</addon>
-
-<addon id="plugin.video.discovery_com" name="Discovery Networks" version="1.0.1" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.0"/>
-        <import addon="plugin.video.howstuffworks_com" version="1.0.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Watch news, clips and full episodes on Discovery Network Channels (+AnimalPlanet Live streams)</summary>
-        <language>en</language>
-        <description lang="en">Watch news, clips and full episodes on Discovery Network Channels (+AnimalPlanet Live streams)</description>
-        <website>http://www.discovery.com</website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.discovery_com</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
+        <summary lang="de">ATV.at Mediathek</summary>
+        <summary lang="en">ATV.at media library</summary>
+        <language>de</language>
+        <description lang="de">ATV.at Mediathek</description>
+        <description lang="en">ATV.at media library</description>
+    <platform>all</platform>
     </extension>
 </addon>
 
@@ -175,27 +152,6 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.pantoffel_tv" name="Pantoffel.tv" version="1.0.1" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="de">Pantoffel-TV Magazin schauen</summary>
-        <summary lang="en">Watch Pantoffel-TV magazine</summary>
-        <language>de</language>
-        <description lang="de">Pantoffel-TV Magazin schauen</description>
-        <description lang="en">Watch Pantoffel-TV magazine</description>
-        <website></website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.pantoffel_tv</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-    </extension>
-</addon>
-
 <addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.1.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
@@ -215,27 +171,6 @@
         <website>http://www.reddit.com</website>
         <source>https://github.com/AddonScriptorDE/plugin.video.reddit_tv</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=170603</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-    </extension>
-</addon>
-
-<addon id="plugin.video.tageswebschau" name="WochenWEBschau" version="2.0.5" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="de">Die neuesten Web-Nachrichten</summary>
-        <summary lang="en">Latest Web-News</summary>
-        <language>de</language>
-        <description lang="de">Die neuesten Web-Nachrichten</description>
-        <description lang="en">Latest Web-News</description>
-        <website>http://wochenwebschau.de</website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.tageswebschau</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
