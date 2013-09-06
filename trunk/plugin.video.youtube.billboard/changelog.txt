@@ -18,3 +18,5 @@
 - Fixed billboard.com site changes
 1.0.8
 - Changed Youtube search result handling
+1.0.9
+- Reverted last changes because of bad search results
