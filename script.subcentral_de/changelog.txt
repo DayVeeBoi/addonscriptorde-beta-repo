@@ -25,3 +25,5 @@
 1.0.9
 - Fixed filename detection bug
 - Added support for some more subtitle table layouts
+1.1.0
+- Changed subcentral login (urlencoded user/pw)

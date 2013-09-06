@@ -16,12 +16,14 @@ addonId = 'plugin.video.lovefilm_com'
 addon = xbmcaddon.Addon(id=addonId)
 translation = addon.getLocalizedString
 baseUrl = "http://www.lovefilm.com"
-osx = xbmc.getCondVisibility('system.platform.osx')
+osWin = xbmc.getCondVisibility('system.platform.windows')
+osOsx = xbmc.getCondVisibility('system.platform.osx')
+osLinux = xbmc.getCondVisibility('system.platform.linux')
+winBrowser = addon.getSetting("winBrowser")
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonId)
 useCoverAsFanart = addon.getSetting("useCoverAsFanart") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
-osxPlayer = addon.getSetting("osxPlayer")
 if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
 
@@ -81,6 +83,7 @@ def listCollections(url):
 
 
 def listVideos(url):
+    xbmcplugin.setContent(pluginhandle, "movies")
     content = getUrl(url)
     if "did not match any titles" not in content:
         if '<div class="core_info_snb' in content:
@@ -170,18 +173,15 @@ def playVideoBrowser(url):
 
 def openBrowser(url):
     xbmc.Player().stop()
-    if osx:
-        if osxPlayer == "0":
-            fullUrl = 'open -a "/Applications/Safari.app/" '+url
-        elif osxPlayer == "1":
-            fullUrl = 'open -a "/Applications/Firefox.app/" '+url
-        elif osxPlayer == "2":
-            fullUrl = '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --kiosk '+url
-        elif osxPlayer == "3":
-            fullUrl = 'open -a "/Applications/Kylo.app/" '+url
-        subprocess.Popen(fullUrl, shell=True)
+    if osWin:
+        if winBrowser=="0":
+            xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite&showScrollbar=no)')
+        elif winBrowser=="1":
+            xbmc.executebuiltin('RunPlugin(plugin://plugin.program.chrome.launcher/?url='+urllib.quote_plus(url)+'&mode=showSite)')
+    elif osOsx or osLinux:
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.chrome.launcher/?url='+urllib.quote_plus(url)+'&mode=showSite)')
     else:
-        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite&showScrollbar=no)')
+        xbmc.executebuiltin('XBMC.Notification(Info:, OS not supported!,5000)')
 
 
 def cleanTitle(title):

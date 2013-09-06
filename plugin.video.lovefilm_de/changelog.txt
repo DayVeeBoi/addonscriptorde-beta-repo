@@ -15,3 +15,5 @@
 - OSX: Chrome now starts in Kiosk-Mode
 1.0.6
 - Fixed collection listing
+1.0.7
+- Added Chrome Launcher integration
