@@ -58,7 +58,7 @@ currentFile = xbmc.Player().getPlayingFile()
 
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-opener.open("http://www.subcentral.de/index.php?form=UserLogin", data="loginUsername="+user+"&loginPassword="+pw)
+opener.open("http://www.subcentral.de/index.php?form=UserLogin", data="loginUsername="+urllib.quote_plus(user)+"&loginPassword="+urllib.quote_plus(pw))
 
 while (user=="" or pw==""):
   addon.openSettings()
