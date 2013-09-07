@@ -13,3 +13,5 @@
 - Added --disable-new-tab-first-run parameter
 1.0.4
 - Added setting to start a custom user script before chrome
+1.0.5
+- Added optional delay after executing custom user script

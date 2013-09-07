@@ -23,6 +23,7 @@ useCustomPath = addon.getSetting("useCustomPath") == "true"
 startScriptBefore = addon.getSetting("startScriptBefore") == "true"
 customPath = str(addon.getSetting("customPath"))
 scriptPath = str(addon.getSetting("scriptPath"))
+scriptDelay = int(addon.getSetting("scriptDelay"))
 
 userDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 profileFolder = os.path.join(userDataFolder, 'profile')
@@ -69,8 +70,9 @@ def index():
 
 def addSite(site="", title=""):
     if site:
+        filename = getFileName(title)
         content = "title="+title+"\nurl="+site+"\nthumb=DefaultFolder.png\nstopPlayback=no"
-        fh = open(os.path.join(siteFolder, title+".link"), 'w')
+        fh = open(os.path.join(siteFolder, filename+".link"), 'w')
         fh.write(content)
         fh.close()
     else:
@@ -87,10 +89,14 @@ def addSite(site="", title=""):
                 if keyboard.isConfirmed() and keyboard.getText():
                     stopPlayback = keyboard.getText()
                     content = "title="+title+"\nurl="+url+"\nthumb=DefaultFolder.png\nstopPlayback="+stopPlayback
-                    fh = open(os.path.join(siteFolder, title+".link"), 'w')
+                    fh = open(os.path.join(siteFolder, getFileName(title)+".link"), 'w')
                     fh.write(content)
                     fh.close()
     xbmc.executebuiltin("Container.Refresh")
+
+
+def getFileName(title):
+    return (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
 
 
 def getFullPath(path, url):
@@ -106,6 +112,8 @@ def showSite(url, stopPlayback):
     if osWin:
         if startScriptBefore and scriptPath:
             subprocess.Popen(scriptPath, shell=False)
+            if scriptDelay>0:
+                xbmc.sleep(scriptDelay*1000)
         path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
         path64 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
         if useCustomPath and os.path.exists(customPath):
@@ -123,6 +131,8 @@ def showSite(url, stopPlayback):
     elif osOsx:
         if startScriptBefore and scriptPath:
             subprocess.Popen(scriptPath, shell=True)
+            if scriptDelay>0:
+                xbmc.sleep(scriptDelay*1000)
         path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url)
@@ -136,6 +146,8 @@ def showSite(url, stopPlayback):
     elif osLinux:
         if startScriptBefore and scriptPath:
             subprocess.Popen(scriptPath, shell=True)
+            if scriptDelay>0:
+                xbmc.sleep(scriptDelay*1000)
         path = "/usr/bin/google-chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url)
@@ -149,12 +161,13 @@ def showSite(url, stopPlayback):
 
 
 def removeSite(title):
-    os.remove(os.path.join(siteFolder, title+".link"))
+    os.remove(os.path.join(siteFolder, getFileName(title)+".link"))
     xbmc.executebuiltin("Container.Refresh")
 
 
 def editSite(title):
-    file = os.path.join(siteFolder, title+".link")
+    filenameOld = getFileName(title)
+    file = os.path.join(siteFolder, filenameOld+".link")
     fh = open(file, 'r')
     title = ""
     url = ""
@@ -187,11 +200,11 @@ def editSite(title):
             if keyboard.isConfirmed() and keyboard.getText():
                 stopPlayback = keyboard.getText()
                 content = "title="+title+"\nurl="+url+"\nthumb="+thumb+"\nstopPlayback="+stopPlayback
-                fh = open(os.path.join(siteFolder, title+".link"), 'w')
+                fh = open(os.path.join(siteFolder, getFileName(title)+".link"), 'w')
                 fh.write(content)
                 fh.close()
                 if title != oldTitle:
-                    os.remove(os.path.join(siteFolder, oldTitle+".link"))
+                    os.remove(os.path.join(siteFolder, filenameOld+".link"))
     xbmc.executebuiltin("Container.Refresh")
 
 

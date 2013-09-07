@@ -11,4 +11,5 @@
   <string id="30012">Eigenes Nutzerprofil nutzen (Kann beim ersten Start etwas dauern)</string>
   <string id="30013">Benutzerdefiniertes Skript vor Chrome starten</string>
   <string id="30014">Script Pfad</string>
+  <string id="30015">Pause nach Skript (in Sekunden)</string>
 </strings>
