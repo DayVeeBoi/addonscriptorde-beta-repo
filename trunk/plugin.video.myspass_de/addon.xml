@@ -13,5 +13,9 @@
         <language>de</language>
         <description lang="de">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob und vieles mehr...</description>
         <description lang="en">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob and much more...</description>
+        <website>http://atv.at</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.myspass_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
