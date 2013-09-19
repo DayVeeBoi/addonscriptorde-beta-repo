@@ -240,6 +240,12 @@ def playVideo(url):
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
+def queueVideo(url, name):
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    listitem = xbmcgui.ListItem(name)
+    playlist.add(url, listitem)
+
+
 def playLive():
     content = getUrl("http://euronews.hexaglobe.com/json/")
     content = content[content.find('"'+language+'":'):]
@@ -284,28 +290,27 @@ def parameters_string_to_dict(parameters):
 def addLink(name, url, mode, iconimage, desc=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(
-        name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     liz.setProperty('IsPlayable', 'true')
-    ok = xbmcplugin.addDirectoryItem(handle=int(
-        sys.argv[1]), url=u, listitem=liz)
+    if mode=="playVideo":
+        liz.addContextMenuItems([(translation(30006), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
 
 def addDir(name, url, mode, iconimage, desc=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(
-        name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
-    ok = xbmcplugin.addDirectoryItem(handle=int(
-        sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
+name = urllib.unquote_plus(params.get('name', ''))
 
 if mode == 'listVideos':
     listVideos(url)
@@ -319,6 +324,8 @@ elif mode == 'playLive':
     playLive()
 elif mode == 'playVideo':
     playVideo(url)
+elif mode == 'queueVideo':
+    queueVideo(url, name)
 elif mode == 'search':
     search()
 else:
