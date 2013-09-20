@@ -20,7 +20,8 @@ forceViewMode = addon.getSetting("forceViewMode") == "true"
 useThumbAsFanart=addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewMode"))
 baseUrl = "http://www.ardmediathek.de"
-
+defaultThumb = baseUrl+"/ard/static/pics/default/16_9/default_webM_16_9.jpg"
+icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
@@ -41,7 +42,7 @@ def index():
     addDir(translation(30006), "", 'listCats', "")
     addDir(translation(30007), "", 'listDossiers', "")
     addDir(translation(30008), "", 'search', "")
-    addLink(translation(30013), "", 'playLive', "")
+    addLink(translation(30013), "", 'playLive', icon)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -149,19 +150,21 @@ def listShowsAZ(letter):
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 def getBetterThumb(url):
+    if baseUrl+"/ard/static/pics/default/16_9/default" in url:
+        url = defaultThumb
     if "/scaled/" in url:
-      url = url.replace("/scaled/","/contentblob/").replace("-bild-xs16x9","/bild/1")
+        url = url.replace("/scaled/","/contentblob/").replace("-bild-xs16x9","/bild/1")
     elif "/contentblob/" in url:
-      match = re.compile('/contentblob/.+?/.+?/.+?/.+?/(.+?)/', re.DOTALL).findall(url)
-      id = int(match[0])
-      if id>=15000000:
-        id = str(id-2)
-        url = baseUrl+"/ard/servlet/contentblob/"+id[0:2]+"/"+id[2:4]+"/"+id[4:6]+"/"+id[6:8]+"/"+id+"/bild/1"
-      elif id>=13300000:
-        id = str(id+2)
-        url = baseUrl+"/ard/servlet/contentblob/"+id[0:2]+"/"+id[2:4]+"/"+id[4:6]+"/"+id[6:8]+"/"+id+"/bild/1"
-      elif id>=10000000:
-        id = str(id+6)
+        match = re.compile('/contentblob/.+?/.+?/.+?/.+?/(.+?)/', re.DOTALL).findall(url)
+        id = int(match[0])
+        if id>=15000000:
+            id = str(id-2)
+        elif id>=12292408:
+            id = str(id+2)
+        elif id>=10159892:
+            id = str(id+6)
+        elif id>=10000000:
+            id = str(id+4)
         url = baseUrl+"/ard/servlet/contentblob/"+id[0:2]+"/"+id[2:4]+"/"+id[4:6]+"/"+id[6:8]+"/"+id+"/bild/1"
     return url
     
@@ -455,7 +458,7 @@ def parameters_string_to_dict(parameters):
 def addLink(name, url, mode, iconimage, duration="", desc=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=defaultThumb, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration, "Plot": desc})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart:
@@ -479,7 +482,7 @@ def addDir(name, url, mode, iconimage, desc=""):
 def addShowDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=defaultThumb, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     if useThumbAsFanart:
       liz.setProperty("fanart_image", iconimage)
@@ -492,7 +495,7 @@ def addShowDir(name, url, mode, iconimage):
 def addShowFavDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=defaultThumb, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     if useThumbAsFanart:
       liz.setProperty("fanart_image", iconimage)
