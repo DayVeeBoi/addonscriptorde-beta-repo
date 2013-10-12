@@ -6,3 +6,5 @@
 - Fixed login site changes
 1.0.3
 - Added Chrome Launcher integration
+1.0.4
+- Fixed site changes

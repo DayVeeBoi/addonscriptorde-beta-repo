@@ -155,17 +155,26 @@ def getBetterThumb(url):
     if "/scaled/" in url:
         url = url.replace("/scaled/","/contentblob/").replace("-bild-xs16x9","/bild/1")
     elif "/contentblob/" in url:
+        customIDs = {12660422:10159866, 13076654:13076650, 13927884:10160114, 13250800:9717382}
         match = re.compile('/contentblob/.+?/.+?/.+?/.+?/(.+?)/', re.DOTALL).findall(url)
         id = int(match[0])
-        if id>=15000000:
-            id = str(id-2)
+        if id in customIDs:
+            id = customIDs[id]
+        elif id>=15000000:
+            id = id-2
         elif id>=12292408:
-            id = str(id+2)
+            id = id+2
         elif id>=10159892:
-            id = str(id+6)
+            id = id+6
         elif id>=10000000:
-            id = str(id+4)
-        url = baseUrl+"/ard/servlet/contentblob/"+id[0:2]+"/"+id[2:4]+"/"+id[4:6]+"/"+id[6:8]+"/"+id+"/bild/1"
+            id = id+4
+        if id>=10000000:
+            id = str(id)
+            url = baseUrl+"/ard/servlet/contentblob/"+id[0:2]+"/"+id[2:4]+"/"+id[4:6]+"/"+id[6:8]+"/"+id+"/bild/1"
+        else:
+            newID = str(id*10)
+            id = str(id)
+            url = baseUrl+"/ard/servlet/contentblob/"+newID[0:2]+"/"+newID[2:4]+"/"+newID[4:6]+"/"+newID[6:8]+"/"+id+"/bild/1"
     return url
     
 

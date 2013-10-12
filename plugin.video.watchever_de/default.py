@@ -40,7 +40,7 @@ def listMovies(url):
     content = content[:content.find('<div class="clear"></div></div></div></div>')]
     match = re.compile('<a href="(.+?)" class=".+?" vkey=".+?"><div>(.+?)</div></a>', re.DOTALL).findall(content)
     for url, title in match:
-        addDir(title, baseUrl+url, 'showSortList', "")
+        addDir(title, url, 'showSortList', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -50,7 +50,7 @@ def listTvShows(url):
     content = content[:content.find('<div class="clear"></div></div></div></div>')]
     match = re.compile('<a href="(.+?)" class=".+?" vkey=".+?"><div>(.+?)</div></a>', re.DOTALL).findall(content)
     for url, title in match:
-        addDir(title, baseUrl+url, 'showSortList', "")
+        addDir(title, url, 'showSortList', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
