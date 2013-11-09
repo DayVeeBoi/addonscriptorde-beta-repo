@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import xbmc, xbmcgui, xbmcaddon, urllib, urllib2, cookielib, re, os, shutil, socket, base64
+import xbmc, xbmcgui, xbmcaddon, urllib, urllib2, socket, cookielib, re, os, shutil, base64, xbmcvfs
 
+addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(30)
-addonID = "script.subcentral_de"
-addon = xbmcaddon.Addon(id=addonID)
+addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 addonUserDataFolder=xbmc.translatePath("special://profile/addon_data/"+addonID)
 subTempDir=xbmc.translatePath("special://profile/addon_data/"+addonID+"/srtTemp/")
@@ -57,8 +57,11 @@ if playlist.getposition()>=0:
 currentFile = xbmc.Player().getPlayingFile()
 
 cj = cookielib.CookieJar()
+mainUrl = "http://www.subcentral.de"
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-opener.open("http://www.subcentral.de/index.php?form=UserLogin", data="loginUsername="+urllib.quote_plus(user)+"&loginPassword="+urllib.quote_plus(pw))
+userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0"
+opener.addheaders = [('User-Agent', userAgent)]
+opener.open(mainUrl+"/index.php?form=UserLogin", data="loginUsername="+urllib.quote_plus(user)+"&loginPassword="+urllib.quote_plus(pw))
 
 while (user=="" or pw==""):
   addon.openSettings()
@@ -148,7 +151,7 @@ def search():
           title=title[:title.find("(")].strip()
         
         if title=="" or season=="" or episode=="":
-          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30014)+'!,3000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30014)+'!,3000)')
           main()
         else:
           if season[0:1]=="0":
@@ -159,8 +162,9 @@ def search():
           if ownKey=="":
             ownKey=general
           searchString='intitle:"[subs] '+title+' - staffel '+season+'|0'+season+'"'
+          fullUrl="https://www.googleapis.com/customsearch/v1?key="+ownKey+"&cx=016144106520845837387:lj4yjfpwyna&q="+urllib.quote_plus(searchString)+"&alt=json"
           xbmc.log("SCDE Addon Log - Search: "+title+"#"+season)
-          content = getUrl("https://www.googleapis.com/customsearch/v1?key="+ownKey+"&cx=016144106520845837387:lj4yjfpwyna&q="+urllib.quote_plus(searchString)+"&alt=json")
+          content = getUrl(fullUrl)
           if '"items"' in content:
             content = content[content.find('"items"'):]
             spl=content.split('"kind"')
@@ -173,8 +177,6 @@ def search():
               url=match[0]
               if "staffel" in title.lower() and "subs:" in title.lower() and "postID=" not in url and "boardID=" not in url:
                 finalUrl=url
-                if "&pageNo=" in finalUrl:
-                  finalUrl=finalUrl[:finalUrl.find("&pageNo=")]
                 break
             if finalUrl=="":
               for i in range(1,len(spl),1):
@@ -185,15 +187,16 @@ def search():
                 url=match[0]
                 if "staffel" in title.lower() and "postID=" not in url and "boardID=" not in url:
                   finalUrl=url
-                  if "&pageNo=" in finalUrl:
-                    finalUrl=finalUrl[:finalUrl.find("&pageNo=")]
                   break
             
             if len(season)==1:
               season="0"+season
             
             if finalUrl!="":
-              content = opener.open(finalUrl).read()
+              threadID = finalUrl[finalUrl.find("&threadID=")+10:]
+              if "&" in threadID:
+                  threadID = threadID[:threadID.find("&")]
+              content = opener.open("http://www.subcentral.de/index.php?page=Thread&threadID="+threadID).read()
               if 'class="bedankhinweisSC' in content:
                 contentThanks=content
                 contentThanks=contentThanks[contentThanks.find('class="bedankhinweisSC'):]
@@ -202,8 +205,8 @@ def search():
                 dialog = xbmcgui.Dialog()
                 nr=dialog.select(title, [translation(30005)+"..."])
                 if nr>=0:
-                  opener.open("http://www.subcentral.de/index.php?action=Thank"+match[0].replace("&amp;","&"))
-                  content = opener.open("http://www.subcentral.de/index.php?page=Thread&threadID="+matchID[0]).read()
+                  opener.open(mainUrl+"/index.php?action=Thank"+match[0].replace("&amp;","&"))
+                  content = opener.open(mainUrl+"/index.php?page=Thread&threadID="+matchID[0]).read()
               
               attachments = []
               titles = []
@@ -249,18 +252,18 @@ def search():
               dialog = xbmcgui.Dialog()
               nr=dialog.select(os.path.basename(currentFile), titles)
               if nr>=0:
-                subUrl="http://www.subcentral.de/index.php?page=Attachment&attachmentID="+attachments[nr]
+                subUrl=mainUrl+"/index.php?page=Attachment&attachmentID="+attachments[nr]
                 setSubtitle(subUrl)
               elif backNav=="true":
                 main()
             else:
-              xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30015)+'!,3000)')
+              xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000)')
               main()
           elif '"totalResults": "0"' in content:
-            xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30015)+'!,3000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000)')
             main()
           else:
-            xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30016)+'!,10000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30016)+'!,10000)')
             main()
 
 def getEpisodes(entry):
@@ -392,7 +395,7 @@ def showFavourites():
           main()
 
 def showAllSeries():
-        content = opener.open("http://www.subcentral.de/index.php").read()
+        content = opener.open(mainUrl+"/index.php").read()
         content = content[content.find('<option value=""> Serien QuickJump </option>')+1:]
         content = content[:content.find('</form>')]
         match=re.compile('<option value="(.+?)">(.+?)</option>', re.DOTALL).findall(content)
@@ -411,7 +414,7 @@ def showAllSeries():
           main()
 
 def showSeries(seriesID):
-        content = opener.open("http://www.subcentral.de/index.php?page=Board&boardID="+seriesID).read()
+        content = opener.open(mainUrl+"/index.php?page=Board&boardID="+seriesID).read()
         match=re.compile('<title>(.+?) -', re.DOTALL).findall(content)
         SeriesTitle=match[0]
         content = content[content.find("<h3>Wichtige Themen</h3>"):]
@@ -465,7 +468,7 @@ def showSeries(seriesID):
             showFavourites()
 
 def showSubtitles(seriesID,id):
-        content = opener.open("http://www.subcentral.de/index.php?page=Thread&threadID="+id).read()
+        content = opener.open(mainUrl+"/index.php?page=Thread&threadID="+id).read()
         match=re.compile('<title>(.+?)</title>', re.DOTALL).findall(content)
         title=match[0]
         if 'class="bedankhinweisSC' in content:
@@ -476,8 +479,8 @@ def showSubtitles(seriesID,id):
           dialog = xbmcgui.Dialog()
           nr=dialog.select(title, [translation(30005)+"..."])
           if nr>=0:
-            opener.open("http://www.subcentral.de/index.php?action=Thank"+match[0].replace("&amp;","&"))
-            content = opener.open("http://www.subcentral.de/index.php?page=Thread&threadID="+id).read()
+            opener.open(mainUrl+"/index.php?action=Thank"+match[0].replace("&amp;","&"))
+            content = opener.open(mainUrl+"/index.php?page=Thread&threadID="+id).read()
           elif backNav=="true":
             showSeries(seriesID)
         attachments = []
@@ -528,7 +531,7 @@ def showSubtitles(seriesID,id):
         dialog = xbmcgui.Dialog()
         nr=dialog.select(os.path.basename(currentFile), titles)
         if nr>=0:
-          subUrl="http://www.subcentral.de/index.php?page=Attachment&attachmentID="+attachments[nr]
+          subUrl=mainUrl+"/index.php?page=Attachment&attachmentID="+attachments[nr]
           setSubtitle(subUrl)
         elif backNav=="true":
           showSeries(seriesID)
@@ -561,20 +564,23 @@ def setSubtitle(subUrl):
         elif len(files)!=0:
           tempFile = xbmc.translatePath(subTempDir+"/"+files[0])
         else:
-          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30017)+'!,3000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30017)+'!,3000)')
           if pause=="true" and xbmc.Player().isPlayingVideo():
             xbmc.Player().pause()
         if tempFile!="":
           shutil.copy2(tempFile, subFile)
           if saveSub=="true" and "http://" not in currentFile and "plugin://" not in currentFile:
             try:
-              extLength=len(currentFile.split(".")[-1])
-              shutil.copy2(tempFile, currentFile[:-extLength]+"srt")
+              extLength = len(currentFile.split(".")[-1])
+              archiveFile = currentFile[:-extLength]+"srt"
+              xbmcvfs.copy(tempFile, archiveFile)
+              global subFile
+              subFile = archiveFile
             except:
               pass
           clearSubTempDir()
           xbmc.Player().setSubtitles(subFile)
-          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30012)+'!,2000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30012)+'!,2000)')
           if pause=="true" and xbmc.Player().isPlayingVideo():
             xbmc.Player().pause()
 
@@ -596,7 +602,7 @@ def addToFavourites(seriesID,title):
             fh=open(favFile, 'a')
             fh.write(entry+"\n")
             fh.close()
-            xbmc.executebuiltin('XBMC.Notification(Info:,'+title+': '+translation(30008)+',3000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30008)+',3000)')
         else:
           fh=open(favFile, 'a')
           fh.write(entry+"\n")
@@ -612,11 +618,11 @@ def removeFromFavourites(seriesID,title):
         fh=open(favFile, 'w')
         fh.write(newContent)
         fh.close()
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+title+': '+translation(30009)+',3000)')
+        xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30009)+',3000)')
 
 def getUrl(url):
         req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0')
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0')
         response = urllib2.urlopen(req)
         content=response.read()
         response.close()
