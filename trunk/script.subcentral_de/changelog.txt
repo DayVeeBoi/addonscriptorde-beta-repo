@@ -27,3 +27,6 @@
 - Added support for some more subtitle table layouts
 1.1.0
 - Changed subcentral login (urlencoded user/pw)
+1.1.1
+- Fixed subtitle archiving on network shares
+- Fixed search
