@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
     </requires>
@@ -118,7 +118,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.discovery_com" name="Discovery Networks" version="2.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.discovery_com" name="Discovery Networks" version="2.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.howstuffworks_com" version="1.0.0"/>
@@ -177,7 +177,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.hypem_com" name="Hype Machine" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.hypem_com" name="Hype Machine" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
     </requires>
@@ -259,13 +259,14 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.1.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.1.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
         <import addon="plugin.video.vimeo" version="2.3.0"/>
         <import addon="plugin.video.dailymotion_com" version="1.0.0"/>
         <import addon="script.module.simple.downloader" version="1.0.0"/>
+        <import addon="plugin.program.chrome.launcher" version="1.0.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -366,7 +367,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -505,7 +506,7 @@
   </extension>
 </addon>
 
-<addon id="script.subcentral_de" name="SubCentral.de" version="1.1.0" provider-name="AddonScriptorDE">
+<addon id="script.subcentral_de" name="SubCentral.de" version="1.1.1" provider-name="AddonScriptorDE">
   <extension point="xbmc.python.subtitles" library="default.py" />
   <extension point="xbmc.addon.metadata">
     <summary lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</summary>

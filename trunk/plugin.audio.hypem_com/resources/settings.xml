@@ -1,6 +1,7 @@
 <settings>
    <setting id="username" type="text" label="30101" default=""/>
    <setting id="password" type="text" option="hidden" label="30102" default="" />
+   <setting id="showCovers" type="bool" label="30108" default="false"/>
    <setting id="showLatestRemix" type="bool" label="30103" default="false"/>
    <setting id="showLatestNoRemix" type="bool" label="30104" default="false"/>
    <setting id="showPopularRemix" type="bool" label="30105" default="false"/>

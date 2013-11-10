@@ -32,6 +32,11 @@ cookieFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/cookie
 siteMode=addon.getSetting("siteMode")
 username=addon.getSetting("username")
 password=addon.getSetting("password")
+showLatestRemix=addon.getSetting("showLatestRemix") == "true"
+showLatestNoRemix=addon.getSetting("showLatestNoRemix") == "true"
+showPopularRemix=addon.getSetting("showPopularRemix") == "true"
+showPopularNoRemix=addon.getSetting("showPopularNoRemix") == "true"
+showZeitgeist=addon.getSetting("showZeitgeist") == "true"
 
 if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
@@ -46,15 +51,20 @@ def index():
         if username and password:
             login()
         addDir(translation(30006), "", 'myMain', "")
-        addDir(translation(30002) + " (" + translation(30012) + ")", urlMain+"/latest/1?ax=1", 'listSongs', "")
-        addDir(translation(30002) + " (" + translation(30010) + ")", urlMain+"/latest/remix/1?ax=1", 'listSongs', "")
-        addDir(translation(30002) + " (" + translation(30011) + ")", urlMain+"/latest/noremix/1?ax=1", 'listSongs', "")
-        addDir(translation(30003) + " (" + translation(30012) + ")", urlMain+"/popular/1?ax=1", 'listSongs', "")
-        addDir(translation(30003) + " (" + translation(30010) + ")", urlMain+"/popular/remix/1?ax=1", 'listSongs', "")
-        addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
+        addDir(translation(30002), urlMain+"/latest/1?ax=1", 'listSongs', "")
+        if showLatestRemix:
+            addDir(translation(30002) + " (" + translation(30010) + ")", urlMain+"/latest/remix/1?ax=1", 'listSongs', "")
+        if showLatestNoRemix:
+            addDir(translation(30002) + " (" + translation(30011) + ")", urlMain+"/latest/noremix/1?ax=1", 'listSongs', "")
+        addDir(translation(30003), urlMain+"/popular/1?ax=1", 'listSongs', "")
+        if showPopularRemix:
+            addDir(translation(30003) + " (" + translation(30010) + ")", urlMain+"/popular/remix/1?ax=1", 'listSongs', "")
+        if showPopularNoRemix:
+            addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
         addDir(translation(30004), urlMain+"/popular/lastweek/1?ax=1", 'listSongs', "")
-        #addDir(translation(30019), "", 'listZeitgeist', "")
         addDir(translation(30021), "", 'listTimeMachineYears', "")
+        if showZeitgeist:
+            addDir(translation(30019), "", 'listZeitgeist', "")
         addDir(translation(30005), "", 'listGenres', "")
         addDir(translation(30013), "", 'search', "")
     else:
@@ -68,6 +78,7 @@ def myMain():
         addDir(translation(30018), urlMain+"/"+username+"/feed/1?ax=1", 'listSongs', "")
         addDir(translation(30014), "", 'listMyArtists', "")
         addDir(translation(30007), urlMain+"/"+username+"/1?ax=1", 'listSongs', "")
+        addDir(translation(30026), urlMain+"/"+username+"/shuffle/1?ax=1", 'listSongs', "")
         addDir(translation(30008), urlMain+"/"+username+"/history/1?ax=1", 'listSongs', "")
         addDir(translation(30009), urlMain+"/"+username+"/obsessed/1?ax=1", 'listSongs', "")
         xbmcplugin.endOfDirectory(pluginhandle)
@@ -77,6 +88,7 @@ def myMain():
 
 
 def listSongs(url):
+    parentUrl = url
     content = opener.open(url).read()
     cj.save(cookieFile)
     match = re.compile('id="displayList-data">(.+?)<', re.DOTALL).findall(content)
@@ -95,7 +107,7 @@ def listSongs(url):
             id = fh.read()
             fh.close()
             thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-        addLink(title, titleRaw, 'playVideo', thumb, track['time'], track['id'], track['artist'].encode('utf-8'), track['fav'])
+        addLink(title, titleRaw, 'playVideo', thumb, track['time'], track['id'], track['artist'].encode('utf-8'), track['fav'], parentUrl)
     match = re.compile('"page_next":"(.+?)"', re.DOTALL).findall(content)
     if match:
         url = match[0].replace("\\","")
@@ -227,10 +239,11 @@ def toggleFollow(artist):
 
 
 def listMyArtists():
+    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = opener.open(urlMain+"/"+username+"/list_artists").read()
     match = re.compile('<a href="/search/(.+?)">(.+?)<', re.DOTALL).findall(content)
     for id, title in match:
-        addDirR(title.title(), urlMain+"/search/"+id+"/1?ax=1", 'listSongs', "", title)
+        addDirR(title.title(), urlMain+"/search/"+id+"/1?ax=1&sortby=fav", 'listSongs', "", title)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -241,8 +254,8 @@ def listZeitgeist():
 
 
 def listTimeMachineYears():
-    #addDir("2008", "2008", 'listTimeMachineWeeks', "")
-    #addDir("2009", "2009", 'listTimeMachineWeeks', "")
+    addDir("2008", "2008", 'listTimeMachineWeeks', "")
+    addDir("2009", "2009", 'listTimeMachineWeeks', "")
     addDir("2010", "2010", 'listTimeMachineWeeks', "")
     addDir("2011", "2011", 'listTimeMachineWeeks', "")
     addDir("2012", "2012", 'listTimeMachineWeeks', "")
@@ -252,7 +265,7 @@ def listTimeMachineYears():
 
 def listTimeMachineWeeks(year):
     months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-    for i in range(1, 53, 1):
+    for i in range(52, 0, -1):
         now = datetime.date(datetime.now())
         date_string = year+' '+str(i)+' 1'
         format = '%Y %W %w'
@@ -314,7 +327,7 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage, duration, songID, artist, fav):
+def addLink(name, url, mode, iconimage, duration, songID, artist, fav, parentUrl):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&hypemID="+str(songID)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
@@ -322,11 +335,15 @@ def addLink(name, url, mode, iconimage, duration, songID, artist, fav):
     liz.addStreamInfo('video', { 'duration': int(duration) })
     liz.setProperty('IsPlayable', 'true')
     entries = []
+    if "/popular/" in parentUrl:
+        entries.append((translation(30027), 'Container.Update(plugin://'+addonID+'/?mode=listSongs&url='+urllib.quote_plus(parentUrl+"&sortby=shuffle")+')',))
     if username and password:
         if fav==0:
             entries.append((translation(30015), 'RunPlugin(plugin://'+addonID+'/?mode=toggleLike&url='+urllib.quote_plus(songID)+')',))
         else:
             entries.append((translation(30020), 'RunPlugin(plugin://'+addonID+'/?mode=toggleLike&url='+urllib.quote_plus(songID)+')',))
+    entries.append((translation(30025), 'Container.Update(plugin://'+addonID+'/?mode=listSongs&url='+urllib.quote_plus(urlMain+"/search/"+artist+"/1?ax=1&sortby=fav")+')',))
+    if username and password:
         entries.append((translation(30016), 'RunPlugin(plugin://'+addonID+'/?mode=toggleFollow&url='+urllib.quote_plus(artist)+')',))
     entries.append((translation(30024), 'Container.Update(plugin://'+addonID+'/?mode=chooseVideo&url='+urllib.quote_plus(url)+"&hypemID="+str(songID)+')',))
     entries.append((translation(30023), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))

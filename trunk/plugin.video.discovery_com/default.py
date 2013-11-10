@@ -114,7 +114,7 @@ def listNewsCollections(url):
 def listShows(url, channelID, channelThumb):
     currentUrl = url
     content = getUrl(url)
-    addDir(translation(30003), urlMain+"/services/taxonomy/"+channelID+"/?num="+itemsPerPage+"&page=0&filter=fullepisode&tpl=dds%2Fmodules%2Fvideo%2Fall_assets_list.html&order=desc&feedGroup=video", 'listVideos', channelThumb, "fullepisode")
+    #addDir(translation(30003), urlMain+"/services/taxonomy/"+channelID+"/?num="+itemsPerPage+"&page=0&filter=fullepisode&tpl=dds%2Fmodules%2Fvideo%2Fall_assets_list.html&order=desc&feedGroup=video", 'listVideos', channelThumb, "fullepisode")
     content = content[content.find('<div class="module-all-shows-carousel shows-other">'):]
     content = content[:content.find('<div class="navigation')]
     spl = content.split('<a href="/tv-shows')
@@ -137,7 +137,7 @@ def listShows(url, channelID, channelThumb):
         thumb = ""
         if match:
             thumb = match[0].replace(" ", "%20")
-        addDir(title, url, 'listVideosMain', thumb)
+        addDir(title, url, 'listVideos', thumb)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeNewsShows+')')
     xbmcplugin.endOfDirectory(pluginhandle)
