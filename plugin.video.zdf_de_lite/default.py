@@ -79,9 +79,9 @@ def listChannel(url):
         addDir(translation(30007), baseUrl+"/ZDFmediathek/senderstartseite/sst2/1209114", 'listVideos', "")
     elif url == "zdfneo":
         addDir(translation(30006), baseUrl+"/ZDFmediathek/kanaluebersicht/aktuellste/857392", 'listVideos', "")
+        addDir(translation(30007), baseUrl+"/ZDFmediathek/senderstartseite/sst2/1209122", 'listVideos', "")
         addDir(translation(30005), baseUrl+"/ZDFmediathek/senderstartseite/sst0/1209122", 'listVideos', "")
-        addDir(translation(30009), baseUrl+"/ZDFmediathek/senderstartseite/sst1/1209122", 'listShows', "")
-        addDir(translation(30008), baseUrl+"/ZDFmediathek/senderstartseite/sst2/1209122", 'listShows', "")
+        addDir(translation(30008), baseUrl+"/ZDFmediathek/senderstartseite/sst1/1209122", 'listShows', "")
     elif url == "zdfkultur":
         addDir(translation(30006), baseUrl+"/ZDFmediathek/kanaluebersicht/aktuellste/1321386", 'listVideos', "")
         addDir(translation(30005), baseUrl+"/ZDFmediathek/senderstartseite/sst0/1317640", 'listVideos', "")

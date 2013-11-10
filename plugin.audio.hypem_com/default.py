@@ -24,10 +24,14 @@ urlMain = "http://www.hypem.com"
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:23.0) Gecko/20100101 Firefox/23.0"
 opener.addheaders = [('User-agent', userAgent)]
+addonDir = xbmc.translatePath('special://home/addons/'+addonID)
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
-cookieFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/cookies")
+downloadScript = os.path.join(addonDir, "downloadThumb.py")
+cookieFile = os.path.join(addonUserDataFolder, "cookies")
+thumbsDir = os.path.join(addonUserDataFolder, "thumbs")
 username=addon.getSetting("username")
 password=addon.getSetting("password")
+showCovers=addon.getSetting("showCovers") == "true"
 showLatestRemix=addon.getSetting("showLatestRemix") == "true"
 showLatestNoRemix=addon.getSetting("showLatestNoRemix") == "true"
 showPopularRemix=addon.getSetting("showPopularRemix") == "true"
@@ -36,6 +40,8 @@ showZeitgeist=addon.getSetting("showZeitgeist") == "true"
 
 if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
+if not os.path.isdir(thumbsDir):
+    os.mkdir(thumbsDir)
 if os.path.exists(cookieFile):
     cj.load(cookieFile)
 
@@ -88,10 +94,15 @@ def listSongs(url):
         title = (track['artist'].encode('utf-8')+" - "+track['song'].encode('utf-8')).strip()
         if track['fav']==1:
             title = "[B]*[/B] " + title + " [B]*[/B]"
+        match = re.compile('href="/track/'+track['id']+'/.+?background:url\\((.+?)\\)', re.DOTALL).findall(content)
         thumb = ""
-        #match = re.compile('href="/track/'+track['id']+'/.+?background:url\\((.+?)\\)', re.DOTALL).findall(content)
-        #if match:
-        #    thumb = match[0].replace(".jpg", "_320.jpg")
+        if match and showCovers:
+            thumb = match[0].replace(".jpg", "_320.jpg")
+            req = urllib2.Request(thumb)
+            try:
+                urllib2.urlopen(req)
+            except:
+                thumb = match[0]
         addLink(title, url, 'playSong', track['time'], track['id'], track['artist'].encode('utf-8'), track['fav'], thumb, parentUrl)
     match = re.compile('"page_next":"(.+?)"', re.DOTALL).findall(content)
     if match:
@@ -247,7 +258,7 @@ def addLink(name, url, mode, duration, songID, artist, fav, thumb, parentUrl):
 def addDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultMusicSongs.png", thumbnailImage=iconimage)
     liz.setInfo(type="music", infoLabels={"title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -256,7 +267,7 @@ def addDir(name, url, mode, iconimage):
 def addDirR(name, url, mode, iconimage, artist):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultMusicAlbums.png", thumbnailImage=iconimage)
     liz.setInfo(type="music", infoLabels={"title": name})
     entries = []
     if username and password:

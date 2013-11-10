@@ -18,3 +18,5 @@
 - Added context menu "Shuffle category"
 - Added context menu "More from artist"
 - Some other small improvements
+1.0.7
+- Added setting to show song covers
