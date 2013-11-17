@@ -16,8 +16,8 @@ pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
-forceViewMode = addon.getSetting("forceViewMode") == "true"
-viewMode = str(addon.getSetting("viewMode"))
+forceViewMode = addon.getSetting("forceView") == "true"
+viewMode = str(addon.getSetting("viewID"))
 translation = addon.getLocalizedString
 urlMain = "http://www.vice.com"
 addonUserdataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
@@ -93,6 +93,8 @@ def listShowsFavs():
             addShowFavDir(title, urllib.unquote_plus(url), "listVideos", thumb)
         fh.close()
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listVideos(url):
@@ -131,7 +133,7 @@ def playVideo(url):
         match = re.compile('mobile_player_url="(.+?)"', re.DOTALL).findall(content)
         content = getUrl(match[0]+"ipad").replace("\\","")
         matchStream = re.compile('"ipad_url":"(.+?)"', re.DOTALL).findall(content)
-        streamUrl = matchStream[0]
+        streamUrl = matchStream[0].replace("u0026","&")
         matchSubtitle = re.compile('"closed_caption_url":"(.+?)"', re.DOTALL).findall(content)
         subtitleUrl = matchSubtitle[0].replace("\\","")
         listitem = xbmcgui.ListItem(path=streamUrl)
