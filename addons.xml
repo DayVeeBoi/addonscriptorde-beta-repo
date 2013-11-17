@@ -158,26 +158,6 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.0.0" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Watch handpicked videos 24/7 on VEVO TV</summary>
-        <language></language>
-        <description lang="en">Watch handpicked videos 24/7 on VEVO TV</description>
-        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <source>https://github.com/AddonScriptorDE/plugin.video.vevo_tv</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-        <website>http://www.vevo.com/tv</website>
-    </extension>
-</addon>
-
 <addon id="plugin.video.vice_com" name="Vice.com" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
