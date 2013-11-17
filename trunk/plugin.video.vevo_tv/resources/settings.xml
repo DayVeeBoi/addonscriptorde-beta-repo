@@ -1,0 +1,3 @@
+<settings>
+   <setting id="quality" type="enum" label="30101" values="HD|SD" default="0"/>
+</settings>
