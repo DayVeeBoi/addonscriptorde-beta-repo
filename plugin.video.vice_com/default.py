@@ -147,6 +147,17 @@ def playVideo(url):
             streamUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + matchYT[0]
         listitem = xbmcgui.ListItem(path=streamUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    if url.endswith("part-1"):
+        urlNext = url.replace("part-1","part-2")
+        req = urllib2.Request(urlNext)
+        try:
+            urllib2.urlopen(req)
+            xbmc.sleep(3000)
+            playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+            listitem = xbmcgui.ListItem(name+" - Part 2")
+            playlist.add("plugin://plugin.video.vice_com/?url="+urllib.quote_plus(urlNext)+"&mode=playVideo", listitem)
+        except:
+            pass
 
 
 def queueVideo(url, name):
@@ -260,7 +271,7 @@ def parameters_string_to_dict(parameters):
 
 
 def addLink(name, url, mode, iconimage, desc=""):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
