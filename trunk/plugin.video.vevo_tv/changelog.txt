@@ -2,3 +2,6 @@
 - Initial release
 1.0.2
 - Added custom mode for live performances
+1.0.3
+- Custom Mode: Added Top200 categories
+- Added setting to show info on video playback (Custom mode)

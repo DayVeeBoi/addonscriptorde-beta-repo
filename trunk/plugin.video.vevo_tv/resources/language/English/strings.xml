@@ -6,4 +6,8 @@
   <string id="30004">Custom (Live only)</string>
   <string id="30101">Bitrate (Official Mode)</string>
   <string id="30102">Bitrate (Custom Mode)</string>
+  <string id="30103">Show info on video playback (Custom Mode)</string>
+  <string id="30104">Type</string>
+  <string id="30105">Delay in seconds</string>
+  <string id="30106">Duration in seconds</string>
 </strings>
