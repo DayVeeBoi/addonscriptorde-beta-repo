@@ -15,6 +15,10 @@ pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
+showInfo = addon.getSetting("showInfo")=="true"
+infoType = addon.getSetting("infoType")
+infoDelay = int(addon.getSetting("infoDelay"))
+infoDuration = int(addon.getSetting("infoDuration"))
 bitrateOfficial = addon.getSetting("bitrateOfficial")
 bitrateOfficial = ["512000", "800000", "1392000", "2272000", "3500000"][int(bitrateOfficial)]
 bitrateCustom = addon.getSetting("bitrateCustom")
@@ -53,17 +57,19 @@ def listCustomModes(id):
     genres = ""
     if id!="all":
         genres = "genres="+id+"&"
-    addDir("Top100", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "100", "false")
-    addDir("Top10 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "10", "true")
-    addDir("Top20 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "20", "true")
-    addDir("Top50 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "50", "true")
-    addDir("Top100 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "100", "true")
-    addDir("Top100 AllTime", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "false")
-    addDir("Top10 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "10", "true")
-    addDir("Top20 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "20", "true")
-    addDir("Top50 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "50", "true")
-    addDir("Top100 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "true")
-    addDir("All (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=100", 'playCustom', "", "100", "false")
+    addDir("Top200", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200", 'playCustom', "", "200", "false")
+    addDir("Top10 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "10", "true")
+    addDir("Top20 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "20", "true")
+    addDir("Top50 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "50", "true")
+    addDir("Top100 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "100", "true")
+    addDir("Top200 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200", 'playCustom', "", "200", "true")
+    addDir("Top200 All-Time", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "200", "false")
+    addDir("Top10 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "10", "true")
+    addDir("Top20 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "20", "true")
+    addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "50", "true")
+    addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "true")
+    addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "200", "true")
+    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "200", "false")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -71,17 +77,19 @@ def listCustomModesLive(id):
     genres = ""
     if id!="all":
         genres = "genres="+id+"&"
-    addDir("Top100", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&max=100&islive=true", 'playCustom', "", "100", "false")
-    addDir("Top10 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
-    addDir("Top20 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
-    addDir("Top50 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
-    addDir("Top100 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
-    addDir("Top100 AllTime", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "false")
-    addDir("Top10 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
-    addDir("Top20 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
-    addDir("Top50 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
-    addDir("Top100 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
-    addDir("All (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=100&islive=true", 'playCustom', "", "100", "false")
+    addDir("Top200", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
+    addDir("Top10 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
+    addDir("Top20 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
+    addDir("Top50 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
+    addDir("Top100 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
+    addDir("Top200 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
+    addDir("Top200 All-Time", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
+    addDir("Top10 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
+    addDir("Top20 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
+    addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
+    addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
+    addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
+    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -136,6 +144,17 @@ def playVideo(id):
                 fullUrl = matchBase[0]+" playpath="+url
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+        if showInfo:
+            xbmc.sleep(infoDelay*1000)
+            if infoType=="0":
+                xbmc.executebuiltin('XBMC.ActivateWindow(12901)')
+                xbmc.sleep(infoDuration*1000)
+                xbmc.executebuiltin('XBMC.ActivateWindow(12005)')
+            elif infoType=="1":
+                title = 'Now playing:'
+                videoTitle = xbmc.getInfoLabel('VideoPlayer.Title')
+                thumb = xbmc.getInfoImage('VideoPlayer.Cover')
+                xbmc.executebuiltin('XBMC.Notification(%s, %s, %s, %s)' % (title, videoTitle, infoDuration*1000, thumb))
     except:
         pass
 

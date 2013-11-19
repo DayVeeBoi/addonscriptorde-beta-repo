@@ -181,7 +181,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -196,7 +196,7 @@
         <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.vevo_tv</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <forum>http://forum.xbmc.org/showthread.php?tid=178369</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.vevo.com</website>
     </extension>
