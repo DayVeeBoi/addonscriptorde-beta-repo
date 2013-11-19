@@ -28,18 +28,22 @@ def index():
     addLink("VEVO TV (US #2)", "TIVEVSTRUS01", 'playOfficial', "")
     addLink("VEVO TV (US #3)", "TIVEVSTRUS02", 'playOfficial', "")
     addLink("VEVO TV (DE)", "TIVEVSTRDE00", 'playOfficial', "")
-    addDir(translation(30001), "", 'customMain', "")
+    addDir(translation(30001), "default", 'customMain', "")
+    addDir(translation(30004), "live", 'customMain', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def customMain():
+def customMain(type):
+    currentMode = 'listCustomModes'
+    if type=="live":
+        currentMode = 'listCustomModesLive'
     content = getUrl(urlMain)
     if "var $data" in content:
-        addDir("- All Genres", "all", 'listCustomModes', "")
+        addDir("- All Genres", "all", currentMode, "")
         content = getUrl(urlMainApi+"/genre/list.json?culture=en_US")
         content = json.loads(content)
         for item in content["result"]:
-            addDir(item["Value"], item["Key"], 'listCustomModes', "")
+            addDir(item["Value"], item["Key"], currentMode, "")
         xbmcplugin.endOfDirectory(pluginhandle)
     else:
         xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30002)+',5000)')
@@ -60,6 +64,24 @@ def listCustomModes(id):
     addDir("Top50 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "50", "true")
     addDir("Top100 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "true")
     addDir("All (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=100", 'playCustom', "", "100", "false")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listCustomModesLive(id):
+    genres = ""
+    if id!="all":
+        genres = "genres="+id+"&"
+    addDir("Top100", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&max=100&islive=true", 'playCustom', "", "100", "false")
+    addDir("Top10 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
+    addDir("Top20 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
+    addDir("Top50 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
+    addDir("Top100 (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
+    addDir("Top100 AllTime", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "false")
+    addDir("Top10 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
+    addDir("Top20 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
+    addDir("Top50 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
+    addDir("Top100 AllTime (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
+    addDir("All (Shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=100&islive=true", 'playCustom', "", "100", "false")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -173,8 +195,10 @@ elif mode == 'playOfficial':
 elif mode == 'playCustom':
     playCustom(url, int(count), shuffled=="true")
 elif mode == 'customMain':
-    customMain()
+    customMain(url)
 elif mode == 'listCustomModes':
     listCustomModes(url)
+elif mode == 'listCustomModesLive':
+    listCustomModesLive(url)
 else:
     index()

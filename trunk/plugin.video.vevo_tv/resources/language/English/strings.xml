@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <string id="30001">Custom Mode</string>
+  <string id="30001">Custom (All videos)</string>
   <string id="30002">VEVO is not available in your country!</string>
   <string id="30003">VEVO TV is not available in your country!</string>
+  <string id="30004">Custom (Live only)</string>
   <string id="30101">Bitrate (Official Mode)</string>
   <string id="30102">Bitrate (Custom Mode)</string>
 </strings>
