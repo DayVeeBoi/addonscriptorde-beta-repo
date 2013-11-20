@@ -38,9 +38,12 @@ def index():
 
 
 def customMain(type):
-    currentMode = 'listCustomModes'
     if type=="live":
         currentMode = 'listCustomModesLive'
+    elif type=="premiere":
+        currentMode = 'listCustomModesPremiere'
+    else:
+        currentMode = 'listCustomModes'
     content = getUrl(urlMain)
     if "var $data" in content:
         addDir("- All Genres", "all", currentMode, "")
@@ -69,7 +72,7 @@ def listCustomModes(id):
     addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "50", "true")
     addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "true")
     addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "200", "true")
-    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "200", "false")
+    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "200", "true")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -89,7 +92,7 @@ def listCustomModesLive(id):
     addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
     addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
     addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
-    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
+    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -112,6 +115,8 @@ def playCustom(url, count, shuffled):
     entries = []
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
+    if "order=Random" in url:
+        url += "&rnd="+str(random.randint(1, 999999))
     content = getUrl(url)
     content = json.loads(content)
     counter = 0
