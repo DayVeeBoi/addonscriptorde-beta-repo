@@ -5,3 +5,5 @@
 1.0.3
 - Custom Mode: Added Top200 categories
 - Added setting to show info on video playback (Custom mode)
+1.0.4
+- All (shuffled): Added pseudo random parameter, so that vevo always returns new random songs
