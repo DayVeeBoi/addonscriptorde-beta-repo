@@ -158,7 +158,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.spiegel_tv" name="Spiegel.tv" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.spiegel_tv" name="Spiegel.tv" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>

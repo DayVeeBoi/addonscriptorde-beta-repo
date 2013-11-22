@@ -111,7 +111,7 @@ def listVideos(ids, index, rnd):
         video = getUrl(urlMain+"/media/"+str(content[i])+".json")
         video = json.loads(video)
         try:
-            date = video["airdate"]
+            date = video["web_airdate"]
         except:
             date = ""
         try:
