@@ -29,3 +29,5 @@
 - Fixed bug with watchever.de login
 1.1.0
 - New icon (thx@djtoll)
+1.1.1
+- Netflix optimizations
