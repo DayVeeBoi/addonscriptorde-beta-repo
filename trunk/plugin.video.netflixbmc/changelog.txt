@@ -3,4 +3,9 @@
 1.0.1
 - Removed XBMC WebBrowser integration
 - Added Control Utility for Windows
+1.0.2
 - Small bugfix on profile management
+1.0.3
+- Added category: Just for Kids
+- Added season/episode listing for tv-shows
+- Added setting to show profile selection on each start

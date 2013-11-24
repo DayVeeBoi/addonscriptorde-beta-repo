@@ -1,10 +1,16 @@
 <settings>
-   <setting id="username" type="text" label="30101" default=""/>
-   <setting id="password" type="text" option="hidden" label="30102" default="" />
-   <setting id="showDetails" type="bool" label="30112" default="false"/>
-   <setting id="singleProfile" type="bool" label="30103" default="false"/>
-   <setting id="useUtility" type="bool" label="30107" default="true"/>
-   <setting label="30116" type="action" enable="eq(-1,true)" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=configureUtility)"/>
-   <setting id="forceView" type="bool" label="30108" default="true"/>
-   <setting id="viewID" type="number" label="30109" default="501"/>
+    <category label="30201">
+        <setting id="username" type="text" label="30101" default=""/>
+        <setting id="password" type="text" option="hidden" label="30102" default="" />
+        <setting id="showDetails" type="bool" label="30112" default="true"/>
+        <setting id="singleProfile" type="bool" label="30103" default="false"/>
+        <setting id="showProfiles" type="bool" label="30117" enable="eq(-1,false)" default="false"/>
+        <setting id="forceView" type="bool" label="30108" default="true"/>
+        <setting id="viewIdVideos" type="number" label="30109" enable="eq(-1,true)" default="501"/>
+        <setting id="viewIdEpisodes" type="number" label="30119" enable="eq(-2,true)" default="501"/>
+    </category>
+    <category label="30202">
+        <setting id="useUtility" type="bool" label="30107" default="true"/>
+        <setting label="30116" type="action" enable="eq(-1,true)" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=configureUtility)"/>
+    </category>
 </settings>
