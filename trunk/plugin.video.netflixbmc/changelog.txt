@@ -1,0 +1,6 @@
+1.0.0
+- Initial release
+1.0.1
+- Removed XBMC WebBrowser integration
+- Added Control Utility for Windows
+- Small bugfix on profile management
