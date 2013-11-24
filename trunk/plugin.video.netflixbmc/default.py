@@ -10,6 +10,7 @@ import os
 import time
 import json
 import base64
+import subprocess
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
@@ -22,8 +23,10 @@ addonID = addon.getAddonInfo('id')
 cj = cookielib.MozillaCookieJar()
 urlMain = "http://movies.netflix.com"
 osWin = xbmc.getCondVisibility('system.platform.windows')
+osLinux = xbmc.getCondVisibility('system.platform.linux')
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
+utilityPath = xbmc.translatePath('special://home/addons/'+addonID+'/resources/NetfliXBMC_Utility.exe')
 searchHistoryFolder=os.path.join(addonUserDataFolder, "history")
 cacheFolder = os.path.join(addonUserDataFolder, "cache")
 cookieFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/cookies")
@@ -32,16 +35,11 @@ authFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/authUrl"
 showDetails=addon.getSetting("showDetails")=="true"
 singleProfile=addon.getSetting("singleProfile")=="true"
 forceView=addon.getSetting("forceView")=="true"
-hideCursor=addon.getSetting("hideCursor")=="true"
-winBrowser=addon.getSetting("winBrowser")
+useUtility=addon.getSetting("useUtility")=="true"
 username=addon.getSetting("username")
 password=addon.getSetting("password")
 viewID=addon.getSetting("viewID")
 auth=""
-if hideCursor:
-    hideCursor = "yes"
-else:
-    hideCursor = "no"
 
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:25.0) Gecko/20100101 Firefox/25.0"
@@ -66,13 +64,13 @@ while (username=="" or password==""):
 
 def index():
     login()
-    addDir(translation(30002), urlMain+"/MyList?leid=595&link=seeall", 'listVideos', icon)
-    addDir(translation(30003), urlMain+"/WiRecentAdditionsGallery?nRR=releaseDate&nRT=all&pn=1&np=1&actionMethod=json", 'listVideos', icon)
-    addDir(translation(30004), urlMain+"/WiHD?dev=PC&pn=1&np=1&actionMethod=json", 'listVideos', icon)
-    addDir(translation(30005), urlMain+"/WiGenre?agid=83&pn=1&np=1&actionMethod=json", 'listVideos', icon)
-    addDir(translation(30006), urlMain+"/WiGenre?agid=6839&pn=1&np=1&actionMethod=json", 'listVideos', icon)
-    addDir(translation(30007), "", 'listGenres', icon)
-    addDir(translation(30008), "", 'search', icon)
+    addDir(translation(30002), urlMain+"/MyList?leid=595&link=seeall", 'listVideos', "")
+    addDir(translation(30003), urlMain+"/WiRecentAdditionsGallery?nRR=releaseDate&nRT=all&pn=1&np=1&actionMethod=json", 'listVideos', "")
+    addDir(translation(30004), urlMain+"/WiHD?dev=PC&pn=1&np=1&actionMethod=json", 'listVideos', "")
+    addDir(translation(30005), urlMain+"/WiGenre?agid=83&pn=1&np=1&actionMethod=json", 'listVideos', "")
+    addDir(translation(30006), urlMain+"/WiGenre?agid=6839&pn=1&np=1&actionMethod=json", 'listVideos', "")
+    addDir(translation(30007), "", 'listGenres', "")
+    addDir(translation(30008), "", 'search', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -131,7 +129,7 @@ def listGenres():
     content = opener.open(urlMain+"/WiHome").read()
     match = re.compile('/WiGenre\\?agid=(.+?)">(.+?)</a></li>', re.DOTALL).findall(content)
     for genreID, title in match:
-        addDir(title, urlMain+"/WiGenre?agid="+genreID+"&pn=1&np=1&actionMethod=json", 'listVideos', icon)
+        addDir(title, urlMain+"/WiGenre?agid="+genreID+"&pn=1&np=1&actionMethod=json", 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -158,10 +156,18 @@ def playVideo(id):
         url = "http://movies.netflix.com/WiPlayer?movieid="+id
     else:
         url = "https://movies.netflix.com/SwitchProfile?tkn="+token+"&nextpage="+urllib.quote_plus("http://movies.netflix.com/WiPlayer?movieid="+id)
-    if osWin and winBrowser=="0":
-        xbmc.executebuiltin('RunPlugin(plugin://plugin.program.webbrowser/?url='+urllib.quote_plus(url)+'&mode=showSite&showScrollbar=no&hideCursor='+hideCursor+')')
-    else:
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite)")
+    xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite)")
+    if osWin:
+        subprocess.Popen(utilityPath, shell=False)
+    #elif osLinux:
+    #    subprocess.Popen('wine "'+utilityPath+'"', shell=True)
+
+
+def configureUtility():
+    if osWin:
+        subprocess.Popen(utilityPath+" yes", shell=False)
+    elif osLinux:
+        subprocess.Popen('wine "'+utilityPath+'" yes', shell=True)
 
 
 def search():
@@ -308,5 +314,7 @@ elif mode == 'chooseProfile':
     chooseProfile()
 elif mode == 'listGenres':
     listGenres()
+elif mode == 'configureUtility':
+    configureUtility()
 else:
     index()

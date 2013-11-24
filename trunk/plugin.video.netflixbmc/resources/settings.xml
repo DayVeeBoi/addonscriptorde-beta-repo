@@ -1,16 +1,10 @@
 <settings>
-   <category label="30201">
-       <setting id="username" type="text" label="30101" default=""/>
-       <setting id="password" type="text" option="hidden" label="30102" default="" />
-       <setting id="showDetails" type="bool" label="30112" default="false"/>
-       <setting id="singleProfile" type="bool" label="30103" default="false"/>
-       <setting id="forceView" type="bool" label="30108" default="true"/>
-       <setting id="viewID" type="number" label="30109" default="501"/>
-   </category>
-   <category label="30202">
-       <setting id="winBrowser" type="enum" label="30104" values="XBMC WebBrowser|Chrome" default="0"/>
-       <setting id="hideCursor" type="bool" label="30107" enable="eq(-1,0)" default="true"/>
-       <setting id="osxBrowser" type="enum" label="30105" values="Chrome" default="0"/>
-       <setting id="linuxBrowser" type="enum" label="30106" values="Chrome" default="0"/>
-   </category>
+   <setting id="username" type="text" label="30101" default=""/>
+   <setting id="password" type="text" option="hidden" label="30102" default="" />
+   <setting id="showDetails" type="bool" label="30112" default="false"/>
+   <setting id="singleProfile" type="bool" label="30103" default="false"/>
+   <setting id="useUtility" type="bool" label="30107" default="true"/>
+   <setting label="30116" type="action" enable="eq(-1,true)" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=configureUtility)"/>
+   <setting id="forceView" type="bool" label="30108" default="true"/>
+   <setting id="viewID" type="number" label="30109" default="501"/>
 </settings>
