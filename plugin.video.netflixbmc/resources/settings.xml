@@ -1,0 +1,10 @@
+<settings>
+   <setting id="username" type="text" label="30101" default=""/>
+   <setting id="password" type="text" option="hidden" label="30102" default="" />
+   <setting id="showDetails" type="bool" label="30112" default="false"/>
+   <setting id="singleProfile" type="bool" label="30103" default="false"/>
+   <setting id="useUtility" type="bool" label="30107" default="true"/>
+   <setting label="30116" type="action" enable="eq(-1,true)" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=configureUtility)"/>
+   <setting id="forceView" type="bool" label="30108" default="true"/>
+   <setting id="viewID" type="number" label="30109" default="501"/>
+</settings>
