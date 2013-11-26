@@ -9,3 +9,8 @@
 - Added category: Just for Kids
 - Added season/episode listing for tv-shows
 - Added setting to show profile selection on each start
+1.0.4
+- Added "Add to library" function
+- Added setting to browse tv-shows instead of continuing
+- Loading extra information is not optional anymore
+  because adding to library and browsing tv-shows depend on it

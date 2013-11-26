@@ -29,10 +29,14 @@ icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 utilityPath = xbmc.translatePath('special://home/addons/'+addonID+'/resources/NetfliXBMC_Utility.exe')
 searchHistoryFolder=os.path.join(addonUserDataFolder, "history")
 cacheFolder = os.path.join(addonUserDataFolder, "cache")
+libraryFolder = xbmc.translatePath("special://profile/addon_data/"+addonID+"/library")
+libraryFolderMovies = xbmc.translatePath("special://profile/addon_data/"+addonID+"/library/Movies")
+libraryFolderTV = xbmc.translatePath("special://profile/addon_data/"+addonID+"/library/TV")
 cookieFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/cookies")
 profileFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/profile")
 authFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/authUrl")
-showDetails=addon.getSetting("showDetails")=="true"
+updateDB=addon.getSetting("updateDB")=="true"
+browseTvShows=addon.getSetting("browseTvShows")=="true"
 singleProfile=addon.getSetting("singleProfile")=="true"
 showProfiles=addon.getSetting("showProfiles")=="true"
 forceView=addon.getSetting("forceView")=="true"
@@ -51,6 +55,12 @@ if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
 if not os.path.isdir(cacheFolder):
     os.mkdir(cacheFolder)
+if not os.path.isdir(libraryFolder):
+    os.mkdir(libraryFolder)
+if not os.path.isdir(libraryFolderMovies):
+    os.mkdir(libraryFolderMovies)
+if not os.path.isdir(libraryFolderTV):
+    os.mkdir(libraryFolderTV)
 if os.path.exists(cookieFile):
     cj.load(cookieFile)
 if os.path.exists(authFile):
@@ -90,40 +100,37 @@ def listVideos(url):
         for videoID, title, thumbUrl in match:
             #Modifying the id won't always work, please let me know if you know a better way
             #thumbID = str(int(thumbUrl.split("/")[-1].split(".")[0])+3)
-            if showDetails:
-                videoDetails = getVideoInfo(videoID).replace("\\n","").replace("\\","")
-                match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-                year = match[0]
-                match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-                mpaa = match[0]
-                match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-                duration = match[0]
-                if "Season" in duration:
-                    videoType = "tv"
-                    duration = ""
-                else:
-                    videoType = "movie"
-                    duration = duration.split(" ")[0]
-                match = re.compile('src=".+?">.+?<\/span>(.+?)<', re.DOTALL).findall(videoDetails)
-                desc = match[0].replace("&amp;","&")
-                match = re.compile('Director:</dt><dd>(.+?)<', re.DOTALL).findall(videoDetails)
-                director = ""
-                if match:
-                    director = match[0].strip()
-                match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
-                genre = match[0]
-                match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
-                rating = "Rating: "+match[0]
-                title = title.replace("&amp;","&")
-                if "/MyList" in url:
-                    addVideoDirR(title, videoID, 'playVideo', thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
-                else:
-                    addVideoDir(title, videoID, 'playVideo', thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
+            videoDetails = getVideoInfo(videoID).replace("\\n","").replace("\\","")
+            match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+            year = match[0]
+            match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+            mpaa = match[0]
+            match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+            duration = match[0]
+            if "Season" in duration or "Series" in duration:
+                videoType = "tv"
+                duration = ""
             else:
-                if "/MyList" in url:
-                    addVideoDirR(title, videoID, 'playVideo', thumbUrl)
-                else:
-                    addVideoDir(title, videoID, 'playVideo', thumbUrl)
+                videoType = "movie"
+                duration = duration.split(" ")[0]
+            match = re.compile('src=".+?">.+?<\/span>(.+?)<', re.DOTALL).findall(videoDetails)
+            desc = match[0].replace("&amp;","&")
+            match = re.compile('Director:</dt><dd>(.+?)<', re.DOTALL).findall(videoDetails)
+            director = ""
+            if match:
+                director = match[0].strip()
+            match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
+            genre = match[0]
+            match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
+            rating = "Rating: "+match[0]
+            title = title.replace("&amp;","&")
+            nextMode = "playVideo"
+            if browseTvShows and videoType=="tv":
+                nextMode = "listSeasons"
+            if "/MyList" in url:
+                addVideoDirR(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
+            else:
+                addVideoDir(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
         match = re.compile('&pn=(.+?)&', re.DOTALL).findall(url)
         if match:
             currentPage = match[0]
@@ -143,17 +150,17 @@ def listGenres(type):
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listSeasons(seriesID, thumb):
+def listSeasons(seriesName, seriesID, thumb):
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = opener.open(urlMain+"/WiMovie/"+seriesID).read()
     match = re.compile('<li class="seasonItem.*?"><a data-vid="(.+?)">(.+?)</a></li>', re.DOTALL).findall(content)
     for seasonID, nr in match:
-        addDir("Season "+nr, urlMain+"/WiMovie/"+seriesID+"?actionMethod=seasonDetails&seasonId="+seasonID+"&seasonKind=ELECTRONIC", 'listEpisodes', thumb)
+        addSeasonDir("Season "+nr, urlMain+"/WiMovie/"+seriesID+"?actionMethod=seasonDetails&seasonId="+seasonID+"&seasonKind=ELECTRONIC", 'listEpisodes', thumb, seriesName)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listEpisodes(url, thumb):
-    xbmcplugin.setContent(pluginhandle, "episodes")
+    xbmcplugin.setContent(pluginhandle, "tvshows")
     content = opener.open(url).read().replace("\\n","").replace("\\","")
     spl=content.split("<li id=")
     for i in range(1,len(spl),1):
@@ -285,6 +292,50 @@ def forceChooseProfile():
     chooseProfile()
 
 
+def addMovieToLibrary(movieID, title):
+    movieFolderName = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    dir = os.path.join(libraryFolderMovies, movieFolderName)
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
+        fh = open(os.path.join(dir, "movie.strm"), 'w')
+        fh.write("plugin://plugin.video.netflixbmc/?mode=playVideo&url="+movieID)
+        fh.close()
+    if updateDB:
+        xbmc.executebuiltin('UpdateLibrary(video)')
+
+
+def addSeasonToLibrary(seasonUrl, seriesTitle, season):
+    seriesFolderName = (''.join(c for c in unicode(seriesTitle, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    seriesDir = os.path.join(libraryFolderTV, seriesFolderName)
+    seasonDir = os.path.join(seriesDir, season)
+    if not os.path.isdir(seriesDir):
+        os.mkdir(seriesDir)
+    if not os.path.isdir(seasonDir):
+        os.mkdir(seasonDir)
+    content = opener.open(seasonUrl).read().replace("\\n","").replace("\\","")
+    spl=content.split("<li id=")
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match = re.compile('data-episodeid="(.+?)"', re.DOTALL).findall(entry)
+        episodeID = match[0]
+        match = re.compile('<span class="seqNum">(.+?)</span>', re.DOTALL).findall(entry)
+        episodeNr = match[0]
+        match = re.compile('<span class="episodeTitle">(.+?)</span>', re.DOTALL).findall(entry)
+        episodeTitle = match[0]
+        episodeTitle = episodeTitle.replace("&amp;","&")
+        if len(episodeNr)==1:
+            episodeNr = "0"+episodeNr
+        seasonNr = season.split(" ")[1]
+        if len(seasonNr)==1:
+            seasonNr = "0"+seasonNr
+        filename = "S"+seasonNr+"E"+episodeNr+" - "+episodeTitle+".strm"
+        fh = open(os.path.join(seasonDir, filename), 'w')
+        fh.write("plugin://plugin.video.netflixbmc/?mode=playVideo&url="+episodeID)
+        fh.close()
+    if updateDB:
+        xbmc.executebuiltin('UpdateLibrary(video)')
+
+
 def translation(id):
     return addon.getLocalizedString(id).encode('utf-8')
 
@@ -314,28 +365,50 @@ def addDir(name, url, mode, iconimage):
 
 
 def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", year="", mpaa="", director="", genre=""):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre})
     entries = []
-    if videoType=="tv":
-        entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     entries.append((translation(30114), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addToQueue&url='+urllib.quote_plus(url)+')',))
+    if videoType=="tv":
+        if browseTvShows:
+            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+        else:
+            entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+    elif videoType=="movie":
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
 
 def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="", year="", mpaa="", director="", genre=""):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre})
     entries = []
-    if videoType=="tv":
-        entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     entries.append((translation(30115), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=removeFromQueue&url='+urllib.quote_plus(url)+')',))
+    if videoType=="tv":
+        if browseTvShows:
+            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+        else:
+            entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+    elif videoType=="movie":
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name)+')',))
+    liz.addContextMenuItems(entries)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    return ok
+
+
+def addSeasonDir(name, url, mode, iconimage, seriesName):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+str(iconimage)
+    ok = True
+    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz.setInfo(type="video", infoLabels={"title": name})
+    entries = []
+    entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeasonToLibrary&url='+urllib.quote_plus(url)+'&name='+str(seriesName)+'&season='+str(name)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -353,6 +426,8 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 thumb = urllib.unquote_plus(params.get('thumb', ''))
+name = urllib.unquote_plus(params.get('name', ''))
+season = urllib.unquote_plus(params.get('season', ''))
 
 if mode == 'listQueue':
     listQueue()
@@ -373,10 +448,14 @@ elif mode == 'chooseProfile':
 elif mode == 'listGenres':
     listGenres(url)
 elif mode == 'listSeasons':
-    listSeasons(url, thumb)
+    listSeasons(name, url, thumb)
 elif mode == 'listEpisodes':
     listEpisodes(url, thumb)
 elif mode == 'configureUtility':
     configureUtility()
+elif mode == 'addMovieToLibrary':
+    addMovieToLibrary(url, name)
+elif mode == 'addSeasonToLibrary':
+    addSeasonToLibrary(url, name, season)
 else:
     index()
