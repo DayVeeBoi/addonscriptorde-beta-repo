@@ -15,7 +15,7 @@
   <string id="30104">Windows Browser</string>
   <string id="30105">OSX Browser</string>
   <string id="30106">Linux Browser</string>
-  <string id="30107">Use Control Utitlity</string>
+  <string id="30107">Use Control Utitlity (Windows)</string>
   <string id="30108">Force View</string>
   <string id="30109">ViewID (Videos)</string>
   <string id="30110">Switch profile</string>
@@ -31,7 +31,10 @@
   <string id="30121">Continue watching</string>
   <string id="30122">Add to library</string>
   <string id="30123">Update library after adding media</string>
+  <string id="30125">Delete cookies</string>
+  <string id="30126">Sorry, Netflix is not available in your country yet.</string>
+  <string id="30127">You are not logged in. Check your login credentials and restart the addon.</string>
   <string id="30201">General</string>
   <string id="30202">Views</string>
-  <string id="30203">Windows</string>
+  <string id="30203">Advanced</string>
 </strings>

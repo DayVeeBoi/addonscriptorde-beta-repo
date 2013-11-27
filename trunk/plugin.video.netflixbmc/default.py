@@ -92,53 +92,59 @@ def listVideos(url):
         setProfile()
     xbmcplugin.setContent(pluginhandle, "movies")
     content = opener.open(url).read()
-    if singleProfile and 'id="page-ProfilesGate"' in content:
-        forceChooseProfile()
-    else:
-        content = content.replace("\\n","").replace("\\","")
-        match = re.compile('<span id="dbs(.+?)_0".+?alt="(.+?)" src="(.+?)">', re.DOTALL).findall(content)
-        for videoID, title, thumbUrl in match:
-            #Modifying the id won't always work, please let me know if you know a better way
-            #thumbID = str(int(thumbUrl.split("/")[-1].split(".")[0])+3)
-            videoDetails = getVideoInfo(videoID).replace("\\n","").replace("\\","")
-            match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-            year = match[0]
-            match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-            mpaa = match[0]
-            match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-            duration = match[0]
-            if "Season" in duration or "Series" in duration:
-                videoType = "tv"
-                duration = ""
-            else:
-                videoType = "movie"
-                duration = duration.split(" ")[0]
-            match = re.compile('src=".+?">.+?<\/span>(.+?)<', re.DOTALL).findall(videoDetails)
-            desc = match[0].replace("&amp;","&")
-            match = re.compile('Director:</dt><dd>(.+?)<', re.DOTALL).findall(videoDetails)
-            director = ""
+    if not 'id="page-LOGIN"' in content:
+        if singleProfile and 'id="page-ProfilesGate"' in content:
+            forceChooseProfile()
+        else:
+            content = content.replace("\\n","").replace("\\","")
+            match = re.compile('<span id="dbs(.+?)_0".+?alt="(.+?)" src="(.+?)">', re.DOTALL).findall(content)
+            for videoID, title, thumbUrl in match:
+                #Modifying the id won't always work, please let me know if you know a better way
+                #thumbID = str(int(thumbUrl.split("/")[-1].split(".")[0])+3)
+                videoDetails = getVideoInfo(videoID).replace("\\n","").replace("\\","")
+                match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                year = match[0]
+                match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                mpaa = ""
+                if match:
+                    mpaa = match[0]
+                match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                duration = match[0]
+                if "Season" in duration or "Series" in duration:
+                    videoType = "tv"
+                    duration = ""
+                else:
+                    videoType = "movie"
+                    duration = duration.split(" ")[0]
+                match = re.compile('src=".+?">.+?<\/span>(.+?)<', re.DOTALL).findall(videoDetails)
+                desc = match[0].replace("&amp;","&")
+                match = re.compile('Director:</dt><dd>(.+?)<', re.DOTALL).findall(videoDetails)
+                director = ""
+                if match:
+                    director = match[0].strip()
+                match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
+                genre = match[0]
+                match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
+                rating = "Rating: "+match[0]
+                title = title.replace("&amp;","&")
+                nextMode = "playVideo"
+                if browseTvShows and videoType=="tv":
+                    nextMode = "listSeasons"
+                if "/MyList" in url:
+                    addVideoDirR(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
+                else:
+                    addVideoDir(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
+            match = re.compile('&pn=(.+?)&', re.DOTALL).findall(url)
             if match:
-                director = match[0].strip()
-            match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
-            genre = match[0]
-            match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
-            rating = "Rating: "+match[0]
-            title = title.replace("&amp;","&")
-            nextMode = "playVideo"
-            if browseTvShows and videoType=="tv":
-                nextMode = "listSeasons"
-            if "/MyList" in url:
-                addVideoDirR(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
-            else:
-                addVideoDir(title, videoID, nextMode, thumbUrl, videoType, rating+"\n\n"+desc, duration, year, mpaa, director, genre)
-        match = re.compile('&pn=(.+?)&', re.DOTALL).findall(url)
-        if match:
-            currentPage = match[0]
-            nextPage = str(int(currentPage)+1)
-            addDir(translation(30001), url.replace("&pn="+currentPage+"&","&pn="+nextPage+"&"), 'listVideos', "")
-        if forceView:
-            xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
-        xbmcplugin.endOfDirectory(pluginhandle)
+                currentPage = match[0]
+                nextPage = str(int(currentPage)+1)
+                addDir(translation(30001), url.replace("&pn="+currentPage+"&","&pn="+nextPage+"&"), 'listVideos', "")
+            if forceView:
+                xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
+            xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        deleteCookies()
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',5000)')
 
 
 def listGenres(type):
@@ -219,6 +225,11 @@ def configureUtility():
         subprocess.Popen('wine "'+utilityPath+'" yes', shell=True)
 
 
+def deleteCookies():
+    if os.path.exists(cookieFile):
+        os.remove(cookieFile)
+
+
 def search():
     keyboard = xbmc.Keyboard('', translation(30008))
     keyboard.doModal()
@@ -238,23 +249,26 @@ def removeFromQueue(id):
 
 def login():
     content = opener.open("http://movies.netflix.com/").read()
-    match = re.compile('id="signout".+?authURL=(.+?)"', re.DOTALL).findall(content)
-    if match:
-        fh = open(authFile, 'w')
-        fh.write(match[0])
-        fh.close()
-    if 'id="page-LOGIN"' in content:
-        match = re.compile('name="authURL" value="(.+?)"', re.DOTALL).findall(content)
-        authUrl = match[0]
-        fh = open(authFile, 'w')
-        fh.write(authUrl)
-        fh.close()
-        opener.open("https://signup.netflix.com/Login", "authURL="+authUrl+"&email="+username+"&password="+password+"&RememberMe=on")
-        cj.save(cookieFile)
-    if not os.path.exists(profileFile) and not singleProfile:
-        chooseProfile()
-    elif not singleProfile and showProfiles:
-        chooseProfile()
+    if not "Sorry, Netflix is not available in your country yet." in content and not "Sorry, Netflix hasn't come to this part of the world yet" in content:
+        match = re.compile('id="signout".+?authURL=(.+?)"', re.DOTALL).findall(content)
+        if match:
+            fh = open(authFile, 'w')
+            fh.write(match[0])
+            fh.close()
+        if 'id="page-LOGIN"' in content:
+            match = re.compile('name="authURL" value="(.+?)"', re.DOTALL).findall(content)
+            authUrl = match[0]
+            fh = open(authFile, 'w')
+            fh.write(authUrl)
+            fh.close()
+            opener.open("https://signup.netflix.com/Login", "authURL="+authUrl+"&email="+username+"&password="+password+"&RememberMe=on")
+            cj.save(cookieFile)
+        if not os.path.exists(profileFile) and not singleProfile:
+            chooseProfile()
+        elif not singleProfile and showProfiles:
+            chooseProfile()
+    else:
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',5000)')
 
 
 def setProfile():
@@ -453,6 +467,8 @@ elif mode == 'listEpisodes':
     listEpisodes(url, thumb)
 elif mode == 'configureUtility':
     configureUtility()
+elif mode == 'deleteCookies':
+    deleteCookies()
 elif mode == 'addMovieToLibrary':
     addMovieToLibrary(url, name)
 elif mode == 'addSeasonToLibrary':

@@ -14,3 +14,5 @@
 - Added setting to browse tv-shows instead of continuing
 - Loading extra information is not optional anymore
   because adding to library and browsing tv-shows depend on it
+1.0.5
+- Added notifications for geoblocking and login problems
