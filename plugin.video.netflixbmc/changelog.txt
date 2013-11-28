@@ -16,3 +16,8 @@
   because adding to library and browsing tv-shows depend on it
 1.0.5
 - Added notifications for geoblocking and login problems
+1.0.6
+- Changed season/episode listing
+- Fixed adding episodes to the library
+- Fixed "My List" when using manual order mode
+- Added support for Safari Browser (OSX)

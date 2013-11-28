@@ -11,7 +11,7 @@
   <string id="30009">Just for Kids</string>
   <string id="30101">eMail</string>
   <string id="30102">Password</string>
-  <string id="30103">Account with only one profile (faster)</string>
+  <string id="30103">Single-User account (faster)</string>
   <string id="30104">Windows Browser</string>
   <string id="30105">OSX Browser</string>
   <string id="30106">Linux Browser</string>
@@ -34,6 +34,7 @@
   <string id="30125">Delete cookies</string>
   <string id="30126">Sorry, Netflix is not available in your country yet.</string>
   <string id="30127">You are not logged in. Check your login credentials and restart the addon.</string>
+  <string id="30128">Language/Country</string>
   <string id="30201">General</string>
   <string id="30202">Views</string>
   <string id="30203">Advanced</string>
