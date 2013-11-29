@@ -21,3 +21,5 @@
 - Fixed adding episodes to the library
 - Fixed "My List" when using manual order mode
 - Added support for Safari Browser (OSX)
+1.0.7
+- Fixed bug with language/country detection
