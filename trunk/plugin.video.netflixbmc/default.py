@@ -193,7 +193,7 @@ def listSeasons(seriesName, seriesID, thumb):
 
 
 def listEpisodes(seriesID, season):
-    xbmcplugin.setContent(pluginhandle, "tvshows")
+    xbmcplugin.setContent(pluginhandle, "episodes")
     content = getSeriesInfo(seriesID)
     content = json.loads(content)
     for test in content["episodes"]:
@@ -205,7 +205,10 @@ def listEpisodes(seriesID, season):
                 episodeTitle = item["title"].encode('utf-8')
                 duration = str(item["runtime"])
                 desc = item["synopsis"].encode('utf-8')
-                thumb = item["stills"][0]["url"]
+                try:
+                    thumb = item["stills"][0]["url"]
+                except:
+                    thumb = ""
                 addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, duration, episodeNr)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewIdEpisodes+')')
@@ -434,7 +437,7 @@ def addDir(name, url, mode, iconimage):
 def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", year="", mpaa="", director="", genre=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre})
     entries = []
     entries.append((translation(30114), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addToQueue&url='+urllib.quote_plus(url)+')',))
@@ -454,7 +457,7 @@ def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", 
 def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="", year="", mpaa="", director="", genre=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre})
     entries = []
     entries.append((translation(30115), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=removeFromQueue&url='+urllib.quote_plus(url)+')',))
@@ -486,7 +489,7 @@ def addSeasonDir(name, url, mode, iconimage, seriesName, seriesID):
 def addEpisodeDir(name, url, mode, iconimage, desc="", duration="", episodeNr=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "episode": episodeNr})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
