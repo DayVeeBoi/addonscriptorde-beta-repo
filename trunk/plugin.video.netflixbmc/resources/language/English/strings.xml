@@ -32,8 +32,8 @@
   <string id="30122">Add to library</string>
   <string id="30123">Update library after adding media</string>
   <string id="30125">Delete cookies</string>
-  <string id="30126">Sorry, Netflix is not available in your country yet.</string>
-  <string id="30127">You are not logged in. Check your login credentials and restart the addon.</string>
+  <string id="30126">Sorry! Netflix is not available in your country yet.</string>
+  <string id="30127">You are not logged in. Restart the addon!</string>
   <string id="30128">Language/Country</string>
   <string id="30201">General</string>
   <string id="30202">Views</string>

@@ -125,7 +125,7 @@ def listVideos(url):
             xbmcplugin.endOfDirectory(pluginhandle)
     else:
         deleteCookies()
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30127))+',10000)')
 
 
 def listVideo(videoID, thumbUrl):
@@ -145,7 +145,7 @@ def listVideo(videoID, thumbUrl):
         mpaa = match[0]
     match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     duration = match[0]
-    if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration:
+    if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
         videoType = "tv"
         duration = ""
     else:
@@ -290,31 +290,36 @@ def removeFromQueue(id):
 
 def login():
     content = opener.open("http://movies.netflix.com/").read()
+    match = re.compile('"LOCALE":"(.+?)"', re.DOTALL).findall(content)
+    if match:
+        fh = open(localeFile, 'w')
+        fh.write(match[0])
+        fh.close()
     if not "Sorry, Netflix is not available in your country yet." in content and not "Sorry, Netflix hasn't come to this part of the world yet" in content:
         match = re.compile('id="signout".+?authURL=(.+?)"', re.DOTALL).findall(content)
         if match:
             fh = open(authFile, 'w')
             fh.write(match[0])
             fh.close()
-        match = re.compile('"LOCALE":"(.+?)"', re.DOTALL).findall(content)
-        localeT = match[0]
-        fh = open(localeFile, 'w')
-        fh.write(localeT)
-        fh.close()
         if 'id="page-LOGIN"' in content:
             match = re.compile('name="authURL" value="(.+?)"', re.DOTALL).findall(content)
             authUrl = match[0]
             fh = open(authFile, 'w')
             fh.write(authUrl)
             fh.close()
-            opener.open("https://signup.netflix.com/Login", "authURL="+authUrl+"&email="+username+"&password="+password+"&RememberMe=on")
+            content = opener.open("https://signup.netflix.com/Login", "authURL="+authUrl+"&email="+username+"&password="+password+"&RememberMe=on").read()
+            match = re.compile('"LOCALE":"(.+?)"', re.DOTALL).findall(content)
+            if match:
+                fh = open(localeFile, 'w')
+                fh.write(match[0])
+                fh.close()
             cj.save(cookieFile)
         if not os.path.exists(profileFile) and not singleProfile:
             chooseProfile()
         elif not singleProfile and showProfiles:
             chooseProfile()
     else:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',10000)')
 
 
 def setProfile():
@@ -434,13 +439,13 @@ def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", 
     entries = []
     entries.append((translation(30114), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addToQueue&url='+urllib.quote_plus(url)+')',))
     if videoType=="tv":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+str(name)+'&seriesID='+str(url)+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+str(name.strip())+'&seriesID='+str(url)+')',))
         if browseTvShows:
             entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
         else:
             entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     elif videoType=="movie":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name+' ('+year+')')+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name.strip()+' ('+year+')')+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -454,13 +459,13 @@ def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="",
     entries = []
     entries.append((translation(30115), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=removeFromQueue&url='+urllib.quote_plus(url)+')',))
     if videoType=="tv":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+str(name)+'&seriesID='+str(url)+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+str(name.strip())+'&seriesID='+str(url)+')',))
         if browseTvShows:
             entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
         else:
             entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     elif videoType=="movie":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name+' ('+year+')')+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name.strip()+' ('+year+')')+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -472,7 +477,7 @@ def addSeasonDir(name, url, mode, iconimage, seriesName, seriesID):
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name})
     entries = []
-    entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url='+urllib.quote_plus(url)+'&name='+str(seriesName)+'&seriesID='+str(seriesID)+')',))
+    entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url='+urllib.quote_plus(url)+'&name='+str(seriesName.strip())+'&seriesID='+str(seriesID)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
