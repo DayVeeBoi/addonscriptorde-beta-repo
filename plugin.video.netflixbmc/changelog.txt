@@ -23,3 +23,5 @@
 - Added support for Safari Browser (OSX)
 1.0.7
 - Fixed bug with language/country detection
+1.0.8
+- Fixed episode listing for videos with missing thumb
