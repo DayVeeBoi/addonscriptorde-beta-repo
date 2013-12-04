@@ -1,9 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import os
 import re
 import sys
 import json
+import shutil
 import random
+import socket
 import urllib
 import urllib2
 import xbmcplugin
@@ -13,9 +16,31 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
+socket.setdefaulttimeout(30)
+opener = urllib2.build_opener()
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
-showInfo = addon.getSetting("showInfo")=="true"
+addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
+simpleChannelsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/simple.channel")
+advancedChannelsDir = xbmc.translatePath("special://profile/addon_data/"+addonID+"/advanced")
+tv1 = addon.getSetting("tv1") == "true"
+tv2 = addon.getSetting("tv2") == "true"
+tv3 = addon.getSetting("tv3") == "true"
+tv4 = addon.getSetting("tv4") == "true"
+cat1 = addon.getSetting("cat1") == "true"
+cat2 = addon.getSetting("cat2") == "true"
+cat3 = addon.getSetting("cat3") == "true"
+cat4 = addon.getSetting("cat4") == "true"
+cat5 = addon.getSetting("cat5") == "true"
+cat6 = addon.getSetting("cat6") == "true"
+cat7 = addon.getSetting("cat7") == "true"
+cat8 = addon.getSetting("cat8") == "true"
+cat9 = addon.getSetting("cat9") == "true"
+cat10 = addon.getSetting("cat10") == "true"
+cat11 = addon.getSetting("cat11") == "true"
+cat12 = addon.getSetting("cat12") == "true"
+cat13 = addon.getSetting("cat13") == "true"
+showInfo = addon.getSetting("showInfo") == "true"
 infoType = addon.getSetting("infoType")
 infoDelay = int(addon.getSetting("infoDelay"))
 infoDuration = int(addon.getSetting("infoDuration"))
@@ -23,114 +48,318 @@ bitrateOfficial = addon.getSetting("bitrateOfficial")
 bitrateOfficial = ["512000", "800000", "1392000", "2272000", "3500000"][int(bitrateOfficial)]
 bitrateCustom = addon.getSetting("bitrateCustom")
 bitrateCustom = ["564000", "864000", "1328000", "1728000", "2528000", "3328000", "4392000", "5392000"][int(bitrateCustom)]
+userAgent = "Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0"
+opener.addheaders = [('User-Agent', userAgent)]
 urlMainApi = "http://api.vevo.com/mobile/v1"
 urlMain = "http://www.vevo.com"
 
+if not os.path.isdir(addonUserDataFolder):
+    os.mkdir(addonUserDataFolder)
+if not os.path.isdir(advancedChannelsDir):
+    os.mkdir(advancedChannelsDir)
+
 
 def index():
-    addLink("VEVO TV (US #1)", "TIVEVSTRUS00", 'playOfficial', "")
-    addLink("VEVO TV (US #2)", "TIVEVSTRUS01", 'playOfficial', "")
-    addLink("VEVO TV (US #3)", "TIVEVSTRUS02", 'playOfficial', "")
-    addLink("VEVO TV (DE)", "TIVEVSTRDE00", 'playOfficial', "")
+    if tv1:
+        addLink(translation(30150), "TIVEVSTRUS00", 'playOfficial', "")
+    if tv2:
+        addLink(translation(30151), "TIVEVSTRUS01", 'playOfficial', "")
+    if tv3:
+        addLink(translation(30152), "TIVEVSTRUS02", 'playOfficial', "")
+    if tv4:
+        addLink(translation(30153), "TIVEVSTRDE00", 'playOfficial', "")
     addDir(translation(30001), "default", 'customMain', "")
-    addDir(translation(30004), "live", 'customMain', "")
+    addDir(translation(30002), "live", 'customMain', "")
+    #addDir(translation(30003), "", 'listChannelsSimple', "")
+    addDir(translation(30004), "", 'listChannelsAdvancedMain', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def customMain(type):
-    if type=="live":
-        currentMode = 'listCustomModesLive'
-    elif type=="premiere":
-        currentMode = 'listCustomModesPremiere'
-    else:
+    if type == "default":
         currentMode = 'listCustomModes'
-    content = getUrl(urlMain)
+    elif type == "live":
+        currentMode = 'listCustomModesLive'
+    content = opener.open(urlMain).read()
     if "var $data" in content:
         addDir("- All Genres", "all", currentMode, "")
-        content = getUrl(urlMainApi+"/genre/list.json?culture=en_US")
+        content = opener.open(urlMainApi+"/genre/list.json?culture=en_US").read()
         content = json.loads(content)
         for item in content["result"]:
             addDir(item["Value"], item["Key"], currentMode, "")
         xbmcplugin.endOfDirectory(pluginhandle)
     else:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30002)+',5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30030)+',5000)')
 
 
 def listCustomModes(id):
     genres = ""
-    if id!="all":
+    if id != "all":
         genres = "genres="+id+"&"
-    addDir("Top200", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200", 'playCustom', "", "200", "false")
-    addDir("Top10 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "10", "true")
-    addDir("Top20 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "20", "true")
-    addDir("Top50 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "50", "true")
-    addDir("Top100 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100", 'playCustom', "", "100", "true")
-    addDir("Top200 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200", 'playCustom', "", "200", "true")
-    addDir("Top200 All-Time", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "200", "false")
-    addDir("Top10 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "10", "true")
-    addDir("Top20 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "20", "true")
-    addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "50", "true")
-    addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "100", "true")
-    addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "200", "true")
-    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "200", "true")
+    if cat1:
+        addDir(translation(30130), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200", 'playCustom', "", "false")
+    if cat2:
+        addDir(translation(30131), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=10", 'playCustom', "", "true")
+    if cat3:
+        addDir(translation(30132), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=20", 'playCustom', "", "true")
+    if cat4:
+        addDir(translation(30133), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=50", 'playCustom', "", "true")
+    if cat5:
+        addDir(translation(30134), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=100", 'playCustom', "", "true")
+    if cat6:
+        addDir(translation(30135), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200", 'playCustom', "", "true")
+    if cat7:
+        addDir(translation(30136), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "false")
+    if cat8:
+        addDir(translation(30137), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=10", 'playCustom', "", "true")
+    if cat9:
+        addDir(translation(30138), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=20", 'playCustom', "", "true")
+    if cat10:
+        addDir(translation(30139), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=50", 'playCustom', "", "true")
+    if cat11:
+        addDir(translation(30140), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "true")
+    if cat12:
+        addDir(translation(30141), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "true")
+    if cat13:
+        addDir(translation(30142), urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "true")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listCustomModesLive(id):
     genres = ""
-    if id!="all":
+    if id != "all":
         genres = "genres="+id+"&"
-    addDir("Top200", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
-    addDir("Top10 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
-    addDir("Top20 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
-    addDir("Top50 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
-    addDir("Top100 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
-    addDir("Top200 (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedThisWeek&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
-    addDir("Top200 All-Time", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "200", "false")
-    addDir("Top10 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "10", "true")
-    addDir("Top20 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "20", "true")
-    addDir("Top50 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "50", "true")
-    addDir("Top100 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "100", "true")
-    addDir("Top200 All-Time (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
-    addDir("All (shuffled)", urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "200", "true")
+    if cat1:
+        addDir(translation(30130), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200&islive=true", 'playCustom', "", "false")
+    if cat2:
+        addDir(translation(30131), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=10&islive=true", 'playCustom', "", "true")
+    if cat3:
+        addDir(translation(30132), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=20&islive=true", 'playCustom', "", "true")
+    if cat4:
+        addDir(translation(30133), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=50&islive=true", 'playCustom', "", "true")
+    if cat5:
+        addDir(translation(30134), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=100&islive=true", 'playCustom', "", "true")
+    if cat6:
+        addDir(translation(30135), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200&islive=true", 'playCustom', "", "true")
+    if cat7:
+        addDir(translation(30136), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "false")
+    if cat8:
+        addDir(translation(30137), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=10&islive=true", 'playCustom', "", "true")
+    if cat9:
+        addDir(translation(30138), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=20&islive=true", 'playCustom', "", "true")
+    if cat10:
+        addDir(translation(30139), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=50&islive=true", 'playCustom', "", "true")
+    if cat11:
+        addDir(translation(30140), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "true")
+    if cat12:
+        addDir(translation(30141), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "true")
+    if cat13:
+        addDir(translation(30142), urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "true")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def playOfficial(id):
-    content = getUrl(urlMain)
+    content = opener.open(urlMain).read()
     if "noVTV: false" in content:
-        content = getUrl("http://smil.lvl3.vevo.com/v3/smil/"+id+"/"+id+"r.smil")
-        matchBase=re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
-        matchPlaypath=re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
+        content = opener.open("http://smil.lvl3.vevo.com/v3/smil/"+id+"/"+id+"r.smil").read()
+        matchBase = re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
+        matchPlaypath = re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
         for url, bitrate in matchPlaypath:
-            if int(bitrate)<=int(bitrateOfficial):
-                fullUrl = matchBase[0]+" playpath="+url+" live=true"
+            if int(bitrate) <= int(bitrateOfficial):
+                fullUrl = matchBase[0]+" playpath="+url
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     else:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30003)+',5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30031)+',5000)')
 
 
-def playCustom(url, count, shuffled):
+def listChannelsSimple():
+    addDir("- "+translation(30005), "", 'addSimpleChannel', "")
+    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+    if os.path.exists(simpleChannelsFile):
+        fh = open(simpleChannelsFile, 'r')
+        all_lines = fh.readlines()
+        for line in all_lines:
+            addSimpleChannelDir(line.strip().title(), urlMainApi+"/search/videos.json?q="+line.strip().lower().replace(" ","%23")+"&offset=0&max=200", 'playCustom', "", "true")
+        fh.close()
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listChannelsAdvancedMain():
+    addDir("- "+translation(30005), "", 'addAdvancedChannel', "")
+    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+    for dir in os.listdir(advancedChannelsDir):
+        addAdvancedChannelDir(dir.strip().title(), dir, 'playAdvancedChannel', "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listAdvancedChannel(channel):
+    channelDir = os.path.join(advancedChannelsDir, channel)
+    addDir("- "+translation(30008), channel, 'addAdvancedChannelArtist', "")
+    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+    if os.path.exists(channelDir):
+        for file in os.listdir(channelDir):
+            count = str(len(os.listdir(os.path.join(channelDir, file)))-1)
+            addArtistDir(file+" ("+count+")", channel, 'updateArtist', "", file)
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def addSimpleChannel():
+    keyboard = xbmc.Keyboard('', translation(30011))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        query = keyboard.getText()
+        fh = open(simpleChannelsFile, 'a')
+        fh.write(query+"\n")
+        fh.close()
+
+
+def addAdvancedChannel():
+    keyboard = xbmc.Keyboard('', translation(30005))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        channel = keyboard.getText()
+        os.mkdir(os.path.join(advancedChannelsDir, channel))
+
+
+def addAdvancedChannelArtist(channel):
+    channelDir = os.path.join(advancedChannelsDir, channel)
+    keyboard = xbmc.Keyboard('', translation(30010))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        artist = keyboard.getText().replace(" ", "+")
+        titles = []
+        titlesRaw = []
+        ids = []
+        content = opener.open("http://api.vevo.com/mobile/v1/search/artists.json?q="+artist+"&offset=0&max=100").read()
+        content = json.loads(content)
+        for item in content["result"]:
+            title = item["name"].encode('utf-8')
+            id = item["id"].encode('utf-8')
+            videos = str(item["video_count"])
+            titles.append(title+" ("+videos+")")
+            titlesRaw.append(title)
+            ids.append(id)
+        dialog = xbmcgui.Dialog()
+        nr=dialog.select("Results", titles)
+        if nr >=0:
+          id = ids[nr]
+          title = titlesRaw[nr]
+          dirName = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+          artistDir = os.path.join(channelDir, dirName)
+          if not os.path.exists(artistDir):
+              os.mkdir(artistDir)
+          artistIdFile = os.path.join(artistDir, "artistID")
+          if not os.path.exists(artistIdFile):
+              fh = open(artistIdFile, 'w')
+              fh.write(id)
+              fh.close()
+          content = opener.open("http://api.vevo.com/mobile/v1/artist/"+id+"/videos.json?order=MostViewedToday&offset=0&max=200").read()
+          content = json.loads(content)
+          count = 0
+          for item in content["result"]:
+              title = item["artists_main"][0]["name"].encode('utf-8')+" - "+item["title"].encode('utf-8')
+              videoID = item["isrc"]
+              thumb = item["image_url"].encode('utf-8')
+              videoFile = os.path.join(artistDir, videoID)
+              if not os.path.exists(videoFile):
+                  fh = open(videoFile, 'w')
+                  fh.write(title+"#"+thumb)
+                  fh.close()
+                  count+=1
+          xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30013)+' '+str(count)+' '+translation(30014)+',5000)')
+
+
+def updateArtist(channel, artist):
+    channelDir = os.path.join(advancedChannelsDir, channel)
+    artistDir = os.path.join(channelDir, artist)
+    artistIdFile = os.path.join(artistDir, "artistID")
+    fh = open(artistIdFile, 'r')
+    id = fh.read()
+    fh.close()
+    content = opener.open("http://api.vevo.com/mobile/v1/artist/"+id+"/videos.json?order=MostViewedToday&offset=0&max=200").read()
+    content = json.loads(content)
+    count = 0
+    for item in content["result"]:
+        title = item["artists_main"][0]["name"].encode('utf-8')+" - "+item["title"].encode('utf-8')
+        videoID = item["isrc"]
+        thumb = item["image_url"].encode('utf-8')
+        videoFile = os.path.join(artistDir, videoID)
+        if not os.path.exists(videoFile):
+            fh = open(videoFile, 'w')
+            fh.write(title+"#"+thumb)
+            fh.close()
+            count+=1
+    xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30013)+' '+str(count)+' '+translation(30014)+',5000)')
+
+
+def removeArtist(artist, channel):
+    channelDir = os.path.join(advancedChannelsDir, channel)
+    artistDir = os.path.join(channelDir, artist)
+    try:
+        shutil.rmtree(artistDir)
+    except:
+        shutil.rmtree(artistDir)
+
+
+def removeAdvancedChannel(channel):
+    channelDir = os.path.join(advancedChannelsDir, channel)
+    try:
+        shutil.rmtree(channelDir)
+    except:
+        shutil.rmtree(channelDir)
+
+
+def renameAdvancedChannel(channel):
+    keyboard = xbmc.Keyboard(channel, translation(30012))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        channelNew = keyboard.getText()
+        channelDir = os.path.join(advancedChannelsDir, channel)
+        channelDirNew = os.path.join(advancedChannelsDir, channelNew)
+        os.rename(channelDir, channelDirNew)
+
+
+def editSimpleChannel(query):
+    fh = open(simpleChannelsFile, 'r')
+    content = fh.read()
+    fh.close()
+    keyboard = xbmc.Keyboard(query, translation(30011))
+    keyboard.doModal()
+    if keyboard.isConfirmed() and keyboard.getText():
+        queryNew = keyboard.getText()
+        fh = open(simpleChannelsFile, 'w')
+        fh.write(content.replace(query, queryNew))
+        fh.close()
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def removeSimpleChannel(query):
+    fh = open(simpleChannelsFile, 'r')
+    content = fh.read()
+    fh.close()
+    fh = open(simpleChannelsFile, 'w')
+    fh.write(content.replace(query+"\n", ""))
+    fh.close()
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def playCustom(url, shuffled):
     entries = []
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
     if "order=Random" in url:
         url += "&rnd="+str(random.randint(1, 999999))
-    content = getUrl(url)
+    content = opener.open(url).read()
     content = json.loads(content)
-    counter = 0
     for item in content["result"]:
-        title = item["artists_main"][0]["name"]+" - "+item["title"]
-        thumb = item["image_url"]
-        if xbox==True:
-            url="plugin://video/VEVO TV/?url="+item["isrc"]+"&mode=playVideo"
+        title = item["artists_main"][0]["name"].encode('utf-8')+" - "+item["title"].encode('utf-8')
+        thumb = item["image_url"].encode('utf-8')
+        if xbox:
+            url = "plugin://video/VEVO TV/?url="+item["isrc"]+"&mode=playVideo"
         else:
-            url="plugin://plugin.video.vevo_tv/?url="+item["isrc"]+"&mode=playVideo"
+            url = "plugin://plugin.video.vevo_tv/?url="+item["isrc"]+"&mode=playVideo"
         entries.append([title, url, thumb])
-        counter += 1
-        if counter==count:
-            break
     if shuffled:
         random.shuffle(entries)
     for title, url, thumb in entries:
@@ -139,38 +368,57 @@ def playCustom(url, count, shuffled):
     xbmc.Player().play(playlist)
 
 
+def playAdvancedChannel(channel):
+    entries = []
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    for root, dirs, files in os.walk(os.path.join(advancedChannelsDir, channel)):
+        for filename in files:
+            if filename!="artistID":
+                fh = open(os.path.join(root, filename), 'r')
+                entry = fh.read()
+                fh.close()
+                title = entry[:entry.rfind("#")]
+                thumb = entry[entry.rfind("#")+1:]
+                if xbox:
+                    url = "plugin://video/VEVO TV/?url="+filename+"&mode=playVideo"
+                else:
+                    url = "plugin://plugin.video.vevo_tv/?url="+filename+"&mode=playVideo"
+                entries.append([title, url, thumb])
+    if len(entries)>0:
+        random.shuffle(entries)
+        for title, url, thumb in entries:
+            listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
+            playlist.add(url, listitem)
+        xbmc.Player().play(playlist)
+    else:
+        listAdvancedChannel(channel)
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30015)+',5000)')
+
+
 def playVideo(id):
     try:
-        content = getUrl("http://vevoodfs.fplive.net/Video/V2/VFILE/"+id+"/"+id.lower()+"r.smil")
-        matchBase=re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
-        matchPlaypath=re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
+        content = opener.open("http://vevoodfs.fplive.net/Video/V2/VFILE/"+id+"/"+id.lower()+"r.smil").read()
+        matchBase = re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
+        matchPlaypath = re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
         for url, bitrate in matchPlaypath:
-            if int(bitrate)<=int(bitrateCustom):
+            if int(bitrate) <= int(bitrateCustom):
                 fullUrl = matchBase[0]+" playpath="+url
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showInfo:
             xbmc.sleep(infoDelay*1000)
-            if infoType=="0":
+            if infoType == "0":
                 xbmc.executebuiltin('XBMC.ActivateWindow(12901)')
                 xbmc.sleep(infoDuration*1000)
                 xbmc.executebuiltin('XBMC.ActivateWindow(12005)')
-            elif infoType=="1":
+            elif infoType == "1":
                 title = 'Now playing:'
                 videoTitle = xbmc.getInfoLabel('VideoPlayer.Title')
                 thumb = xbmc.getInfoImage('VideoPlayer.Cover')
                 xbmc.executebuiltin('XBMC.Notification(%s, %s, %s, %s)' % (title, videoTitle, infoDuration*1000, thumb))
     except:
         pass
-
-
-def getUrl(url):
-    req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0')
-    response = urllib2.urlopen(req)
-    link=response.read()
-    response.close()
-    return link
 
 
 def translation(id):
@@ -198,31 +446,95 @@ def addLink(name, url, mode, iconimage):
     return ok
 
 
-def addDir(name, url, mode, iconimage, count=100, shuffled="false"):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&count="+str(count)+"&shuffled="+str(shuffled)
+def addDir(name, url, mode, iconimage, shuffled="false"):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&shuffled="+str(shuffled)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=icon)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
+
+def addSimpleChannelDir(name, url, mode, iconimage, shuffled="false"):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&shuffled="+str(shuffled)
+    ok = True
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=icon)
+    liz.setInfo(type="Video", infoLabels={"Title": name})
+    entries = []
+    entries.append((translation(30006), 'RunPlugin(plugin://'+addonID+'/?mode=editSimpleChannel&url='+urllib.quote_plus(name.lower())+')',))
+    entries.append((translation(30007), 'RunPlugin(plugin://'+addonID+'/?mode=removeSimpleChannel&url='+urllib.quote_plus(name.lower())+')',))
+    liz.addContextMenuItems(entries)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    return ok
+
+def addAdvancedChannelDir(name, url, mode, iconimage):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    ok = True
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=icon)
+    liz.setInfo(type="Video", infoLabels={"Title": name})
+    entries = []
+    entries.append((translation(30006), 'Container.Update(plugin://'+addonID+'/?mode=listAdvancedChannel&url='+urllib.quote_plus(url)+')',))
+    entries.append((translation(30012), 'Container.Update(plugin://'+addonID+'/?mode=renameAdvancedChannel&url='+urllib.quote_plus(url)+')',))
+    entries.append((translation(30007), 'Container.Update(plugin://'+addonID+'/?mode=removeAdvancedChannel&url='+urllib.quote_plus(url)+')',))
+    liz.addContextMenuItems(entries)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    return ok
+
+
+def addArtistDir(name, url, mode, iconimage, artist):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(artist)
+    ok = True
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=icon)
+    liz.setInfo(type="Video", infoLabels={"Title": name})
+    entries = []
+    entries.append((translation(30009), 'Container.Update(plugin://'+addonID+'/?mode=removeArtist&url='+urllib.quote_plus(url)+"&name="+str(artist)+')',))
+    liz.addContextMenuItems(entries)
+    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    return ok
+
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
-count = urllib.unquote_plus(params.get('count', ''))
 shuffled = urllib.unquote_plus(params.get('shuffled', ''))
+name = urllib.unquote_plus(params.get('name', ''))
 
 if mode == 'playVideo':
     playVideo(url)
 elif mode == 'playOfficial':
     playOfficial(url)
 elif mode == 'playCustom':
-    playCustom(url, int(count), shuffled=="true")
+    playCustom(url, shuffled == "true")
+elif mode == 'playAdvancedChannel':
+    playAdvancedChannel(url)
 elif mode == 'customMain':
     customMain(url)
 elif mode == 'listCustomModes':
     listCustomModes(url)
 elif mode == 'listCustomModesLive':
     listCustomModesLive(url)
+elif mode == 'listChannelsSimple':
+    listChannelsSimple()
+elif mode == 'listChannelsAdvancedMain':
+    listChannelsAdvancedMain()
+elif mode == 'addSimpleChannel':
+    addSimpleChannel()
+elif mode == 'addAdvancedChannel':
+    addAdvancedChannel()
+elif mode == 'listAdvancedChannel':
+    listAdvancedChannel(url)
+elif mode == 'addAdvancedChannelArtist':
+    addAdvancedChannelArtist(url)
+elif mode == 'editSimpleChannel':
+    editSimpleChannel(url)
+elif mode == 'removeSimpleChannel':
+    removeSimpleChannel(url)
+elif mode == 'removeAdvancedChannel':
+    removeAdvancedChannel(url)
+elif mode == 'renameAdvancedChannel':
+    renameAdvancedChannel(url)
+elif mode == 'removeArtist':
+    removeArtist(name, url)
+elif mode == 'updateArtist':
+    updateArtist(url, name)
 else:
     index()
