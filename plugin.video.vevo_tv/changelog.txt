@@ -12,3 +12,5 @@
 - Added setting to hide VEVO TV channels
 - Added settings to hide custom categories
 - Code cleanup & optimizations
+1.0.6
+- Addon is now also shown as music addon
