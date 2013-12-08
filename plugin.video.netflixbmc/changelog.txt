@@ -25,3 +25,10 @@
 - Fixed bug with language/country detection
 1.0.8
 - Fixed episode listing for videos with missing thumb
+1.0.9
+- Fixed login issue
+- Added "Viewing Activity"
+- Added support for IExplorer (Win)
+- Added function to add "My List" to library
+- Added TMDb integration to get cover & fanart images
+- Added context menu "Play trailer"

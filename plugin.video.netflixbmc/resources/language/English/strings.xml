@@ -9,10 +9,11 @@
   <string id="30007">Genres</string>
   <string id="30008">Search</string>
   <string id="30009">Just for Kids</string>
+  <string id="30010">Viewing Activity</string>
   <string id="30101">eMail</string>
   <string id="30102">Password</string>
   <string id="30103">Single-User account (faster)</string>
-  <string id="30104">Windows Browser</string>
+  <string id="30104">Win Browser</string>
   <string id="30105">OSX Browser</string>
   <string id="30106">Linux Browser</string>
   <string id="30107">Use Control Utitlity (Windows)</string>
@@ -35,7 +36,15 @@
   <string id="30126">Sorry! Netflix is not available in your country yet.</string>
   <string id="30127">You are not logged in. Restart the addon!</string>
   <string id="30128">Language/Country</string>
-  <string id="30201">General</string>
-  <string id="30202">Views</string>
-  <string id="30203">Advanced</string>
+  <string id="30129">Hide movies in Viewing Activity</string>
+  <string id="30130">ViewID (Viewing Activity)</string>
+  <string id="30131">Show all episodes in Viewing Activity</string>
+  <string id="30132">Delete cache</string>
+  <string id="30133">Chrome: Don't use kiosk mode</string>
+  <string id="30134">Play trailer</string>
+  <string id="30135">Get covers &amp; fanart images from TMDb</string>
+  <string id="30201">Account</string>
+  <string id="30202">General</string>
+  <string id="30203">Views</string>
+  <string id="30204">Advanced</string>
 </strings>
