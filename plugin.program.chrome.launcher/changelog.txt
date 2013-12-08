@@ -15,3 +15,5 @@
 - Added setting to start a custom user script before chrome
 1.0.5
 - Added optional delay after executing custom user script
+1.0.6
+- Added setting to launch chrome without kiosk mode
