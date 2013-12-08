@@ -92,69 +92,39 @@ def customMain(type):
         xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30030)+',5000)')
 
 
-def listCustomModes(id):
+def listCustomModes(id, type=""):
     genres = ""
     if id != "all":
         genres = "genres="+id+"&"
+    isLive = ""
+    if type == "live":
+        isLive = "&islive=true"
     if cat1:
-        addDir(translation(30130), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200", 'playCustom', "", "false")
+        addDir(translation(30130), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200"+isLive, 'playCustom', "", "false")
     if cat2:
-        addDir(translation(30131), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=10", 'playCustom', "", "true")
+        addDir(translation(30131), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=10"+isLive, 'playCustom', "", "true")
     if cat3:
-        addDir(translation(30132), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=20", 'playCustom', "", "true")
+        addDir(translation(30132), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=20"+isLive, 'playCustom', "", "true")
     if cat4:
-        addDir(translation(30133), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=50", 'playCustom', "", "true")
+        addDir(translation(30133), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=50"+isLive, 'playCustom', "", "true")
     if cat5:
-        addDir(translation(30134), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=100", 'playCustom', "", "true")
+        addDir(translation(30134), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=100"+isLive, 'playCustom', "", "true")
     if cat6:
-        addDir(translation(30135), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200", 'playCustom', "", "true")
+        addDir(translation(30135), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200"+isLive, 'playCustom', "", "true")
     if cat7:
-        addDir(translation(30136), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "false")
+        addDir(translation(30136), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200"+isLive, 'playCustom', "", "false")
     if cat8:
-        addDir(translation(30137), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=10", 'playCustom', "", "true")
+        addDir(translation(30137), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=10"+isLive, 'playCustom', "", "true")
     if cat9:
-        addDir(translation(30138), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=20", 'playCustom', "", "true")
+        addDir(translation(30138), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=20"+isLive, 'playCustom', "", "true")
     if cat10:
-        addDir(translation(30139), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=50", 'playCustom', "", "true")
+        addDir(translation(30139), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=50"+isLive, 'playCustom', "", "true")
     if cat11:
-        addDir(translation(30140), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100", 'playCustom', "", "true")
+        addDir(translation(30140), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100"+isLive, 'playCustom', "", "true")
     if cat12:
-        addDir(translation(30141), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200", 'playCustom', "", "true")
+        addDir(translation(30141), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200"+isLive, 'playCustom', "", "true")
     if cat13:
-        addDir(translation(30142), urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200", 'playCustom', "", "true")
-    xbmcplugin.endOfDirectory(pluginhandle)
-
-
-def listCustomModesLive(id):
-    genres = ""
-    if id != "all":
-        genres = "genres="+id+"&"
-    if cat1:
-        addDir(translation(30130), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200&islive=true", 'playCustom', "", "false")
-    if cat2:
-        addDir(translation(30131), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=10&islive=true", 'playCustom', "", "true")
-    if cat3:
-        addDir(translation(30132), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=20&islive=true", 'playCustom', "", "true")
-    if cat4:
-        addDir(translation(30133), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=50&islive=true", 'playCustom', "", "true")
-    if cat5:
-        addDir(translation(30134), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=100&islive=true", 'playCustom', "", "true")
-    if cat6:
-        addDir(translation(30135), urlMainApi+"/video/list.json?"+genres+"order=MostViewedToday&offset=0&max=200&islive=true", 'playCustom', "", "true")
-    if cat7:
-        addDir(translation(30136), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "false")
-    if cat8:
-        addDir(translation(30137), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=10&islive=true", 'playCustom', "", "true")
-    if cat9:
-        addDir(translation(30138), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=20&islive=true", 'playCustom', "", "true")
-    if cat10:
-        addDir(translation(30139), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=50&islive=true", 'playCustom', "", "true")
-    if cat11:
-        addDir(translation(30140), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=100&islive=true", 'playCustom', "", "true")
-    if cat12:
-        addDir(translation(30141), urlMainApi+"/video/list.json?"+genres+"order=MostViewedAllTime&offset=0&max=200&islive=true", 'playCustom', "", "true")
-    if cat13:
-        addDir(translation(30142), urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200&islive=true", 'playCustom', "", "true")
+        addDir(translation(30142), urlMainApi+"/video/list.json?"+genres+"order=Random&offset=0&max=200"+isLive, 'playCustom', "", "true")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -511,7 +481,7 @@ elif mode == 'customMain':
 elif mode == 'listCustomModes':
     listCustomModes(url)
 elif mode == 'listCustomModesLive':
-    listCustomModesLive(url)
+    listCustomModes(url, "live")
 elif mode == 'listChannelsSimple':
     listChannelsSimple()
 elif mode == 'listChannelsAdvancedMain':

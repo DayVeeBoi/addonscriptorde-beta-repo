@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
+        <provides>video audio</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
