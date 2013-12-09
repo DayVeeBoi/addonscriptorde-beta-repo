@@ -83,7 +83,7 @@ def customMain(type):
     content = opener.open(urlMain).read()
     if "var $data" in content:
         addDir("- All Genres", "all", currentMode, "")
-        content = opener.open(urlMainApi+"/genre/list.json?culture=en_US").read()
+        content = opener.open(urlMainApi+"/genre/list.json").read()
         content = json.loads(content)
         for item in content["result"]:
             addDir(item["Value"], item["Key"], currentMode, "")
