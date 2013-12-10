@@ -257,6 +257,8 @@ def listEpisodes(seriesID, season):
 
 
 def listViewingActivity():
+    if not singleProfile:
+        setProfile()
     xbmcplugin.setContent(pluginhandle, "movies")
     content = opener.open("https://api-global.netflix.com/desktop/account/viewinghistory").read()
     content = json.loads(content)

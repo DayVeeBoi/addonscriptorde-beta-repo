@@ -14,3 +14,7 @@
 - Code cleanup & optimizations
 1.0.6
 - Addon is now also shown as music addon
+1.0.8
+- Changed genre listing
+- Added playlist support
+- Added blacklist filter

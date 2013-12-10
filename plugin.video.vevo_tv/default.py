@@ -23,6 +23,7 @@ icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 simpleChannelsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/simple.channel")
 advancedChannelsDir = xbmc.translatePath("special://profile/addon_data/"+addonID+"/advanced")
+playlistsDir = xbmc.translatePath("special://profile/addon_data/"+addonID+"/playlists")
 tv1 = addon.getSetting("tv1") == "true"
 tv2 = addon.getSetting("tv2") == "true"
 tv3 = addon.getSetting("tv3") == "true"
@@ -40,6 +41,7 @@ cat10 = addon.getSetting("cat10") == "true"
 cat11 = addon.getSetting("cat11") == "true"
 cat12 = addon.getSetting("cat12") == "true"
 cat13 = addon.getSetting("cat13") == "true"
+blacklist = addon.getSetting("blacklist").split(',')
 showInfo = addon.getSetting("showInfo") == "true"
 infoType = addon.getSetting("infoType")
 infoDelay = int(addon.getSetting("infoDelay"))
@@ -57,6 +59,15 @@ if not os.path.isdir(addonUserDataFolder):
     os.mkdir(addonUserDataFolder)
 if not os.path.isdir(advancedChannelsDir):
     os.mkdir(advancedChannelsDir)
+if not os.path.isdir(playlistsDir):
+    os.mkdir(playlistsDir)
+if len(os.listdir(playlistsDir))==0:
+    fh = open(os.path.join(playlistsDir, 'staff picks'), 'w')
+    fh.write("8b75ba3c-4322-4946-9288-949b6ac1bf5b")
+    fh.close()
+    fh = open(os.path.join(playlistsDir, 'staff picks (german)'), 'w')
+    fh.write("4d9ce4e3-3391-45cf-a472-b968ef6f4ba9")
+    fh.close()
 
 
 def index():
@@ -70,7 +81,7 @@ def index():
         addLink(translation(30153), "TIVEVSTRDE00", 'playOfficial', "")
     addDir(translation(30001), "default", 'customMain', "")
     addDir(translation(30002), "live", 'customMain', "")
-    #addDir(translation(30003), "", 'listChannelsSimple', "")
+    addDir(translation(30003), "", 'listPlaylists', "")
     addDir(translation(30004), "", 'listChannelsAdvancedMain', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -82,11 +93,14 @@ def customMain(type):
         currentMode = 'listCustomModesLive'
     content = opener.open(urlMain).read()
     if "var $data" in content:
-        addDir("- All Genres", "all", currentMode, "")
-        content = opener.open(urlMainApi+"/genre/list.json").read()
-        content = json.loads(content)
-        for item in content["result"]:
-            addDir(item["Value"], item["Key"], currentMode, "")
+        #api.vevo.com/mobile/v1/genre/list.json responses seems to depend on the country
+        #and does not always return all genres that are listed on the website
+        content = opener.open(urlMain+"/browse").read()
+        content = content[content.find('"browseCategoryList"'):]
+        content = content[:content.find(']')]
+        match = re.compile('"id":"(.+?)","loc":"(.+?)"', re.DOTALL).findall(content)
+        for id, title in match:
+            addDir(title, id, currentMode, "")
         xbmcplugin.endOfDirectory(pluginhandle)
     else:
         xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30030)+',5000)')
@@ -322,8 +336,19 @@ def playCustom(url, shuffled):
         url += "&rnd="+str(random.randint(1, 999999))
     content = opener.open(url).read()
     content = json.loads(content)
-    for item in content["result"]:
-        title = item["artists_main"][0]["name"].encode('utf-8')+" - "+item["title"].encode('utf-8')
+    try:
+        content = content["result"]["videos"]
+    except:
+        content = content["result"]
+    for item in content:
+        artist = item["artists_main"][0]["name"].encode('utf-8')
+        filtered = False
+        for entry in blacklist:
+            if entry.strip().lower() and entry.lower() in artist.lower():
+                filtered = True
+        if filtered:
+            continue
+        title = artist+" - "+item["title"].encode('utf-8')
         thumb = item["image_url"].encode('utf-8')
         if xbox:
             url = "plugin://video/VEVO TV/?url="+item["isrc"]+"&mode=playVideo"
@@ -389,6 +414,16 @@ def playVideo(id):
                 xbmc.executebuiltin('XBMC.Notification(%s, %s, %s, %s)' % (title, videoTitle, infoDuration*1000, thumb))
     except:
         pass
+
+
+def listPlaylists():
+    for root, dirs, files in os.walk(playlistsDir):
+        for filename in files:
+            fh = open(os.path.join(root, filename), 'r')
+            playlistID = fh.read()
+            fh.close()
+            addDir(filename.title(), "http://api.vevo.com/mobile/v2/playlist/"+playlistID+".json", 'playCustom', "", "true")
+    xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def translation(id):
@@ -476,6 +511,8 @@ elif mode == 'playCustom':
     playCustom(url, shuffled == "true")
 elif mode == 'playAdvancedChannel':
     playAdvancedChannel(url)
+elif mode == 'playPlaylist':
+    playPlaylist(url)
 elif mode == 'customMain':
     customMain(url)
 elif mode == 'listCustomModes':
@@ -486,6 +523,8 @@ elif mode == 'listChannelsSimple':
     listChannelsSimple()
 elif mode == 'listChannelsAdvancedMain':
     listChannelsAdvancedMain()
+elif mode == 'listPlaylists':
+    listPlaylists()
 elif mode == 'addSimpleChannel':
     addSimpleChannel()
 elif mode == 'addAdvancedChannel':
