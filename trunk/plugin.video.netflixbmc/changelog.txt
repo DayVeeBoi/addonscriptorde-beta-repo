@@ -32,3 +32,5 @@
 - Added function to add "My List" to library
 - Added TMDb integration to get cover & fanart images
 - Added context menu "Play trailer"
+1.1.0
+- Fixed category "Viewing Activity" for multi-profile accounts
