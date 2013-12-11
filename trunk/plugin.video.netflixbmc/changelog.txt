@@ -34,3 +34,5 @@
 - Added context menu "Play trailer"
 1.1.0
 - Fixed category "Viewing Activity" for multi-profile accounts
+1.1.1
+- Added custom User-Agent parameter on linux when launching chrome

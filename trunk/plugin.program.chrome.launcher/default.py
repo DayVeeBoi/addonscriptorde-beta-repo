@@ -106,17 +106,19 @@ def getFileName(title):
     return (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
 
 
-def getFullPath(path, url, useKiosk):
+def getFullPath(path, url, useKiosk, userAgent):
     profile = ""
     if useOwnProfile:
         profile = '--user-data-dir="'+profileFolder+'" '
     kiosk = ""
     if useKiosk=="yes":
         kiosk = '--kiosk '
-    return '"'+path+'" '+profile+'--start-maximized --disable-translate --disable-new-tab-first-run --no-default-browser-check --no-first-run '+kiosk+'"'+url+'"'
+    if userAgent:
+        userAgent = '--user-agent="'+userAgent+'" '
+    return '"'+path+'" '+profile+userAgent+'--start-maximized --disable-translate --disable-new-tab-first-run --no-default-browser-check --no-first-run '+kiosk+'"'+url+'"'
 
 
-def showSite(url, stopPlayback, kiosk):
+def showSite(url, stopPlayback, kiosk, userAgent):
     if stopPlayback == "yes":
         xbmc.Player().stop()
     if osWin:
@@ -127,13 +129,13 @@ def showSite(url, stopPlayback, kiosk):
         path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
         path64 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
         if useCustomPath and os.path.exists(customPath):
-            fullUrl = getFullPath(customPath, url, kiosk)
+            fullUrl = getFullPath(customPath, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=False)
         elif os.path.exists(path):
-            fullUrl = getFullPath(path, url, kiosk)
+            fullUrl = getFullPath(path, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=False)
         elif os.path.exists(path64):
-            fullUrl = getFullPath(path64, url, kiosk)
+            fullUrl = getFullPath(path64, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=False)
         else:
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
@@ -145,10 +147,10 @@ def showSite(url, stopPlayback, kiosk):
                 xbmc.sleep(scriptDelay*1000)
         path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         if useCustomPath and os.path.exists(customPath):
-            fullUrl = getFullPath(customPath, url, kiosk)
+            fullUrl = getFullPath(customPath, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=True)
         elif os.path.exists(path):
-            fullUrl = getFullPath(path, url, kiosk)
+            fullUrl = getFullPath(path, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=True)
         else:
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
@@ -160,10 +162,10 @@ def showSite(url, stopPlayback, kiosk):
                 xbmc.sleep(scriptDelay*1000)
         path = "/usr/bin/google-chrome"
         if useCustomPath and os.path.exists(customPath):
-            fullUrl = getFullPath(customPath, url, kiosk)
+            fullUrl = getFullPath(customPath, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=True)
         elif os.path.exists(path):
-            fullUrl = getFullPath(path, url, kiosk)
+            fullUrl = getFullPath(path, url, kiosk, userAgent)
             subprocess.Popen(fullUrl, shell=True)
         else:
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
@@ -260,12 +262,13 @@ name = urllib.unquote_plus(params.get('name', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 stopPlayback = urllib.unquote_plus(params.get('stopPlayback', 'no'))
 kiosk = urllib.unquote_plus(params.get('kiosk', 'yes'))
+userAgent = urllib.unquote_plus(params.get('userAgent', ''))
 
 
 if mode == 'addSite':
     addSite()
 elif mode == 'showSite':
-    showSite(url, stopPlayback, kiosk)
+    showSite(url, stopPlayback, kiosk, userAgent)
 elif mode == 'removeSite':
     removeSite(url)
 elif mode == 'editSite':
