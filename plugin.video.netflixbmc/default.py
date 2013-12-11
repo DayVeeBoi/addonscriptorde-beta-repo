@@ -355,6 +355,9 @@ def playVideo(id):
             token = fh.read()
             fh.close()
         url = "https://movies.netflix.com/SwitchProfile?tkn="+token+"&nextpage="+urllib.quote_plus("http://movies.netflix.com/WiPlayer?movieid="+id)
+    kiosk = "yes"
+    if dontUseKiosk:
+        kiosk = "no"
     if osOsx and osxBrowser == 1:
         subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
     elif osWin and winBrowser == 1:
@@ -364,10 +367,9 @@ def playVideo(id):
             subprocess.Popen('"'+path+'" -k "'+url+'"', shell=False)
         elif os.path.exists(path64):
             subprocess.Popen('"'+path64+'" -k "'+url+'"', shell=False)
+    elif osLinux or (osOsx and osxBrowser == 0):
+        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
     else:
-        kiosk = "yes"
-        if dontUseKiosk:
-            kiosk = "no"
         xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
     if osWin:
         subprocess.Popen(utilityPath, shell=False)
@@ -376,8 +378,6 @@ def playVideo(id):
 def configureUtility():
     if osWin:
         subprocess.Popen(utilityPath+" yes", shell=False)
-    elif osLinux:
-        subprocess.Popen('wine "'+utilityPath+'" yes', shell=True)
 
 
 def deleteCookies():
@@ -527,13 +527,9 @@ def addSeriesToLibrary(seriesID, seriesTitle, season, singleUpdate=True):
 
 def playTrailer(title):
     try:
-        url = "http://gdata.youtube.com/feeds/api/videos?vq="+title.strip().replace(" ", "+")+"+trailer&racy=include&orderby=relevance"
-        content = opener.open(url).read()
-        spl = content.split('<entry>')
-        match = re.compile('<id>http://gdata.youtube.com/feeds/api/videos/(.+?)</id>', re.DOTALL).findall(spl[1])
-        id = match[0]
-        fullUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + id
-        xbmc.Player().play(fullUrl)
+        content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+title.strip().replace(" ", "+")+"+trailer&racy=include&orderby=relevance").read()
+        match = re.compile('<id>http://gdata.youtube.com/feeds/api/videos/(.+?)</id>', re.DOTALL).findall(content.split('<entry>')[1])
+        xbmc.Player().play("plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + match[0])
     except:
         pass
 
