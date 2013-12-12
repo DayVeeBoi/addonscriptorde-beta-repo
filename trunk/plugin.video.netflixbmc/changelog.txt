@@ -43,3 +43,5 @@
 - Fixed NetfliXBMC_Utility.exe for 32Bit systems
 1.1.4
 - Fixed "Use Control Utility" setting
+1.1.5
+- Fixed launching of NetfliXBMC_Utility.exe when path contains spaces
