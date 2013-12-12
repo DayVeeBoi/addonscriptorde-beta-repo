@@ -41,3 +41,5 @@
 - Windows: Default controls are now also mappable via the Control Utility
 1.1.3
 - Fixed NetfliXBMC_Utility.exe for 32Bit systems
+1.1.4
+- Fixed "Use Control Utility" setting

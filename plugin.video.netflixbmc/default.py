@@ -387,7 +387,8 @@ def playVideo(id):
                 subprocess.Popen('"'+path64+'" -k "'+url+'"', shell=False)
         else:
             xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
-        subprocess.Popen(utilityPath, shell=False)
+        if useUtility:
+            subprocess.Popen(utilityPath, shell=False)
 
 
 def configureUtility():
