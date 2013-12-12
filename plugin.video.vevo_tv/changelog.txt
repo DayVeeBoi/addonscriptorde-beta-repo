@@ -18,3 +18,5 @@
 - Changed genre listing
 - Added playlist support
 - Added blacklist filter
+1.0.9
+- Fixed german translations
