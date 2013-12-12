@@ -358,20 +358,35 @@ def playVideo(id):
     kiosk = "yes"
     if dontUseKiosk:
         kiosk = "no"
-    if osOsx and osxBrowser == 1:
-        subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
-    elif osWin and winBrowser == 1:
-        path = 'C:\\Program Files\\Internet Explorer\\iexplore.exe'
-        path64 = 'C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe'
-        if os.path.exists(path):
-            subprocess.Popen('"'+path+'" -k "'+url+'"', shell=False)
-        elif os.path.exists(path64):
-            subprocess.Popen('"'+path64+'" -k "'+url+'"', shell=False)
-    elif osLinux or (osOsx and osxBrowser == 0):
+    if osOsx:
+        if osxBrowser == 0:
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
+        elif osxBrowser == 1:
+            subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
+        xbmc.sleep(5000)
+        subprocess.Popen('cliclick c:500,500', shell=True)
+        subprocess.Popen('cliclick kp:arrow-up', shell=True)
+        xbmc.sleep(10000)
+        subprocess.Popen('cliclick c:500,500', shell=True)
+        subprocess.Popen('cliclick kp:arrow-up', shell=True)
+    elif osLinux:
         xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
-    else:
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
-    if osWin:
+        xbmc.sleep(5000)
+        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+        xbmc.sleep(10000)
+        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+        xbmc.sleep(10000)
+        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+    elif osWin:
+        if winBrowser == 1:
+            path = 'C:\\Program Files\\Internet Explorer\\iexplore.exe'
+            path64 = 'C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe'
+            if os.path.exists(path):
+                subprocess.Popen('"'+path+'" -k "'+url+'"', shell=False)
+            elif os.path.exists(path64):
+                subprocess.Popen('"'+path64+'" -k "'+url+'"', shell=False)
+        else:
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
         subprocess.Popen(utilityPath, shell=False)
 
 

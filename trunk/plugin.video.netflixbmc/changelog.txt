@@ -36,3 +36,6 @@
 - Fixed category "Viewing Activity" for multi-profile accounts
 1.1.1
 - Added custom User-Agent parameter on linux when launching chrome
+1.1.2
+- Added xdotool (Linux) & cliclick (OSX) integration
+- Windows: Default controls are now also mappable via the Control Utility
