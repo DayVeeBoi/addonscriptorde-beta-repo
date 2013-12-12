@@ -363,20 +363,26 @@ def playVideo(id):
             xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
         elif osxBrowser == 1:
             subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
-        xbmc.sleep(5000)
-        subprocess.Popen('cliclick c:500,500', shell=True)
-        subprocess.Popen('cliclick kp:arrow-up', shell=True)
-        xbmc.sleep(10000)
-        subprocess.Popen('cliclick c:500,500', shell=True)
-        subprocess.Popen('cliclick kp:arrow-up', shell=True)
+        try:
+            xbmc.sleep(10000)
+            subprocess.Popen('cliclick c:500,500', shell=True)
+            subprocess.Popen('cliclick kp:arrow-up', shell=True)
+            xbmc.sleep(5000)
+            subprocess.Popen('cliclick c:500,500', shell=True)
+            subprocess.Popen('cliclick kp:arrow-up', shell=True)
+        except:
+            pass
     elif osLinux:
         xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
-        xbmc.sleep(5000)
-        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
-        xbmc.sleep(10000)
-        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
-        xbmc.sleep(10000)
-        subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+        try:
+            xbmc.sleep(10000)
+            subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+            xbmc.sleep(5000)
+            subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+            xbmc.sleep(5000)
+            subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+        except:
+            pass
     elif osWin:
         if winBrowser == 1:
             path = 'C:\\Program Files\\Internet Explorer\\iexplore.exe'
@@ -388,12 +394,12 @@ def playVideo(id):
         else:
             xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
         if useUtility:
-            subprocess.Popen(utilityPath, shell=False)
+            subprocess.Popen('"'+utilityPath+'"', shell=False)
 
 
 def configureUtility():
     if osWin:
-        subprocess.Popen(utilityPath+" yes", shell=False)
+        subprocess.Popen('"'+utilityPath+'"'+' yes', shell=False)
 
 
 def deleteCookies():
