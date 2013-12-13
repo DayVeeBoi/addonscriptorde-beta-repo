@@ -49,7 +49,8 @@ def listVideos(url):
         title = cleanTitle(title)
         addLink(title, id, "playVideo", thumb, duration, views+" views - "+comments+" comments")
     match = re.compile('<a class="buttons nextListPage" href="(.+?)">', re.DOTALL).findall(content)
-    addDir(translation(30005), urlMain+match[0], "listVideos", '')
+    if match:
+        addDir(translation(30005), urlMain+match[0], "listVideos", '')
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
@@ -102,7 +103,6 @@ def addDir(name, url, mode, iconimage):
 
 
 def parameters_string_to_dict(parameters):
-    ''' Convert parameters encoded in a URL to a dict. '''
     paramDict = {}
     if parameters:
         paramPairs = parameters[1:].split("&")
