@@ -45,3 +45,7 @@
 - Fixed "Use Control Utility" setting
 1.1.5
 - Fixed launching of NetfliXBMC_Utility.exe when path contains spaces
+1.1.6
+- Reverted UserAgent changes on OSX / Chrome
+- Control Utitlity (Windows): Added some keymappings
+- Fixed video listing for items with missing metadata
