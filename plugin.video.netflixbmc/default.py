@@ -346,10 +346,18 @@ def addMyListToLibrary():
                 year = match[0]
                 match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
                 duration = match[0]
+                if year:
+                    title = title+" ("+year+")"
                 if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
-                    addSeriesToLibrary(videoID, title, "", False)
+                    try:
+                        addSeriesToLibrary(videoID, title, "", False)
+                    except:
+                        pass
                 else:
-                    addMovieToLibrary(videoID, title+" ("+year+")", False)
+                    try:
+                        addMovieToLibrary(videoID, title, False)
+                    except:
+                        pass
             if updateDB:
                 xbmc.executebuiltin('UpdateLibrary(video)')
 

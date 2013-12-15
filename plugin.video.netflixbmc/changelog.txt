@@ -49,3 +49,5 @@
 - Reverted UserAgent changes on OSX / Chrome
 - Control Utitlity (Windows): Added some keymappings
 - Fixed video listing for items with missing metadata
+1.1.7
+- Fixed adding "My List" to library
