@@ -97,17 +97,17 @@ while (username == "" or password == ""):
 
 
 def index():
-    login()
-    addDir(translation(30002), urlMain+"/MyList?leid=595&link=seeall", 'listVideos', "")
-    addDir(translation(30010), "", 'listViewingActivity', "")
-    addDir(translation(30003), urlMain+"/WiRecentAdditionsGallery?nRR=releaseDate&nRT=all&pn=1&np=1&actionMethod=json", 'listVideos', "")
-    addDir(translation(30004), urlMain+"/WiHD?dev=PC&pn=1&np=1&actionMethod=json", 'listVideos', "")
-    addDir(translation(30005), urlMain+"/WiGenre?agid=83&pn=1&np=1&actionMethod=json", 'listVideos', "")
-    addDir(translation(30007), "WiGenre", 'listGenres', "")
-    addDir(translation(30006), urlMain+"/WiGenre?agid=6839&pn=1&np=1&actionMethod=json", 'listVideos', "")
-    addDir(translation(30009), "KidsAltGenre", 'listGenres', "")
-    addDir(translation(30008), "", 'search', "")
-    xbmcplugin.endOfDirectory(pluginhandle)
+    if login():
+        addDir(translation(30002), urlMain+"/MyList?leid=595&link=seeall", 'listVideos', "")
+        addDir(translation(30010), "", 'listViewingActivity', "")
+        addDir(translation(30003), urlMain+"/WiRecentAdditionsGallery?nRR=releaseDate&nRT=all&pn=1&np=1&actionMethod=json", 'listVideos', "")
+        addDir(translation(30004), urlMain+"/WiHD?dev=PC&pn=1&np=1&actionMethod=json", 'listVideos', "")
+        addDir(translation(30005), urlMain+"/WiGenre?agid=83&pn=1&np=1&actionMethod=json", 'listVideos', "")
+        addDir(translation(30007), "WiGenre", 'listGenres', "")
+        addDir(translation(30006), urlMain+"/WiGenre?agid=6839&pn=1&np=1&actionMethod=json", 'listVideos', "")
+        addDir(translation(30009), "KidsAltGenre", 'listGenres', "")
+        addDir(translation(30008), "", 'search', "")
+        xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listVideos(url):
@@ -148,8 +148,10 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     if not title:
         match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
         title = match[0].strip()
+    year = ""
     match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-    year = match[0]
+    if match:
+        year = match[0]
     if not thumbUrl:
         match = re.compile('src="(.+?)"', re.DOTALL).findall(videoDetails)
         thumbUrl = match[0]
@@ -160,7 +162,9 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     if match:
         mpaa = match[0]
     match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-    duration = match[0]
+    duration = ""
+    if match:
+        duration = match[0]
     if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
         videoTypeTemp = "tv"
         if tvshowIsEpisode:
@@ -187,15 +191,21 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
         if not os.path.exists(coverFile):
             xbmc.executebuiltin('XBMC.RunScript('+downloadScript+', '+urllib.quote_plus(videoTypeTemp)+', '+urllib.quote_plus(videoID)+', '+urllib.quote_plus(titleTemp)+', '+urllib.quote_plus(yearTemp)+')')
     match = re.compile('src=".+?">.+?<\/span>(.+?)<', re.DOTALL).findall(videoDetails)
-    desc = match[0].replace("&amp;", "&")
+    desc = ""
+    if match:
+        desc = match[0].replace("&amp;", "&")
     match = re.compile('Director:</dt><dd>(.+?)<', re.DOTALL).findall(videoDetails)
     director = ""
     if match:
         director = match[0].strip()
     match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
-    genre = match[0]
+    genre = ""
+    if match:
+        genre = match[0]
     match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
-    rating = match[0]
+    rating = ""
+    if rating:
+        rating = match[0]
     title = title.replace("&amp;", "&")
     nextMode = "playVideo"
     if browseTvShows and videoType == "tvshow":
@@ -360,7 +370,7 @@ def playVideo(id):
         kiosk = "no"
     if osOsx:
         if osxBrowser == 0:
-            xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
         elif osxBrowser == 1:
             subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
         try:
@@ -462,8 +472,10 @@ def login():
             chooseProfile()
         elif not singleProfile and showProfiles:
             chooseProfile()
+        return True
     else:
         xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',10000)')
+        return False
 
 
 def setProfile():
