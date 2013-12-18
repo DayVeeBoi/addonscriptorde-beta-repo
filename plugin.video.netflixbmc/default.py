@@ -145,9 +145,8 @@ def listVideos(url):
 
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     videoDetails = getVideoInfo(videoID).replace("\\n", "").replace("\\", "")
-    if not title:
-        match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-        title = match[0].strip()
+    match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+    title = match[0].replace("\\t","").strip()
     year = ""
     match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if match:
