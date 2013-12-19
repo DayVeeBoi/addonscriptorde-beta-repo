@@ -53,3 +53,5 @@
 - Fixed adding "My List" to library
 1.1.8
 - Fixed site changes (title)
+1.1.9
+- Fixed site changes (title)
