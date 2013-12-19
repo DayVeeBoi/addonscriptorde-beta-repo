@@ -121,7 +121,7 @@ def listVideos(url):
         else:
             if '<div id="queue"' in content:
                 content = content[content.find('<div id="queue"'):]
-            content = content.replace("\\n", "").replace("\\", "")
+            content = content.replace("\\t","").replace("\\n", "").replace("\\", "")
             match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?" src="(.+?)">', re.DOTALL).findall(content)
             match2 = re.compile('<span class="title "><a id="b(.+?)_', re.DOTALL).findall(content)
             if match1:
@@ -146,7 +146,7 @@ def listVideos(url):
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     videoDetails = getVideoInfo(videoID).replace("\\n", "").replace("\\", "")
     match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-    title = match[0].replace("\\t","").strip()
+    title = match[0].strip()
     year = ""
     match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if match:
