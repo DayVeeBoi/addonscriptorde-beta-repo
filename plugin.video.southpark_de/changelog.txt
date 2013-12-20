@@ -11,3 +11,5 @@
 - Removed random autoplay mode because of playlist
 - Addon now supports multiple countries/languages
 - Changed name from "SouthPark.de" to "South Park"
+1.0.7
+- Fixed geoblocking detection

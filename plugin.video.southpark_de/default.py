@@ -35,7 +35,7 @@ while baseUrl == "-":
 
 def index():
     content = getUrl("http://www."+baseUrl)
-    if not "/geoblock/" in content:
+    if not "/geoblock/messages/" in content:
         if baseUrl == "southpark.de":
             url = "/alle-episoden"
         else:
