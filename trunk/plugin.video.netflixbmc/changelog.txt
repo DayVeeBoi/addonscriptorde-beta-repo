@@ -55,3 +55,6 @@
 - Fixed site changes (title)
 1.2.1
 - Fixed title in "Viewing Activity"
+1.2.2
+- Control Utitlity (Win): Fixed keymapping for some combo keys
+- Control Utitlity (Win): Added custom cursor position setting
