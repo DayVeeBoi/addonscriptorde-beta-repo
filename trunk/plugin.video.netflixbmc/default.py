@@ -146,7 +146,8 @@ def listVideos(url):
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     videoDetails = getVideoInfo(videoID).replace("\\t","").replace("\\n", "").replace("\\", "")
     match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-    title = match[0].strip()
+    if not title:
+        title = match[0].strip()
     year = ""
     match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if match:
@@ -154,8 +155,6 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     if not thumbUrl:
         match = re.compile('src="(.+?)"', re.DOTALL).findall(videoDetails)
         thumbUrl = match[0]
-        # Modifying the id won't always work, please let me know if you know a better way
-        # thumbID = str(int(thumbUrl.split("/")[-1].split(".")[0])+3)
     match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     mpaa = ""
     if match:
@@ -491,6 +490,7 @@ def setProfile():
     fh.close()
     opener.open("https://movies.netflix.com/ProfilesGate?nextpage=http%3A%2F%2Fmovies.netflix.com%2FDefault")
     opener.open("https://api-global.netflix.com/desktop/account/profiles/switch?switchProfileGuid="+token)
+    cj.save(cookieFile)
 
 
 def chooseProfile():
