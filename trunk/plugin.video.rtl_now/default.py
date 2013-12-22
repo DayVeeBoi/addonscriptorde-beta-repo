@@ -244,7 +244,7 @@ def addLink(name, url, mode, iconimage, desc="", duration="", date=""):
     if useThumbAsFanart and iconimage not in [iconRTL, iconRTL2, iconVOX, iconRTLNitro, iconSuperRTL, iconNTV]:
         liz.setProperty("fanart_image", iconimage)
     entries = []
-    entries.append((translation(30043), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
+    entries.append((translation(30021), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
