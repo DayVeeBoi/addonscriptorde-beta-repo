@@ -241,7 +241,7 @@ def search(urlMain, language):
 def playVideo(id, language):
     content = opener.open("http://video.query.yahoo.com/v1/public/yql?q=SELECT%20*%20FROM%20yahoo.media.video.streams%20WHERE%20id%3D%22"+id+"%22%20AND%20format%3D%22mp4%2Cflv%22%20AND%20protocol%3D%22http%22%20AND%20rt%3D%22flash%22%20AND%20plrs%3D%22%22%20AND%20acctid%3D%22%22%20AND%20plidl%3D%22%22%20AND%20pspid%3D%22%22%20AND%20offnetwork%3D%22false%22%20AND%20site%3D%22ivy%22%20AND%20lang%3D%22"+language+"%22%20AND%20region%3D%22"+language.split("-")[1]+"%22%20AND%20override%3D%22none%22%3B&env=prod&format=json").read()
     if '"geo restricted"' in content:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30003))+',5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30014))+',5000)')
     else:
         content = json.loads(content)
         url = ""
