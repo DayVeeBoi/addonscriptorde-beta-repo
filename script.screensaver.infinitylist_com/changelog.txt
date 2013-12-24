@@ -12,3 +12,5 @@
 - Added setting to force volume
 1.0.7
 - Fixed bug when exiting screensaver
+1.0.8
+- Fixed volume detection on Gotham

@@ -16,3 +16,5 @@
 - Added content cache
 1.0.9
 - Fixed bug when exiting screensaver
+1.1.0
+- Fixed volume detection on Gotham

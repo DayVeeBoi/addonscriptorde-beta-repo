@@ -17,3 +17,5 @@
 1.0.8
 - New icon (thx@djtoll)
 - Added image screensaver function
+1.0.9
+- Fixed volume detection on Gotham

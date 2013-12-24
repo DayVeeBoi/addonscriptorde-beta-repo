@@ -403,7 +403,7 @@
 	</extension>
 </addon>
 
-<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.9" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.1.0" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -423,7 +423,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.7" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.8" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -444,7 +444,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.0.8" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.0.9" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.image.reddit_com" version="1.0.0"/>
@@ -468,7 +468,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.smart_playlist" name="Video/Audio Screensaver: SmartPlaylist" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.smart_playlist" name="Video/Audio Screensaver: SmartPlaylist" version="1.0.6" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -487,7 +487,7 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.1" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.2" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>

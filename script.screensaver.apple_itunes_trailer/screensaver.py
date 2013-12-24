@@ -80,8 +80,7 @@ jumpBack = int(addon.getSetting("jumpBack"))
 setVolume = addon.getSetting("setVolume") == "true"
 volume = int(addon.getSetting("volume"))
 currentVolume = xbmc.getInfoLabel("Player.Volume")
-match=re.compile('(.+?) dB', re.DOTALL).findall(currentVolume)
-currentVolume = int((float(match[0])+60.0)/60.0*100.0)
+currentVolume = int((float(currentVolume.split(" ")[0])+60.0)/60.0*100.0)
 g_action = addon.getSetting("g_action") == "true"
 g_comedy = addon.getSetting("g_comedy") == "true"
 g_docu = addon.getSetting("g_docu") == "true"
