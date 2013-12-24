@@ -22,9 +22,9 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 userDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
-forceViewMode = addon.getSetting("forceViewMode") == "true"
+forceViewMode = addon.getSetting("forceView") == "true"
 autoPlay = addon.getSetting("autoPlay") == "true"
-viewMode = str(addon.getSetting("viewMode"))
+viewMode = str(addon.getSetting("viewID"))
 maxBitRate = addon.getSetting("maxBitRate")
 qual = [512000, 1024000, 1536000, 2048000, 2560000, 3072000]
 maxBitRate = qual[int(maxBitRate)]
@@ -41,7 +41,7 @@ def index():
     addDir(translation(30004), "BELIEBTE VIDEOS", 'listVideosLatest', icon, '')
     addDir(translation(30007), "CLIPS", 'listVideosLatest', icon, '')
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode == True:
+    if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
@@ -58,10 +58,11 @@ def listVideosMain(url, thumb):
     if matchClips:
         addDir(translation(30007), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchClips[0]+"&post_id="+showID, 'listVideos', thumb, "")
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listVideos(urlMain):
-    xbmcplugin.setContent(pluginhandle, "episodes")
     content = ""
     try:
         content = getUrl(urlMain)
@@ -92,7 +93,7 @@ def listVideos(urlMain):
         nextPage = str(int(currentPage)+1)
         totalPages = matchTotal[0]
         if int(currentPage) < int(totalPages):
-            addDir(translation(30001)+" ("+nextPage+")", urlMain.replace("page="+currentPage, "page="+nextPage), 'listVideos', "", "")
+            addDir(translation(30001)+" ("+nextPage+")", urlMain.replace("page="+currentPage, "page="+nextPage), 'listVideos', icon, "")
     except:
         pass
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -101,7 +102,6 @@ def listVideos(urlMain):
 
 
 def listVideosLatest(type):
-    xbmcplugin.setContent(pluginhandle, "episodes")
     content = getUrl(baseUrl+"/videos/")
     content = content[content.find('<div class="tab-module-header">'+type+'</div>'):]
     content = content[:content.find('</section>	</div>')]
@@ -133,6 +133,8 @@ def listAZ():
         url = baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter="+letter.upper()+"&page=1&id=1b0&post_id=2178"
         addDir(letter.upper(), url, 'listShows', icon, "")
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listShows(urlMain):
@@ -166,6 +168,8 @@ def listShows(urlMain):
     except:
         pass
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listShowsFavs():
@@ -196,14 +200,15 @@ def listSeasons(urlMain, thumb):
         matchSeasons = re.compile('<option value="(.+?)">(.+?)</option>', re.DOTALL).findall(content)
         for seasonID, title in matchSeasons:
             url = baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_episode_browser_get_season&post="+matchIDs[0][1]+"&module=cfct-module-"+matchIDs[0][0]+"&season="+seasonID
-            addDir(title, url, 'listEpisodes', thumb, "")
+            addDir(title.replace("Season", "Staffel"), url, 'listEpisodes', thumb, "")
         xbmcplugin.endOfDirectory(pluginhandle)
+        if forceViewMode:
+            xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
     else:
         listEpisodes(urlMain)
 
 
 def listEpisodes(url):
-    xbmcplugin.setContent(pluginhandle, "episodes")
     content = getUrl(url)
     spl = content.split('<a class="dni-episode-browser-item pagetype-video"')
     for i in range(1, len(spl), 1):
@@ -244,6 +249,8 @@ def playVideo(url, title, thumb):
         for part, videoID in matchMulti:
             addLink(title+": Teil "+part, videoID, "playBrightCoveStream", thumb, title, "no")
         xbmcplugin.endOfDirectory(pluginhandle)
+        if forceViewMode:
+            xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
     elif matchSingle:
         playBrightCoveStream(matchSingle[0], title, thumb, "yes")
 
@@ -294,7 +301,7 @@ def playBrightCoveStream(bc_videoID, title, thumb, isSingle):
                     xbmc.Player().pause()
                     break
                 xbmc.sleep(100)
-            xbmc.sleep(300)
+            xbmc.sleep(500)
             while xbmc.getCondVisibility("Player.Paused"):
                 if xbmc.Player().isPlaying() and int(xbmc.Player().getTime()) == 0:
                     xbmc.Player().pause()

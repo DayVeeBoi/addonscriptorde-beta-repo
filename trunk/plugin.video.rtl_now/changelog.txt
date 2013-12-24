@@ -2,3 +2,6 @@
 - Initial release
 1.0.1
 - Fixed "Add to queue" context menu
+1.0.2
+- Fixed flv playback
+- Added season selection
