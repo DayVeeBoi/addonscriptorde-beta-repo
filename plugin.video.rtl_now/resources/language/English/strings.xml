@@ -21,5 +21,13 @@
   <string id="30019">Top 10</string>
   <string id="30020">Top Rated</string>
   <string id="30021">Add to queue</string>
+  <string id="30022">Sorry - this video is not available in your country.</string>
+  <string id="30023">Favourites</string>
+  <string id="30024">Add to Addon favourites</string>
+  <string id="30025">Remove from Addon favourites</string>
   <string id="30101">Use thumb as fanart</string>
+  <string id="30102">Force View</string>
+  <string id="30103">ViewID</string>
+  <string id="30201">General</string>
+  <string id="30202">Channels</string>
 </strings>
