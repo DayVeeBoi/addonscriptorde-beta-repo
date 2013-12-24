@@ -19,3 +19,5 @@
 - New icon (thx@djtoll)
 1.1.1
 - Fixed file extension bug (now non case sensitive)
+1.1.2
+- Fixed volume detection on Gotham

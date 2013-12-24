@@ -82,8 +82,7 @@ genre = ["ALL", "bike", "climb", "extra", "motor", "parkour", "skate", "sky", "s
 setVolume = addon.getSetting("setVolume") == "true"
 volume = int(addon.getSetting("volume"))
 currentVolume = xbmc.getInfoLabel("Player.Volume")
-match=re.compile('(.+?) dB', re.DOTALL).findall(currentVolume)
-currentVolume = int((float(match[0])+60.0)/60.0*100.0)
+currentVolume = int((float(currentVolume.split(" ")[0])+60.0)/60.0*100.0)
 exitDelay = int(addon.getSetting("exitDelay"))
 myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
 myPlayer = XBMCPlayer()
