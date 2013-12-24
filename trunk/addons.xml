@@ -21,7 +21,7 @@
 
 <addon id="plugin.image.reddit_com" name="Reddit.com" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>image</provides>
@@ -177,7 +177,7 @@
 
 <addon id="plugin.video.reddit_tv" name="Reddit.com" version="1.1.7" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
         <import addon="plugin.video.vimeo" version="2.3.0"/>
         <import addon="plugin.video.dailymotion_com" version="1.0.0"/>
@@ -351,7 +351,7 @@
 
 <addon id="plugin.video.youtube.billboard" name="YouTube Billboard" version="1.0.9" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
@@ -371,7 +371,7 @@
 
 <addon id="plugin.video.youtube.quickplay" name="YouTube QuickPlay" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
@@ -405,7 +405,7 @@
 
 <addon id="script.screensaver.apple_itunes_trailer" name="Video Screensaver: iTunes Trailers" version="1.0.9" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
   <extension point="xbmc.python.pluginsource" library="default.py"/>
@@ -425,7 +425,7 @@
 
 <addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.7" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
     <import addon="plugin.video.vimeo" version="2.3.0"/>
   </requires>
@@ -446,7 +446,7 @@
 
 <addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.0.8" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.image.reddit_com" version="1.0.0"/>
     <import addon="plugin.video.reddit_tv" version="1.0.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -470,7 +470,7 @@
 
 <addon id="script.screensaver.smart_playlist" name="Video/Audio Screensaver: SmartPlaylist" version="1.0.5" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
   <extension point="xbmc.addon.metadata">
@@ -489,7 +489,7 @@
 
 <addon id="script.screensaver.video_folder" name="Video/Audio Screensaver: Directory" version="1.1.1" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.ui.screensaver" library="screensaver.py"/>
   <extension point="xbmc.addon.metadata">

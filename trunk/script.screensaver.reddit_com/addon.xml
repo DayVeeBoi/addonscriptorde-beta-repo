@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.0.8" provider-name="AddonScriptorDE">
   <requires>
-    <import addon="xbmc.python" version="2.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.image.reddit_com" version="1.0.0"/>
     <import addon="plugin.video.reddit_tv" version="1.0.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
