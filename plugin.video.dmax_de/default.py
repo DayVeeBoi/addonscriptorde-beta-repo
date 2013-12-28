@@ -53,10 +53,10 @@ def listVideosMain(url, thumb):
     showID = matchShowID[0]
     if ">GANZE FOLGEN<" in content:
         addDir(translation(30006), url.replace("/videos/", "/episoden/"), 'listSeasons', thumb, "")
-    if matchMV:
-        addDir(translation(30005), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchMV[0]+"&post_id="+showID, 'listVideos', thumb, "")
     if matchClips:
         addDir(translation(30007), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchClips[0]+"&post_id="+showID, 'listVideos', thumb, "")
+    if matchMV:
+        addDir(translation(30005), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchMV[0]+"&post_id="+showID, 'listVideos', thumb, "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -252,6 +252,8 @@ def playVideo(url, title, thumb):
         if forceViewMode:
             xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
     elif matchSingle:
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playlist.clear()
         playBrightCoveStream(matchSingle[0], title, thumb, "yes")
 
 
