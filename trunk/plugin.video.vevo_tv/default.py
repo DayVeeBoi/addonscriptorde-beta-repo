@@ -150,7 +150,7 @@ def playOfficial(id):
         matchPlaypath = re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
         for url, bitrate in matchPlaypath:
             if int(bitrate) <= int(bitrateOfficial):
-                fullUrl = matchBase[0]+" playpath="+url
+                fullUrl = matchBase[0]+" playpath="+url+" swfUrl="+urlMain+"/swf/videoplayer.swf swfVfy=true live=true"
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     else:
