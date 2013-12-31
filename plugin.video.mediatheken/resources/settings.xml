@@ -1,0 +1,21 @@
+<settings>
+    <setting id="site1" type="bool" label="30001" default="true" />
+    <setting id="site2" type="bool" label="30002" default="true" />
+    <setting id="site3" type="bool" label="30003" default="true" />
+    <setting id="site4" type="bool" label="30004" default="true" />
+    <setting id="site5" type="bool" label="30005" default="true" />
+    <setting id="site6" type="bool" label="30006" default="true" />
+    <setting id="site7" type="bool" label="30007" default="true" />
+    <setting id="site8" type="bool" label="30008" default="true" />
+    <setting id="site9" type="bool" label="30009" default="true" />
+    <setting id="site10" type="bool" label="30010" default="true" />
+    <setting id="site11" type="bool" label="30011" default="true" />
+    <setting id="site12" type="bool" label="30012" default="true" />
+    <setting id="site13" type="bool" label="30013" default="true" />
+    <setting id="site14" type="bool" label="30014" default="true" />
+    <setting id="site15" type="bool" label="30015" default="true" />
+    <setting id="site16" type="bool" label="30016" default="true" />
+    <setting id="site17" type="bool" label="30017" default="true" />
+    <setting id="site18" type="bool" label="30018" default="true" />
+    <setting id="site19" type="bool" label="30019" default="true" />
+</settings>
