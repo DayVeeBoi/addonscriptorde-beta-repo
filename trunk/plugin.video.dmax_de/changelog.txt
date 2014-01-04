@@ -4,3 +4,7 @@
 - Changed default view
 1.0.2
 - Changed translations
+1.0.3
+- Added category: Full episodes
+1.0.4
+- Changed season listing

@@ -31,7 +31,7 @@ if os.path.exists(cookieFile):
 
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceView = addon.getSetting("forceView") == "true"
-viewID = str(addon.getSetting("viewID"))
+viewID = str(addon.getSetting("viewIDNew"))
 site1 = addon.getSetting("site1") == "true"
 site2 = addon.getSetting("site2") == "true"
 site3 = addon.getSetting("site3") == "true"
@@ -84,6 +84,8 @@ def index():
     if site11:
         addDir(translation(30013), urlMainESUS, "listChannels", icon, "es-US")
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceView:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def listChannelsUS(urlMain, language):
@@ -97,9 +99,13 @@ def listChannelsUS(urlMain, language):
         url = urlMainUS+"/ajax/resource/channel/id/"+id+";count="+itemsPerPage+";start=0"
         addChannelDir(title, url, 'listVideosUS', '', language)
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceView:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def listChannels(urlMain, language):
+    if urlMain==urlMainDE:
+        addDir("Alle Sendungen", urlMainDE+"/shows-a-z/", 'listShowsDE', '', language)
     addDir("Search", urlMain, "search", "", language)
     content = opener.open(urlMain).read()
     cj.save(cookieFile)
@@ -111,6 +117,8 @@ def listChannels(urlMain, language):
         if url not in notWorkingUrls:
             addChannelDir(cleanTitle(title), url, 'listVideosMain', '', language)
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceView:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def listVideosMain(urlMain, language):
@@ -156,6 +164,8 @@ def listVideosMain(urlMain, language):
             except:
                 pass
         xbmcplugin.endOfDirectory(pluginhandle)
+        if forceView:
+            xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def listVideos(urlMain, language):
@@ -171,12 +181,15 @@ def listVideos(urlMain, language):
         id = match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0]
+        thumb = thumb[thumb.rfind('http'):]
         if "icon-play-small" in entry:
             addLink(title, id, 'playVideo', thumb, language)
         else:
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
             addDir(title, match[0], 'listVideosMain', thumb, language)
     xbmcplugin.endOfDirectory(pluginhandle)
+    if forceView:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def listVideosUS(url, language):
@@ -199,6 +212,19 @@ def listVideosUS(url, language):
         nextIndex = str(int(currentIndex)+int(itemsPerPage))
         nextUrl = url[:url.rfind("=")+1]+nextIndex
         addDir(translation(30001), nextUrl, 'listVideosUS', "", language)
+    xbmcplugin.endOfDirectory(pluginhandle)
+    if forceView:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
+
+
+def listShowsDE(urlMain, language):
+    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+    content = opener.open(urlMain).read()
+    content = content[content.find('<div class="yom-mod yom-heading-generic"'):]
+    content = content[:content.find('<div class="yom-mod yom-scrollflow"')]
+    match = re.compile('<a href="(.+?)"><span>(.+?)<', re.DOTALL).findall(content)
+    for url, title in match:
+        addDir(title, url, 'listVideosMain', "", language)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
@@ -295,12 +321,12 @@ def parameters_string_to_dict(parameters):
 def addLink(name, url, mode, iconimage, language="", desc="", duration="", date=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&language="+str(language)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Aired": date, "Episode": 1})
     liz.setProperty('IsPlayable', 'true')
     if duration:
         liz.addStreamInfo('video', {'duration': duration})
-    if useThumbAsFanart and language == "en-US":
+    if useThumbAsFanart:
         liz.setProperty("fanart_image", iconimage)
     entries = []
     entries.append((translation(30043), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
@@ -312,7 +338,7 @@ def addLink(name, url, mode, iconimage, language="", desc="", duration="", date=
 def addSearchLink(name, url, mode, iconimage, language="", desc="", duration="", date=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&language="+str(language)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Aired": date, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
     entries = []
@@ -325,7 +351,7 @@ def addSearchLink(name, url, mode, iconimage, language="", desc="", duration="",
 def addDir(name, url, mode, iconimage, language=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&language="+str(language)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -334,7 +360,7 @@ def addDir(name, url, mode, iconimage, language=""):
 def addChannelDir(name, url, mode, iconimage, language=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&language="+str(language)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -343,7 +369,7 @@ def addChannelDir(name, url, mode, iconimage, language=""):
 def addChannelFavDir(name, url, mode, iconimage, language=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&language="+str(language)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -358,6 +384,8 @@ if mode == 'listVideosUS':
     listVideosUS(url, language)
 elif mode == 'listChannelsUS':
     listChannelsUS(url, language)
+elif mode == 'listShowsDE':
+    listShowsDE(url, language)
 elif mode == 'listChannels':
     listChannels(url, language)
 elif mode == 'listVideosMain':

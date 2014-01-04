@@ -98,7 +98,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.pyamf" version="0.6.1"/>
@@ -178,7 +178,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -192,10 +192,10 @@
         <language>de</language>
         <description lang="en">German media libraries</description>
         <description lang="de">Deutsche Mediatheken</description>
-        <website></website>
         <source>https://github.com/AddonScriptorDE/plugin.video.mediatheken</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
+        <website></website>
     </extension>
 </addon>
 
@@ -243,7 +243,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.rtl_now" name="RTL NOW" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.rtl_now" name="NOW" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -266,7 +266,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.screen_yahoo_com" name="Yahoo Screen" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.screen_yahoo_com" name="Yahoo Screen" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -306,28 +306,6 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=180476</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.southparkstudios.com/full-episodes</website>
-    </extension>
-</addon>
-
-<addon id="plugin.video.upworthy_com" name="Upworthy.com" version="1.0.0" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="plugin.video.youtube" version="3.0.0"/>
-        <import addon="plugin.video.vimeo" version="2.3.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Things that matter. Pass 'em on.</summary>
-        <language></language>
-        <description lang="en">Upworthy is social media with a mission: to make important stuff as viral as a video of some idiot surfing off his roof. At best, things online are usually either awesome or meaningful, but everything on Upworthy.com has a little of both. Sensational and substantial. Entertaining and enlightening. Shocking and significant.</description>
-        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <source>https://github.com/AddonScriptorDE/plugin.video.upworthy_com</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=180294</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-        <website>http://www.infinitylist.com</website>
     </extension>
 </addon>
 

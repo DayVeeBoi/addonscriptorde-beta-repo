@@ -6,6 +6,7 @@ import os
 import urllib
 import urllib2
 import httplib
+import cookielib
 import socket
 import xbmcgui
 import xbmcaddon
@@ -29,6 +30,9 @@ maxBitRate = addon.getSetting("maxBitRate")
 qual = [512000, 1024000, 1536000, 2048000, 2560000, 3072000]
 maxBitRate = qual[int(maxBitRate)]
 baseUrl = "http://www.dmax.de"
+opener = urllib2.build_opener()
+userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0"
+opener.addheaders = [('User-Agent', userAgent)]
 
 if not os.path.isdir(userDataFolder):
     os.mkdir(userDataFolder)
@@ -38,36 +42,38 @@ def index():
     addDir(translation(30002), "", 'listAZ', icon, '')
     addDir(translation(30010), "", 'listShowsFavs', icon, '')
     addDir(translation(30003), "NEUESTE VIDEOS", 'listVideosLatest', icon, '')
-    addDir(translation(30004), "BELIEBTE VIDEOS", 'listVideosLatest', icon, '')
     addDir(translation(30007), "CLIPS", 'listVideosLatest', icon, '')
+    addDir(translation(30004), "BELIEBTE VIDEOS", 'listVideosLatest', icon, '')
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listVideosMain(url, thumb):
-    content = getUrl(url)
+    content = opener.open(url).read()
     matchShowID = re.compile('id="dni_listing_post_id" value="(.+?)"', re.DOTALL).findall(content)
+    matchFE = re.compile('<h2>GANZE FOLGEN</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
     matchMV = re.compile('<h2>MEIST GESEHEN</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
     matchClips = re.compile('<h2>CLIPS</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
+    matchEpisodes = re.compile('<a href="(.+?)"><span>(.+?)<', re.DOTALL).findall(content)
     showID = matchShowID[0]
-    if ">GANZE FOLGEN<" in content:
-        addDir(translation(30006), url.replace("/videos/", "/episoden/"), 'listSeasons', thumb, "")
-    if matchClips:
-        addDir(translation(30007), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchClips[0]+"&post_id="+showID, 'listVideos', thumb, "")
+    if matchFE:
+        for url, title in matchEpisodes:
+            if title=="Episoden":
+                addDir(translation(30006), url, 'listSeasons', thumb, "")
+                break
+        addDir(translation(30008), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchFE[0]+"&post_id="+showID, 'listVideos', thumb, "")
     if matchMV:
         addDir(translation(30005), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchMV[0]+"&post_id="+showID, 'listVideos', thumb, "")
+    if matchClips:
+        addDir(translation(30007), baseUrl+"/wp-content/plugins/dni_plugin_core/ajax.php?action=dni_listing_items_filter&letter=&page=1&id="+matchClips[0]+"&post_id="+showID, 'listVideos', thumb, "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listVideos(urlMain):
-    content = ""
-    try:
-        content = getUrl(urlMain)
-    except:
-        pass
+    content = opener.open(urlMain).read()
     content = content.replace("\\", "")
     spl = content.split('<a')
     for i in range(1, len(spl), 1):
@@ -102,7 +108,7 @@ def listVideos(urlMain):
 
 
 def listVideosLatest(type):
-    content = getUrl(baseUrl+"/videos/")
+    content = opener.open(baseUrl+"/videos/").read()
     content = content[content.find('<div class="tab-module-header">'+type+'</div>'):]
     content = content[:content.find('</section>	</div>')]
     spl = content.split('<section class="pagetype-video">')
@@ -138,7 +144,7 @@ def listAZ():
 
 
 def listShows(urlMain):
-    content = getUrl(urlMain)
+    content = opener.open(urlMain).read()
     content = content.replace("\\", "")
     spl = content.split('<a')
     for i in range(1, len(spl), 1):
@@ -164,7 +170,7 @@ def listShows(urlMain):
         nextPage = str(int(currentPage)+1)
         totalPages = matchTotal[0]
         if int(currentPage) < int(totalPages):
-            addDir(translation(30001)+" ("+nextPage+")", urlMain.replace("page="+currentPage, "page="+nextPage), 'listShows', "", "")
+            addDir(translation(30001)+" ("+nextPage+")", urlMain.replace("page="+currentPage, "page="+nextPage), 'listShows', icon, "")
     except:
         pass
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -192,7 +198,7 @@ def listShowsFavs():
 
 
 def listSeasons(urlMain, thumb):
-    content = getUrl(urlMain)
+    content = opener.open(urlMain).read()
     matchIDs = re.compile('data-module-id="cfct-module-(.+?)" data-post-id="(.+?)"', re.DOTALL).findall(content)
     if '<select name="season"' in content:
         content = content[content.find('<select name="season"'):]
@@ -209,7 +215,7 @@ def listSeasons(urlMain, thumb):
 
 
 def listEpisodes(url):
-    content = getUrl(url)
+    content = opener.open(url).read()
     spl = content.split('<a class="dni-episode-browser-item pagetype-video"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
@@ -241,7 +247,7 @@ def listEpisodes(url):
 
 
 def playVideo(url, title, thumb):
-    content = getUrl(url)
+    content = opener.open(url).read()
     matchMulti = re.compile('<li data-number="(.+?)" data-guid="(.+?)"', re.DOTALL).findall(content)
     matchSingle = re.compile('&playlist=(.+?)"', re.DOTALL).findall(content)
     if matchMulti:
@@ -260,7 +266,7 @@ def playVideo(url, title, thumb):
 def playVideoAll(url, title, thumb):
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
-    content = getUrl(url)
+    content = opener.open(url).read()
     matchMulti = re.compile('<li data-number="(.+?)" data-guid="(.+?)"', re.DOTALL).findall(content)
     for part, videoID in matchMulti:
         listitem = xbmcgui.ListItem(title+": Teil "+part, thumbnailImage=thumb)
@@ -354,15 +360,6 @@ def cleanTitle(title):
     title = title.replace("u00c4", "Ä").replace("u00e4", "ä").replace("u00d6", "Ö").replace("u00f6", "ö").replace("u00dc", "Ü").replace("u00fc", "ü").replace("u00df", "ß").replace("u2013", "–")
     title = title.strip()
     return title
-
-
-def getUrl(url):
-    req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:24.0) Gecko/20100101 Firefox/24.0')
-    response = urllib2.urlopen(req)
-    link = response.read()
-    response.close()
-    return link
 
 
 def parameters_string_to_dict(parameters):
