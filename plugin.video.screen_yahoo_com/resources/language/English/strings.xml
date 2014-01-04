@@ -16,9 +16,9 @@
   <string id="30014">Sorry, this video is not available in your country!</string>
   <string id="30101">Maximum bitrate</string>
   <string id="30102">Items per page (International)</string>
-  <string id="30103">Use thumb as fanart (International)</string>
-  <string id="30104">Force View (International)</string>
-  <string id="30105">ViewID (International)</string>
+  <string id="30103">Use thumb as fanart</string>
+  <string id="30104">Force View</string>
+  <string id="30105">ViewID</string>
   <string id="30201">General</string>
   <string id="30202">Sites</string>
 </strings>

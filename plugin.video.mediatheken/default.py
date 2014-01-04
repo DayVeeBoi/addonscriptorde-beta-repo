@@ -57,7 +57,7 @@ def index():
     if site5:
         addDir("Euronews","plugin://plugin.video.euronews_com",iconEuroNews)
     if site6:
-        addDir("MTV","plugin://plugin.video.mtv_de",iconMTV)
+        addDir("MTV","plugin://plugin.video.mtv_de/?mode=listShows&url=http%3a%2f%2fwww.mtv.de%2fshows%2falle",iconMTV)
     if site7:
         addDir("MySpass","plugin://plugin.video.myspass_de",iconMySpass)
     if site8:

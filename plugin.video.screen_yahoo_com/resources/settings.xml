@@ -2,10 +2,10 @@
 <settings>
    <category label="30201">
         <setting id="maxVideoQuality" type="enum" label="30101" values="1096kb|1628kb|3192kb|4192kb" default="2"/>
-        <setting id="itemsPerPage" type="enum" label="30102" values="25|50|75|100" default="1"/>
         <setting id="useThumbAsFanart" type="bool" label="30103" default="true"/>
+        <setting id="itemsPerPage" type="enum" label="30102" values="25|50|75|100" default="1"/>
         <setting id="forceView" type="bool" label="30104" default="true"/>
-        <setting id="viewID" type="number" label="30105" default="504"/>
+        <setting id="viewIDNew" type="number" label="30105" default="51"/>
     </category>
     <category label="30202">
         <setting id="site1" type="bool" label="30003" default="true"/>

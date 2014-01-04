@@ -16,7 +16,7 @@ socket.setdefaulttimeout(60)
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
-iconRTL = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
+iconRTL = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL.png')
 iconRTL2 = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL2.png')
 iconVOX = xbmc.translatePath('special://home/addons/'+addonID+'/iconVOX.png')
 iconRTLNitro = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTLNitro.png')
@@ -83,6 +83,7 @@ def listShowsThumb(urlMain):
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = opener.open(urlMain).read()
     spl = content.split('<div class="m03medium"')
+    entries = []
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(entry)
@@ -97,10 +98,12 @@ def listShowsThumb(urlMain):
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("/216x122/", "/864x488/")
         if 'class="m03date">FREE' in entry or 'class="m03date">NEW' in entry:
-            if url.endswith("gzsz.php"):
-                addShowDir(title, url, 'listSeasons', thumb)
-            else:
-                addShowDir(title, url, 'listVideos', thumb)
+            if url not in entries:
+                if url.endswith("gzsz.php"):
+                    addShowDir(title, url, 'listSeasons', thumb)
+                else:
+                    addShowDir(title, url, 'listVideos', thumb)
+                entries.append(url)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -110,6 +113,7 @@ def listShowsNoThumb(urlMain, thumb):
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = opener.open(urlMain).read()
     spl = content.split('<div class="seriennavi')
+    entries = []
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
@@ -118,7 +122,9 @@ def listShowsNoThumb(urlMain, thumb):
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
             url = urlMain+match[0]
             if '>FREE<' in entry or '>NEW<' in entry:
-                addShowDir(title, url, 'listVideos', thumb)
+                if url not in entries:
+                    addShowDir(title, url, 'listVideos', thumb)
+                    entries.append(url)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -336,7 +342,7 @@ def addLink(name, url, mode, iconimage, desc="", duration="", date=""):
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Aired": date, "Duration": duration, "Episode": 1})
     liz.setProperty('IsPlayable', 'true')
-    if useThumbAsFanart and iconimage not in [iconRTL, iconRTL2, iconVOX, iconRTLNitro, iconSuperRTL, iconNTV]:
+    if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     entries = []
     entries.append((translation(30021), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
@@ -350,7 +356,7 @@ def addDir(name, url, mode, iconimage, args="", type=""):
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart and iconimage not in [iconRTL, iconRTL2, iconVOX, iconRTLNitro, iconSuperRTL, iconNTV]:
+    if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -361,7 +367,7 @@ def addShowDir(name, url, mode, iconimage, args="", type=""):
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart and iconimage not in [iconRTL, iconRTL2, iconVOX, iconRTLNitro, iconSuperRTL, iconNTV]:
+    if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     playListInfos = "###MODE###=ADD###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30024), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
@@ -374,7 +380,7 @@ def addShowRDir(name, url, mode, iconimage, args="", type=""):
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart and iconimage not in [iconRTL, iconRTL2, iconVOX, iconRTLNitro, iconSuperRTL, iconNTV]:
+    if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     playListInfos = "###MODE###=REMOVE###REFRESH###=TRUE###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30025), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
