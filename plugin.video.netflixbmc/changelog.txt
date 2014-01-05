@@ -58,3 +58,7 @@
 1.2.2
 - Control Utitlity (Win): Fixed keymapping for some combo keys
 - Control Utitlity (Win): Added custom cursor position setting
+1.2.3
+- Added watched status for episodes
+- Fixed adding "My List" to library
+- Fixed categories "Genres" / "Just for Kids" for multi-profile accounts

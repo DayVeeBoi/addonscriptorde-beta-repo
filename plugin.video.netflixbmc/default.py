@@ -145,21 +145,21 @@ def listVideos(url):
 
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     videoDetails = getVideoInfo(videoID).replace("\\t","").replace("\\n", "").replace("\\", "")
-    match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="title ".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if not title:
         title = match[0].strip()
     year = ""
-    match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="year".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if match:
         year = match[0]
     if not thumbUrl:
         match = re.compile('src="(.+?)"', re.DOTALL).findall(videoDetails)
         thumbUrl = match[0]
-    match = re.compile('<span class="mpaaRating.+?">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="mpaaRating.+?".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     mpaa = ""
     if match:
         mpaa = match[0]
-    match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="duration".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     duration = ""
     if match:
         duration = match[0]
@@ -196,11 +196,11 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     director = ""
     if match:
         director = match[0].strip()
-    match = re.compile('<span class="genre">(.+?)</span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="genre".*?>(.+?)</span>', re.DOTALL).findall(videoDetails)
     genre = ""
     if match:
         genre = match[0]
-    match = re.compile('<span class="rating">(.+?)</span>', re.DOTALL).findall(videoDetails)
+    match = re.compile('<span class="rating".*?>(.+?)</span>', re.DOTALL).findall(videoDetails)
     rating = ""
     if rating:
         rating = match[0]
@@ -221,9 +221,11 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
 
 
 def listGenres(type):
+    if not singleProfile:
+        setProfile()
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = opener.open(urlMain+"/WiHome").read()
-    match = re.compile('/'+type+'\\?agid=(.+?)">(.+?)</a></li>', re.DOTALL).findall(content)
+    match = re.compile('/'+type+'\\?agid=(.+?)">(.+?)<', re.DOTALL).findall(content)
     for genreID, title in match:
         addDir(title, urlMain+"/"+type+"?agid="+genreID+"&pn=1&np=1&actionMethod=json", 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -252,13 +254,17 @@ def listEpisodes(seriesID, season):
                 episodeID = str(item["episodeId"])
                 episodeNr = str(item["episode"])
                 episodeTitle = item["title"].encode('utf-8')
-                duration = str(item["runtime"])
+                duration = item["runtime"]
+                bookmarkPosition = item["bookmarkPosition"]
+                playcount=0
+                if (float(bookmarkPosition)/float(duration))>=0.9:
+                    playcount=1
                 desc = item["synopsis"].encode('utf-8')
                 try:
                     thumb = item["stills"][0]["url"]
                 except:
                     thumb = ""
-                addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, duration, episodeNr, seriesID)
+                addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, str(duration), episodeNr, seriesID, playcount)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewIdEpisodes+')')
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -328,7 +334,7 @@ def addMyListToLibrary():
         else:
             if '<div id="queue"' in content:
                 content = content[content.find('<div id="queue"'):]
-            content = content.replace("\\n", "").replace("\\", "")
+            content = content.replace("\\t","").replace("\\n", "").replace("\\", "")
             match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?" src=".+?">', re.DOTALL).findall(content)
             match2 = re.compile('<span class="title "><a id="b(.+?)_', re.DOTALL).findall(content)
             if match1:
@@ -337,15 +343,18 @@ def addMyListToLibrary():
                 match = match2
             for videoID in match:
                 videoDetails = getVideoInfo(videoID).replace("\\n", "").replace("\\", "")
-                match = re.compile('<span class="title ">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                match = re.compile('<span class="title ".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
                 title = match[0].strip()
                 title = title.replace("&amp;", "&")
-                match = re.compile('<span class="year">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-                year = match[0]
-                match = re.compile('<span class="duration">(.+?)<\/span>', re.DOTALL).findall(videoDetails)
-                duration = match[0]
-                if year:
+                match = re.compile('<span class="year".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                year = ""
+                if match:
+                    year = match[0]
                     title = title+" ("+year+")"
+                match = re.compile('<span class="duration".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
+                duration = ""
+                if match:
+                    duration = match[0]
                 if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
                     try:
                         addSeriesToLibrary(videoID, title, "", False)
@@ -521,7 +530,7 @@ def forceChooseProfile():
 
 
 def addMovieToLibrary(movieID, title, singleUpdate=True):
-    movieFolderName = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    movieFolderName = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip(' .')
     dir = os.path.join(libraryFolderMovies, movieFolderName)
     if not os.path.isdir(dir):
         os.mkdir(dir)
@@ -533,7 +542,7 @@ def addMovieToLibrary(movieID, title, singleUpdate=True):
 
 
 def addSeriesToLibrary(seriesID, seriesTitle, season, singleUpdate=True):
-    seriesFolderName = (''.join(c for c in unicode(seriesTitle, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+    seriesFolderName = (''.join(c for c in unicode(seriesTitle, 'utf-8') if c not in '/\\:?"*|<>')).strip(' .')
     seriesDir = os.path.join(libraryFolderTV, seriesFolderName)
     if not os.path.isdir(seriesDir):
         os.mkdir(seriesDir)
@@ -558,7 +567,7 @@ def addSeriesToLibrary(seriesID, seriesTitle, season, singleUpdate=True):
                 if len(seasonNr) == 1:
                     seasonNr = "0"+seasonNr
                 filename = "S"+seasonNr+"E"+episodeNr+" - "+episodeTitle+".strm"
-                filename = (''.join(c for c in unicode(filename, 'utf-8') if c not in '/\\:?"*|<>')).strip()
+                filename = (''.join(c for c in unicode(filename, 'utf-8') if c not in '/\\:?"*|<>')).strip(' .')
                 fh = open(os.path.join(seasonDir, filename), 'w')
                 fh.write("plugin://plugin.video.netflixbmc/?mode=playVideo&url="+episodeID)
                 fh.close()
@@ -675,13 +684,13 @@ def addSeasonDir(name, url, mode, iconimage, seriesName, seriesID):
     return ok
 
 
-def addEpisodeDir(name, url, mode, iconimage, desc="", duration="", episodeNr="", seriesID=""):
+def addEpisodeDir(name, url, mode, iconimage, desc="", duration="", episodeNr="", seriesID="", playcount=""):
     filename = (''.join(c for c in unicode(seriesID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".jpg"
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
-    liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "episode": episodeNr})
+    liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "episode": episodeNr, "playcount": playcount})
     liz.setProperty("fanart_image", fanartFile)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
