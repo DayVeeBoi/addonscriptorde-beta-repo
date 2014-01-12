@@ -2,3 +2,7 @@
 - Initial release
 1.0.1
 - Changed MTV plugin path
+1.0.2
+- Removed NOW channels
+- Added NOW addon
+- Added Tele5
