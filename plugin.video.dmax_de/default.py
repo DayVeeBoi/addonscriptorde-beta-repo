@@ -16,7 +16,8 @@ from pyamf import remoting
 addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.dmax_de'
+#addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 translation = addon.getLocalizedString
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
@@ -45,8 +46,6 @@ def index():
     addDir(translation(30007), "CLIPS", 'listVideosLatest', icon, '')
     addDir(translation(30004), "BELIEBTE VIDEOS", 'listVideosLatest', icon, '')
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode:
-        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listVideosMain(url, thumb):

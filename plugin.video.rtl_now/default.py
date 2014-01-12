@@ -14,7 +14,8 @@ import re
 addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(60)
 pluginhandle = int(sys.argv[1])
-addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.rtl_now'
+#addonID = addon.getAddonInfo('id')
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
 iconRTL = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL.png')
 iconRTL2 = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL2.png')
@@ -58,8 +59,6 @@ def index():
     if site6:
         addDir(translation(30007), urlMainNTV, "listChannel", iconNTV)
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode:
-        xbmc.executebuiltin('Container.SetViewMode(500)')
 
 
 def listChannel(urlMain, thumb):
