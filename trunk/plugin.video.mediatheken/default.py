@@ -13,17 +13,13 @@ iconEuroNews=xbmc.translatePath('special://home/addons/'+addonID+'/iconEuroNews.
 iconMTV=xbmc.translatePath('special://home/addons/'+addonID+'/iconMTV.png')
 iconMySpass=xbmc.translatePath('special://home/addons/'+addonID+'/iconMySpass.png')
 iconN24=xbmc.translatePath('special://home/addons/'+addonID+'/iconN24.png')
-iconNTV=xbmc.translatePath('special://home/addons/'+addonID+'/iconNTV.png')
-iconRTL=xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL.png')
-iconRTL2=xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL2.png')
-iconRTLNitro=xbmc.translatePath('special://home/addons/'+addonID+'/iconRTLNitro.png')
+iconNOW=xbmc.translatePath('special://home/addons/'+addonID+'/iconNOW.png')
 iconSouthPark=xbmc.translatePath('special://home/addons/'+addonID+'/iconSouthPark.png')
 iconSpiegelTV=xbmc.translatePath('special://home/addons/'+addonID+'/iconSpiegelTV.png')
-iconSuperRTL=xbmc.translatePath('special://home/addons/'+addonID+'/iconSuperRTL.png')
 iconVEVOTV=xbmc.translatePath('special://home/addons/'+addonID+'/iconVEVOTV.png')
-iconVOX=xbmc.translatePath('special://home/addons/'+addonID+'/iconVOX.png')
 iconWeltDerWunder=xbmc.translatePath('special://home/addons/'+addonID+'/iconWeltDerWunder.png')
 iconZDF=xbmc.translatePath('special://home/addons/'+addonID+'/iconZDF.png')
+iconTele5=xbmc.translatePath('special://home/addons/'+addonID+'/iconTele5.png')
 site1=addon.getSetting("site1")=="true"
 site2=addon.getSetting("site2")=="true"
 site3=addon.getSetting("site3")=="true"
@@ -43,6 +39,8 @@ site16=addon.getSetting("site16")=="true"
 site17=addon.getSetting("site17")=="true"
 site18=addon.getSetting("site18")=="true"
 site19=addon.getSetting("site19")=="true"
+site22=addon.getSetting("site22")=="true"
+site23=addon.getSetting("site23")=="true"
 
 def index():
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -62,28 +60,20 @@ def index():
         addDir("MySpass","plugin://plugin.video.myspass_de",iconMySpass)
     if site8:
         addDir("N24","plugin://plugin.video.n24_de",iconN24)
-    if site9:
-        addDir("N-TV","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://www.n-tvnow.de")+"&thumb="+urllib.quote_plus(iconNTV),iconNTV)
-    if site10:
-        addDir("RTL","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://rtl-now.rtl.de")+"&thumb="+urllib.quote_plus(iconRTL),iconRTL)
-    if site11:
-        addDir("RTL 2","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://rtl2now.rtl2.de")+"&thumb="+urllib.quote_plus(iconRTL2),iconRTL2)
-    if site12:
-        addDir("RTL Nitro","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://www.rtlnitronow.de")+"&thumb="+urllib.quote_plus(iconRTLNitro),iconRTLNitro)
     if site13:
         addDir("South Park","plugin://plugin.video.southpark_de",iconSouthPark)
     if site14:
         addDir("Spiegel TV","plugin://plugin.video.spiegel_tv",iconSpiegelTV)
-    if site15:
-        addDir("Super RTL","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://www.superrtlnow.de")+"&thumb="+urllib.quote_plus(iconSuperRTL),iconSuperRTL)
     if site16:
         addDir("VEVO TV","plugin://plugin.video.vevo_tv",iconVEVOTV)
-    if site17:
-        addDir("VOX","plugin://plugin.video.rtl_now?mode=listChannel&url="+urllib.quote_plus("http://www.voxnow.de")+"&thumb="+urllib.quote_plus(iconVOX),iconVOX)
     if site18:
         addDir("Welt der Wunder","plugin://plugin.video.welt_der_wunder",iconWeltDerWunder)
     if site19:
         addDir("ZDF","plugin://plugin.video.zdf_de_lite",iconZDF)
+    if site22:
+        addDir("Tele 5","plugin://plugin.video.tele5_de",iconTele5)
+    if site23:
+        addDir("NOW","plugin://plugin.video.rtl_now", iconNOW)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
