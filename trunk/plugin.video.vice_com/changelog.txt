@@ -6,3 +6,5 @@
 - Fixed multi-part playback
 1.0.4
 - Fixed show listing
+1.0.5
+- Changed default view

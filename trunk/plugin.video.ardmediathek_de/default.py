@@ -13,7 +13,8 @@ import os
 addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.ardmediathek_de'
+#addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
@@ -46,8 +47,6 @@ def index():
     addDir(translation(30008), "", 'search', "")
     addLink(translation(30013), "", 'playLive', icon)
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode:
-        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def listShowsFavs():
@@ -228,7 +227,8 @@ def listVideos(url):
             match = re.compile('<p class="mt-source mt-tile-view_hide">aus: (.+?)</p>', re.DOTALL).findall(entry)
             show = ""
             if match:
-                show = match[0]
+                show = cleanTitle(match[0])
+                title = show+": "+title
             match = re.compile('<span class="mt-channel mt-tile-view_hide">(.+?)</span>', re.DOTALL).findall(entry)
             channel = ""
             if match:
@@ -249,7 +249,7 @@ def listVideos(url):
                 title = date[:5]+" - "+title
             match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
             thumb = getBetterThumb(baseUrl+match[0])
-            desc = cleanTitle(date+" - "+show+" ("+channel+")")
+            desc = cleanTitle(title+" ("+channel+")")
             if "Livestream" not in title:
                 addLink(title, url, 'playVideo', thumb, duration, desc)
     xbmcplugin.endOfDirectory(pluginhandle)
