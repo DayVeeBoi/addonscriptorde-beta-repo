@@ -304,13 +304,13 @@ def playBrightCoveStream(bc_videoID, title, thumb, isSingle):
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if autoPlay:
             while True:
-                if xbmc.Player().isPlaying() and int(xbmc.Player().getTime()) == 0 and xbmc.getCondVisibility("Player.Paused"):
+                if xbmc.Player().isPlaying() and xbmc.getCondVisibility("Player.Paused"):
                     xbmc.Player().pause()
                     break
                 xbmc.sleep(100)
             xbmc.sleep(500)
             while xbmc.getCondVisibility("Player.Paused"):
-                if xbmc.Player().isPlaying() and int(xbmc.Player().getTime()) == 0:
+                if xbmc.Player().isPlaying():
                     xbmc.Player().pause()
                     break
                 xbmc.sleep(100)

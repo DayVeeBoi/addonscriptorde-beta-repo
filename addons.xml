@@ -144,7 +144,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.pyamf" version="0.6.1"/>
