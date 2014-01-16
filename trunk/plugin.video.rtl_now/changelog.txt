@@ -7,3 +7,6 @@
 - Added season selection
 1.0.3
 - Changed name to 'NOW'
+1.0.5
+- Fixed xbox compatibility
+- Fixed some missing shows

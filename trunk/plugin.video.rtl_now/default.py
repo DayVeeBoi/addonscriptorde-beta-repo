@@ -11,18 +11,21 @@ import sys
 import os
 import re
 
-addon = xbmcaddon.Addon()
-socket.setdefaulttimeout(60)
-pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.rtl_now'
+#addon = xbmcaddon.Addon()
 #addonID = addon.getAddonInfo('id')
-channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
-iconRTL = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL.png')
-iconRTL2 = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTL2.png')
-iconVOX = xbmc.translatePath('special://home/addons/'+addonID+'/iconVOX.png')
-iconRTLNitro = xbmc.translatePath('special://home/addons/'+addonID+'/iconRTLNitro.png')
-iconSuperRTL = xbmc.translatePath('special://home/addons/'+addonID+'/iconSuperRTL.png')
-iconNTV = xbmc.translatePath('special://home/addons/'+addonID+'/iconNTV.png')
+addonID = 'plugin.video.rtl_now'
+addon = xbmcaddon.Addon(id=addonID)
+socket.setdefaulttimeout(30)
+pluginhandle = int(sys.argv[1])
+xbox = xbmc.getCondVisibility("System.Platform.xbox")
+addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
+channelFavsFile = xbmc.translatePath(os.path.join(addon.getAddonInfo('profile'), addonID+".favorites"))
+iconRTL = os.path.join(addonDir, 'iconRTL.png')
+iconRTL2 = os.path.join(addonDir, 'iconRTL2.png')
+iconVOX = os.path.join(addonDir, 'iconVOX.png')
+iconRTLNitro = os.path.join(addonDir, 'iconRTLNitro.png')
+iconSuperRTL = os.path.join(addonDir, 'iconSuperRTL.png')
+iconNTV = os.path.join(addonDir, 'iconNTV.png')
 opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:24.0) Gecko/20100101 Firefox/24.0"
 opener.addheaders = [('User-Agent', userAgent)]
@@ -89,11 +92,14 @@ def listShowsThumb(urlMain):
         title = cleanTitle(match[0])
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = match[0]
-        if url.startswith("/"):
-            url = url[1:]
-        if "/" in url:
-            url = url[:url.find("/")]+".php"
-        url = urlMain[:urlMain.rfind("/")+1]+url
+        if url.startswith("http"):
+            pass
+        else:
+            if url.startswith("/"):
+                url = url[1:]
+            if "/" in url:
+                url = url[:url.find("/")]+".php"
+            url = urlMain[:urlMain.rfind("/")+1]+url
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("/216x122/", "/864x488/")
         if 'class="m03date">FREE' in entry or 'class="m03date">NEW' in entry:
@@ -324,6 +330,13 @@ def cleanTitle(title):
     return title
 
 
+def getPluginUrl():
+    if xbox:
+        return "plugin://video/"+addon.getAddonInfo('name')+"/"
+    else:
+        return "plugin://"+addonID+"/"
+
+
 def parameters_string_to_dict(parameters):
     paramDict = {}
     if parameters:
@@ -344,7 +357,7 @@ def addLink(name, url, mode, iconimage, desc="", duration="", date=""):
     if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     entries = []
-    entries.append((translation(30021), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
+    entries.append((translation(30021), 'RunPlugin('+getPluginUrl()+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -369,7 +382,7 @@ def addShowDir(name, url, mode, iconimage, args="", type=""):
     if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     playListInfos = "###MODE###=ADD###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
-    liz.addContextMenuItems([(translation(30024), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
+    liz.addContextMenuItems([(translation(30024), 'RunPlugin('+getPluginUrl()+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -382,7 +395,7 @@ def addShowRDir(name, url, mode, iconimage, args="", type=""):
     if useThumbAsFanart and not iconimage.split(os.sep)[-1].startswith("icon"):
         liz.setProperty("fanart_image", iconimage)
     playListInfos = "###MODE###=REMOVE###REFRESH###=TRUE###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
-    liz.addContextMenuItems([(translation(30025), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
+    liz.addContextMenuItems([(translation(30025), 'RunPlugin('+getPluginUrl()+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
