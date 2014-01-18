@@ -13,6 +13,7 @@ iconPK=xbmc.translatePath('special://home/addons/'+addonID+'/iconPK.png')
 iconKN=xbmc.translatePath('special://home/addons/'+addonID+'/iconKN.png')
 iconCE=xbmc.translatePath('special://home/addons/'+addonID+'/iconCE.png')
 iconSS=xbmc.translatePath('special://home/addons/'+addonID+'/iconSS.png')
+iconDC=xbmc.translatePath('special://home/addons/'+addonID+'/iconDC.png')
 site1=addon.getSetting("site1")=="true"
 site2=addon.getSetting("site2")=="true"
 site3=addon.getSetting("site3")=="true"
@@ -21,6 +22,7 @@ site5=addon.getSetting("site5")=="true"
 site6=addon.getSetting("site6")=="true"
 site7=addon.getSetting("site7")=="true"
 site8=addon.getSetting("site8")=="true"
+site9=addon.getSetting("site9")=="true"
 
 def index():
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -35,11 +37,13 @@ def index():
     if site5:
         addDir("Pfefferkörner","plugin://plugin.video.pfefferkoerner_de", iconPK)
     if site6:
-        addDir("Kindernetz","plugin://plugin.video.kindernetz_de", iconKN)
+        addDir("SWR Kindernetz","plugin://plugin.video.kindernetz_de", iconKN)
     if site7:
-        addDir("CheckEins","plugin://plugin.video.checkeins_de", iconCE)
+        addDir("ARD CheckEins","plugin://plugin.video.checkeins_de", iconCE)
     if site8:
         addDir("Sesamstraße","plugin://plugin.video.sesamstrasse_de", iconSS)
+    if site9:
+        addDir("Disney Channel","plugin://plugin.video.disneychannel_de", iconDC)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 

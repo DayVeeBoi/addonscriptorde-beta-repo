@@ -75,7 +75,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="2.1.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="2.1.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -141,6 +141,28 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.checkeins.de</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.disneychannel_de" name="DisneyChannel.de" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">DisneyChannel Mediathek</summary>
+        <summary lang="en">DisneyChannel media library</summary>
+        <language>de</language>
+        <description lang="de">DisneyChannel Mediathek</description>
+        <description lang="en">DisneyChannel media library</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.disneychannel_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.disneychannel.de</website>
     </extension>
 </addon>
 
@@ -230,7 +252,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.kindernetz_de" name="Kindernetz.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.kindernetz_de" name="Kindernetz.de" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -253,7 +275,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.kinder_mediatheken" name="Kinder Mediatheken" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.kinder_mediatheken" name="Kinder Mediatheken" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -658,6 +680,52 @@
         <source>https://github.com/AddonScriptorDE/plugin.video.youtube.billboard</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=171123</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.youtube.filme" name="Youtube Filme" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch free german movies on Youtube</summary>
+        <summary lang="de">Kostenlose deutsche Filme auf Youtube schauen</summary>
+        <language>de</language>
+        <description lang="en">Watch free german movies on Youtube</description>
+        <description lang="de">Kostenlose deutsche Filme auf Youtube schauen</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.filme</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.youtube.com</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.youtube.movies" name="Youtube Movies" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch free movies on Youtube</summary>
+        <summary lang="de">Kostenlose Filme auf Youtube schauen</summary>
+        <language></language>
+        <description lang="en">Watch free movies on Youtube</description>
+        <description lang="de">Kostenlose Filme auf Youtube schauen</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.movies</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.youtube.com</website>
     </extension>
 </addon>
 

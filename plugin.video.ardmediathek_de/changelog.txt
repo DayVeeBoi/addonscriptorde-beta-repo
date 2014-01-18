@@ -26,3 +26,5 @@
 - Added default background
 2.0.9
 - Changed default view
+2.1.1
+- Some small fixes
