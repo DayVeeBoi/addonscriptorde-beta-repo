@@ -122,6 +122,26 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.cbsnews_com" name="CBSnews.com" version="2.0.9" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Various news and shows (60 Minutes, 48 Hours, ...)</summary>
+        <language>en</language>
+        <description lang="en">Various news and shows (60 Minutes, 48 Hours, ...)</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.cbsnews_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=136416</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.cbsnews.com/videos</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.checkeins_de" name="CheckEins.de" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -554,6 +574,27 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.tele5.de</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.thatguywiththeglasses_com" name="ThatGuyWithTheGlasses.com" version="2.0.5" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">ThatGuyWithTheGlasses and many more...</summary>
+        <language>en</language>
+        <description lang="en">Your one stop site for 5 Second Movies, Bum Reviews, Nostalgia Critic, and Ask ThatGuy.</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.thatguywiththeglasses_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=136044</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.tgwtg.com</website>
     </extension>
 </addon>
 
