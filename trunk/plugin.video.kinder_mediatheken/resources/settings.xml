@@ -7,4 +7,5 @@
     <setting id="site6" type="bool" label="30006" default="true" />
     <setting id="site7" type="bool" label="30007" default="true" />
     <setting id="site8" type="bool" label="30008" default="true" />
+    <setting id="site9" type="bool" label="30009" default="true" />
 </settings>

@@ -10,11 +10,12 @@ import sys
 import re
 import os
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.ardmediathek_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.ardmediathek_de'
-#addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
@@ -91,7 +92,7 @@ def listDossiers():
         url = baseUrl+match[0]
         id = url[url.find("documentId=")+11:]
         url = baseUrl+"/ard/servlet/ajax-cache/3517004/view=list/documentId="+id+"/goto=1/index.html"
-        match = re.compile('<span class="mt-icon mt-icon-toggle_arrows"></span>\n                (.+?)\n', re.DOTALL).findall(entry)
+        match = re.compile('<span class="mt-icon mt-icon-toggle_arrows"></span>(.+?)<', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = getBetterThumb(baseUrl+match[0])
@@ -429,7 +430,7 @@ def listVideosSearch(url):
         desc = cleanTitle(date+" - "+show+" ("+channel+")")
         if "Livestream" not in title:
             addLink(title, url, 'playVideo', thumb, duration, desc)
-    match = re.compile('<a  href="(.+?)"  class=".+?" rel=".+?">(.+?)</a>', re.DOTALL).findall(content)
+    match = re.compile('href="(.+?)".+?>(.+?)<', re.DOTALL).findall(content)
     for url, title in match:
         if title == "Weiter":
             addDir(translation(30009), baseUrl+url.replace("&amp;", "&"), 'listVideosSearch', "", "")

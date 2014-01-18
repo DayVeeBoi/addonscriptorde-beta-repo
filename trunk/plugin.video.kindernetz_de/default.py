@@ -11,11 +11,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.kindernetz_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.kindernetz_de'
-#addonID = addon.getAddonInfo('id')
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewMode"))
@@ -57,8 +58,10 @@ def listVideosLatest(url):
         title = match[0]
         title = cleanTitle(title)
         match = re.compile('description:"(.+?)"', re.DOTALL).findall(entry)
-        desc = match[0]
-        desc = cleanTitle(desc)
+        desc = ""
+        if match:
+            desc = match[0]
+            desc = cleanTitle(desc)
         match = re.compile('file:"(.+?)"', re.DOTALL).findall(entry)
         url = match[len(match)-1]
         match = re.compile('image:"(.+?)"', re.DOTALL).findall(entry)
