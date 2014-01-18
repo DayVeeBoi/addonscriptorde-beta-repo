@@ -1,8 +1,9 @@
-import os, xbmc, xbmcaddon, datetime, base64
+import os, xbmc, xbmcaddon, datetime, hashlib
 
-addon = xbmcaddon.Addon()
-addonID = 'service.screen_time'
+#addon = xbmcaddon.Addon()
 #addonID = addon.getAddonInfo('id')
+addonID = 'service.screen_time'
+addon = xbmcaddon.Addon(id=addonID)
 userDataDir = xbmc.translatePath("special://profile/addon_data/"+addonID)
 workingDir = os.path.join(userDataDir, 'times')
 timeFile = os.path.join(userDataDir, 'time')
@@ -54,7 +55,7 @@ if not os.path.exists(pinFile):
     kb.doModal()
     if kb.isConfirmed():
         fh = open(pinFile, 'w')
-        fh.write(base64.b64encode(kb.getText()))
+        fh.write(hashlib.sha1(kb.getText()).hexdigest())
         fh.close()
 
 if not os.path.exists(timeFile) and os.path.exists(pinFile):

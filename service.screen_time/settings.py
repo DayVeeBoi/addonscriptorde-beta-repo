@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
-import base64
+import hashlib
 import xbmc
 import urllib
 
@@ -26,11 +26,11 @@ def setMessage():
 
 
 def setPin():
-    kb = xbmc.Keyboard(pin, "Enter a new 4-digit PIN")
+    kb = xbmc.Keyboard("", "Enter a new 4-digit PIN")
     kb.doModal()
     if kb.isConfirmed():
         fh = open(pinFile, 'w')
-        fh.write(base64.b64encode(kb.getText()))
+        fh.write(hashlib.sha1(kb.getText()).hexdigest())
         fh.close()
 
 
@@ -40,10 +40,10 @@ workingDir = os.path.join(userDataDir, 'times')
 timeFile = os.path.join(userDataDir, 'time')
 messageFile = os.path.join(userDataDir, 'message')
 pinFile = os.path.join(userDataDir, 'pin')
-pin = ""
+pinHash = ""
 if os.path.exists(pinFile):
     fh = open(pinFile, 'r')
-    pin = base64.b64decode(fh.read())
+    pinHash = fh.read()
     fh.close()
 time = ""
 if os.path.exists(timeFile):
@@ -56,12 +56,12 @@ if os.path.exists(messageFile):
     message = fh.read()
     fh.close()
 enteredPin = ""
-if pin:
+if pinHash:
     kb = xbmc.Keyboard("", "Enter your PIN")
     kb.doModal()
     if kb.isConfirmed():
         enteredPin = kb.getText()
-        while pin!=enteredPin:
+        while enteredPin and pinHash!=hashlib.sha1(enteredPin).hexdigest():
             kb = xbmc.Keyboard("", "Wrong PIN! Try again...")
             kb.doModal()
             if kb.isConfirmed():
@@ -70,9 +70,9 @@ if pin:
 
 mode = urllib.unquote_plus(sys.argv[1])
 
-if mode=="setTime" and pin and pin==enteredPin:
+if mode=="setTime" and pinHash and pinHash==hashlib.sha1(enteredPin).hexdigest():
     setTime()
-elif mode=="setMessage" and pin and pin==enteredPin:
+elif mode=="setMessage" and pinHash and pinHash==hashlib.sha1(enteredPin).hexdigest():
     setMessage()
-elif mode=="setPin" and pin and pin==enteredPin:
+elif mode=="setPin" and pinHash and pinHash==hashlib.sha1(enteredPin).hexdigest():
     setPin()
