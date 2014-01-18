@@ -904,7 +904,7 @@
   </extension>
 </addon>
 
-<addon id="service.screen_time" name="Screen Time" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="service.screen_time" name="Screen Time" version="1.0.1" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
