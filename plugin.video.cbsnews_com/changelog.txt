@@ -19,3 +19,5 @@
 - Rewrote addon because of new video site layout
 2.0.9
 - Fixed thumbnail on infoview while playback
+2.1.0
+- Fixed site changes
