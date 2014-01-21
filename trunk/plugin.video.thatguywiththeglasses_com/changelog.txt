@@ -15,3 +15,7 @@
 - Added "Add to queue" context menu
 - Removed Blip.tv addon dependency
 - Implemented Blip.tv stream resolving
+2.0.6
+- Added show favorites
+- Fixed video playback on some vids
+- Added new Blip.tv addon dependency

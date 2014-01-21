@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+   <setting id="maxVideoQuality" type="enum" label="30101" values="480p|720p|1080p" default="1"/>
+   <setting id="showSubtitles" type="bool" label="30106" default="false"/>
+   <setting id="useThumbAsFanart" type="bool" label="30102" default="true"/>
+   <setting id="forceView" type="bool" label="30103" default="true"/>
+   <setting id="viewIDShows" type="number" label="30104" default="501"/>
+   <setting id="viewIDEpisodes" type="number" label="30105" default="51"/>
+</settings>
