@@ -116,11 +116,15 @@ def listLatestAll():
         time = time[:time.rfind(":")]
         title = time+" - "+titleShow+" - "+titleEpisode
         match = re.compile('<blip:runtime>(.+?)</blip:runtime>', re.DOTALL).findall(entry)
-        duration = str(int(match[0])/60)
-        if duration=="0":
-            duration = "1"
+        duration = ""
+        if match:
+            duration = str(int(match[0])/60)
+            if duration=="0":
+                duration = "1"
         match = re.compile('<blip:puredescription>(.+?)</blip:puredescription>', re.DOTALL).findall(entry)
-        desc = match[0].replace("<![CDATA[","").replace("]]>","")
+        desc = ""
+        if match:
+            desc = match[0].replace("<![CDATA[","").replace("]]>","")
         match = re.compile('<media:thumbnail url="(.+?)"/>', re.DOTALL).findall(entry)
         thumb = match[0]
         if not thumb.startswith("http:"):
