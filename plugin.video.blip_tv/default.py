@@ -18,6 +18,7 @@ socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 forceViewMode = addon.getSetting("forceView") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
+showNotConverted = addon.getSetting("showNotConverted") == "true"
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 viewIDShows = str(addon.getSetting("viewIDShows"))
 viewIDEpisodes = str(addon.getSetting("viewIDEpisodes"))
@@ -25,7 +26,7 @@ xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath(os.path.join(addon.getAddonInfo('path') ,'icon.png'))
 channelFavsFile = xbmc.translatePath(os.path.join(addon.getAddonInfo('profile') ,'favourites'))
 maxVideoQuality = addon.getSetting("maxVideoQuality")
-maxVideoQuality = ["480p", "720p", "1080p"][int(maxVideoQuality)]
+maxVideoQuality = ["SD", "720p", "Source"][int(maxVideoQuality)]
 baseUrl = "http://www.blip.tv"
 opener = urllib2.build_opener()
 opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0')]
@@ -310,11 +311,16 @@ def playVideo(videoID):
         elif title=="Closed Captioning - English":
             subURL = url
     for url, title in match:
-        if title=="Blip HD 720" and (maxVideoQuality=="720p" or maxVideoQuality=="1080p"):
+        if title=="Blip HD 720" and (maxVideoQuality=="720p" or maxVideoQuality=="Source"):
             streamURL = url
     for url, title in match:
-        if title=="Source" and maxVideoQuality=="1080p":
+        if title=="Source" and maxVideoQuality=="Source":
             streamURL = url
+    for url, title in match:
+        if title=="Source" and not streamURL:
+            streamURL = url
+            if showNotConverted:
+                xbmc.executebuiltin('XBMC.Notification(Blip.tv:,'+str(translation(30018))+',10000)')
     match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
     title = match[0]
     match = re.compile('<media:thumbnail url="(.+?)"/>', re.DOTALL).findall(content)
