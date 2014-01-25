@@ -176,6 +176,9 @@ def listVideos(urlMain, thumb, args=""):
     ajaxUrl = ""
     if not args:
         content = opener.open(urlMain).read()
+        match = re.compile('<meta property="og:image" content="(.+?)"', re.DOTALL).findall(content)
+        if match and thumb.split(os.sep)[-1].startswith("icon"):
+            thumb = match[0]
         matchUrl = re.compile('xajaxRequestUri="(.+?)"', re.DOTALL).findall(content)
         ajaxUrl = matchUrl[0]
         matchParams = re.compile("<select onchange=\"xajax_show_top_and_movies.+?'(.+?)','(.+?)','(.+?)','(.+?)','(.+?)','(.+?)','(.+?)'", re.DOTALL).findall(content)
@@ -259,9 +262,9 @@ def playVideo(urlMain):
         xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30022))+',10000)')
     else:
         match = re.compile("data:'(.+?)'", re.DOTALL).findall(content)
-        urlMain = urlMain[urlMain.find("//")+2:]
-        urlMain = urlMain[:urlMain.find("/")]
-        url = "http://"+urlMain+urllib.unquote(match[0])
+        hosterURL = urlMain[urlMain.find("//")+2:]
+        hosterURL = hosterURL[:hosterURL.find("/")]
+        url = "http://"+hosterURL+urllib.unquote(match[0])
         content = opener.open(url).read()
         match = re.compile('<filename.+?><(.+?)>', re.DOTALL).findall(content)
         url = match[0].replace("![CDATA[", "")
@@ -274,9 +277,9 @@ def playVideo(urlMain):
                 playpath = playpath[:playpath.rfind('.')]
             else:
                 playpath = "mp4:"+playpath
-            finalUrl = "rtmpe://"+matchRTMPE[0][0]+"/"+matchRTMPE[0][1]+"/ playpath="+playpath+" swfVfy=1 swfUrl=http://"+urlMain+"/includes/vodplayer.swf app="+matchRTMPE[0][1]+"/_definst_ pageUrl=http://"+urlMain+"/p/"
+            finalUrl = "rtmpe://"+matchRTMPE[0][0]+"/"+matchRTMPE[0][1]+"/ playpath="+playpath+" swfVfy=1 swfUrl=http://"+hosterURL+"/includes/vodplayer.swf app="+matchRTMPE[0][1]+"/_definst_ pageUrl="+urlMain
         elif matchHDS:
-            finalUrl = "rtmpe://fms-fra"+str(random.randint(1, 34))+".rtl.de/"+matchHDS[0][2]+"/ playpath=mp4:"+matchHDS[0][4].replace(".f4m", "")+" swfVfy=1 swfUrl=http://"+urlMain+"/includes/vodplayer.swf app="+matchHDS[0][2]+"/_definst_ pageUrl=http://"+urlMain+"/p/"
+            finalUrl = "rtmpe://fms-fra"+str(random.randint(1, 34))+".rtl.de/"+matchHDS[0][2]+"/ playpath=mp4:"+matchHDS[0][4].replace(".f4m", "")+" swfVfy=1 swfUrl=http://"+hosterURL+"/includes/vodplayer.swf app="+matchHDS[0][2]+"/_definst_ pageUrl="+urlMain
         if finalUrl:
             listitem = xbmcgui.ListItem(path=finalUrl)
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)

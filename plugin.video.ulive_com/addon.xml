@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.blip_tv" name="Blip.tv" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ulive_com" name="ulive.com" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -8,13 +8,13 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Browse and watch shows on Blip.tv</summary>
+        <summary lang="en">Video On Recipes, Design, Home, Travel, Parenting</summary>
         <language>en</language>
-        <description lang="en">Blip is home to the best in original web series from professional and up-and-coming producers. Watch dramas, comedies and other online videos for free.</description>
+        <description lang="en">ulive is your destination for entertaining and useful lifestyle videos. From original videos to ones you'll love from Food Network, Cooking Channel, HGTV, Travel Channel, and DIY.</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <source>https://github.com/AddonScriptorDE/plugin.video.blip_tv</source>
+        <source>https://github.com/AddonScriptorDE/plugin.video.ulive_com</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
-        <website>http://www.blip.tv</website>
+        <website>http://www.ulive.com</website>
     </extension>
 </addon>

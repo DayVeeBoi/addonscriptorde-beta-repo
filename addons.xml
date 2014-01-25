@@ -122,7 +122,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.blip_tv" name="Blip.tv" version="1.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.blip_tv" name="Blip.tv" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -486,7 +486,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.rtl_now" name="NOW" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.rtl_now" name="NOW" version="1.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -642,6 +642,26 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.ulive_com" name="ulive.com" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Video On Recipes, Design, Home, Travel, Parenting</summary>
+        <language>en</language>
+        <description lang="en">ulive is your destination for entertaining and useful lifestyle videos. From original videos to ones you'll love from Food Network, Cooking Channel, HGTV, Travel Channel, and DIY.</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.ulive_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.ulive.com</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.vevo_tv" name="VEVO TV" version="1.1.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -680,6 +700,26 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=178219</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.vice.com</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.videogameszone_de" name="VideoGamesZone.de" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch and browse videos on VideoGamesZone.de</summary>
+        <language></language>
+        <description lang="en">Watch and browse videos on VideoGamesZone.de</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.videogameszone_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.videogameszone.de/</website>
     </extension>
 </addon>
 
