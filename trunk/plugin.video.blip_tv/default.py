@@ -24,12 +24,16 @@ viewIDShows = str(addon.getSetting("viewIDShows"))
 viewIDEpisodes = str(addon.getSetting("viewIDEpisodes"))
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath(os.path.join(addon.getAddonInfo('path') ,'icon.png'))
-channelFavsFile = xbmc.translatePath(os.path.join(addon.getAddonInfo('profile') ,'favourites'))
+addonUserDataFolder = xbmc.translatePath(addon.getAddonInfo('profile'))
+channelFavsFile = os.path.join(addonUserDataFolder ,'favourites')
 maxVideoQuality = addon.getSetting("maxVideoQuality")
 maxVideoQuality = ["SD", "720p", "Source"][int(maxVideoQuality)]
 baseUrl = "http://www.blip.tv"
 opener = urllib2.build_opener()
 opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0')]
+
+if not os.path.isdir(addonUserDataFolder):
+    os.mkdir(addonUserDataFolder)
 
 
 def index():

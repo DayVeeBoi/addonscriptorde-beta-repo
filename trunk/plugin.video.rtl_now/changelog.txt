@@ -10,3 +10,5 @@
 1.0.5
 - Fixed xbox compatibility
 - Fixed some missing shows
+1.0.6
+- Fixed missing thumbs on episode listing
