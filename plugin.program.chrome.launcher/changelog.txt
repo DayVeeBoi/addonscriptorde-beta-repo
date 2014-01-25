@@ -19,3 +19,5 @@
 - Added setting to launch chrome without kiosk mode
 1.0.7
 - Added (internal) custom User-Agent setting
+1.0.8
+- Changed custom script handling (thx @ rob hodge)

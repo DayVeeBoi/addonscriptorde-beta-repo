@@ -38,7 +38,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.program.chrome.launcher" name="Chrome Launcher" version="1.0.7" provider-name="AddonScriptorDE">
+<addon id="plugin.program.chrome.launcher" name="Chrome Launcher" version="1.0.8" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -50,10 +50,11 @@
         <summary lang="en">Launch websites via Chrome in Kiosk-mode</summary>
         <language></language>
         <description lang="en">Launch websites via Chrome in Kiosk-mode</description>
-        <website></website>
-        <source>https://github.com/AddonScriptorDE/plugin.program.chrome.starter</source>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.program.chrome.launcher</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=170965</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
+        <website></website>
     </extension>
 </addon>
 
