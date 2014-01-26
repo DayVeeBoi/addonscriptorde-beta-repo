@@ -20,10 +20,7 @@ osOsx = xbmc.getCondVisibility('system.platform.osx')
 osLinux = xbmc.getCondVisibility('system.platform.linux')
 useOwnProfile = addon.getSetting("useOwnProfile") == "true"
 useCustomPath = addon.getSetting("useCustomPath") == "true"
-startScriptBefore = addon.getSetting("startScriptBefore") == "true"
 customPath = str(addon.getSetting("customPath"))
-scriptPath = str(addon.getSetting("scriptPath"))
-scriptDelay = int(addon.getSetting("scriptDelay"))
 
 userDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 profileFolder = os.path.join(userDataFolder, 'profile')

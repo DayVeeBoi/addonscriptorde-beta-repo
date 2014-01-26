@@ -40,6 +40,7 @@ profileFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/profi
 authFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/authUrl")
 localeFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/locale")
 dontUseKiosk = addon.getSetting("dontUseKiosk") == "true"
+linuxFullscreen = addon.getSetting("linuxFullscreen") == "true"
 showAllEpisodesInVA = addon.getSetting("showAllEpisodesInVA") == "true"
 hideMoviesInVA = addon.getSetting("hideMoviesInVA") == "true"
 browseTvShows = addon.getSetting("browseTvShows") == "true"
@@ -52,7 +53,7 @@ useTMDb = addon.getSetting("useTMDb") == "true"
 username = addon.getSetting("username")
 password = addon.getSetting("password")
 viewIdVideos = addon.getSetting("viewIdVideos")
-viewIdEpisodes = addon.getSetting("viewIdEpisodes")
+viewIdEpisodes = addon.getSetting("viewIdEpisodesNew")
 viewIdActivity = addon.getSetting("viewIdActivity")
 winBrowser = int(addon.getSetting("winBrowserNew"))
 osxBrowser = int(addon.getSetting("osxBrowser"))
@@ -144,7 +145,7 @@ def listVideos(url):
 
 
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
-    videoDetails = getVideoInfo(videoID).replace("\\t","").replace("\\n", "").replace("\\", "")
+    videoDetails = getVideoInfo(videoID)
     match = re.compile('<span class="title ".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     if not title:
         title = match[0].strip()
@@ -162,8 +163,12 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     match = re.compile('<span class="duration".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
     duration = ""
     if match:
-        duration = match[0]
-    if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
+        duration = match[0].lower()
+    if "minutes" in duration:
+        videoType = "movie"
+        videoTypeTemp = videoType
+        duration = duration.split(" ")[0]
+    else:
         videoTypeTemp = "tv"
         if tvshowIsEpisode:
             videoType = "episode"
@@ -171,10 +176,6 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
         else:
             videoType = "tvshow"
         duration = ""
-    else:
-        videoType = "movie"
-        videoTypeTemp = videoType
-        duration = duration.split(" ")[0]
     if useTMDb:
         yearTemp = year
         titleTemp = title
@@ -264,7 +265,7 @@ def listEpisodes(seriesID, season):
                     thumb = item["stills"][0]["url"]
                 except:
                     thumb = ""
-                addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, str(duration), episodeNr, seriesID, playcount)
+                addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, str(duration), season, episodeNr, seriesID, playcount)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewIdEpisodes+')')
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -309,7 +310,7 @@ def getVideoInfo(videoID):
         fh = open(cacheFile, 'w')
         fh.write(content)
         fh.close()
-    return content
+    return content.replace("\\t","").replace("\\n", "").replace("\\", "")
 
 
 def getSeriesInfo(seriesID):
@@ -319,7 +320,8 @@ def getSeriesInfo(seriesID):
         content = fh.read()
         fh.close()
     else:
-        content = opener.open("http://api-global.netflix.com/desktop/odp/episodes?languages="+language+"&forceEpisodes=true&routing=redirect&video="+seriesID+"&country="+country).read()
+        url = "http://api-global.netflix.com/desktop/odp/episodes?languages="+language+"&forceEpisodes=true&routing=redirect&video="+seriesID+"&country="+country
+        content = opener.open(url).read()
         fh = open(cacheFile, 'w')
         fh.write(content)
         fh.close()
@@ -342,7 +344,7 @@ def addMyListToLibrary():
             elif match2:
                 match = match2
             for videoID in match:
-                videoDetails = getVideoInfo(videoID).replace("\\n", "").replace("\\", "")
+                videoDetails = getVideoInfo(videoID)
                 match = re.compile('<span class="title ".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
                 title = match[0].strip()
                 title = title.replace("&amp;", "&")
@@ -350,19 +352,20 @@ def addMyListToLibrary():
                 year = ""
                 if match:
                     year = match[0]
-                    title = title+" ("+year+")"
                 match = re.compile('<span class="duration".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
                 duration = ""
                 if match:
-                    duration = match[0]
-                if "Season" in duration or "Series" in duration or "Episodes" in duration or "Collections" in duration or "Volume" in duration:
+                    duration = match[0].lower()
+                if "minutes" in duration:
                     try:
-                        addSeriesToLibrary(videoID, title, "", False)
+                        if year:
+                            title = title+" ("+year+")"
+                        addMovieToLibrary(videoID, title, False)
                     except:
                         pass
                 else:
                     try:
-                        addMovieToLibrary(videoID, title, False)
+                        addSeriesToLibrary(videoID, title, "", False)
                     except:
                         pass
             if updateDB:
@@ -389,7 +392,10 @@ def playVideo(id):
         elif osxBrowser == 1:
             subprocess.Popen('open -a "/Applications/Safari.app/" '+url, shell=True)
         try:
-            xbmc.sleep(10000)
+            xbmc.sleep(5000)
+            subprocess.Popen('cliclick c:500,500', shell=True)
+            subprocess.Popen('cliclick kp:arrow-up', shell=True)
+            xbmc.sleep(5000)
             subprocess.Popen('cliclick c:500,500', shell=True)
             subprocess.Popen('cliclick kp:arrow-up', shell=True)
             xbmc.sleep(5000)
@@ -400,12 +406,18 @@ def playVideo(id):
     elif osLinux:
         xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
         try:
-            xbmc.sleep(10000)
-            subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
             xbmc.sleep(5000)
             subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+            if linuxFullscreen:
+                subprocess.Popen('xdotool key f', shell=True)
             xbmc.sleep(5000)
             subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+            if linuxFullscreen:
+                subprocess.Popen('xdotool key f', shell=True)
+            xbmc.sleep(5000)
+            subprocess.Popen('xdotool mousemove 9999 9999 click 1', shell=True)
+            if linuxFullscreen:
+                subprocess.Popen('xdotool key f', shell=True)
         except:
             pass
     elif osWin:
@@ -600,7 +612,7 @@ def parameters_string_to_dict(parameters):
 
 
 def addDir(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+str(iconimage)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name})
@@ -620,23 +632,26 @@ def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", 
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
     if os.path.exists(coverFile):
         iconimage = coverFile
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre, "rating": rating})
-    liz.setProperty("fanart_image", fanartFile)
+    if os.path.exists(fanartFile):
+        liz.setProperty("fanart_image", fanartFile)
+    elif os.path.exists(coverFile):
+        liz.setProperty("fanart_image", coverFile)
     entries = []
     if videoType != "episode":
         entries.append((translation(30134), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=playTrailer&url='+urllib.quote_plus(name)+')',))
         entries.append((translation(30114), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addToQueue&url='+urllib.quote_plus(url)+')',))
     if videoType == "tvshow":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+str(name.strip())+'&seriesID='+str(url)+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url=&name='+urllib.quote_plus(name.strip())+'&seriesID='+urllib.quote_plus(url)+')',))
         if browseTvShows:
             entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
         else:
             entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     elif videoType == "movie":
-        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+str(name.strip()+' ('+year+')')+')',))
+        entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addMovieToLibrary&url='+urllib.quote_plus(url)+'&name='+urllib.quote_plus(name.strip()+' ('+year+')')+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -648,11 +663,14 @@ def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="",
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
     if os.path.exists(coverFile):
         iconimage = coverFile
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&thumb="+urllib.quote_plus(iconimage)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "year": year, "mpaa": mpaa, "director": director, "genre": genre, "rating": rating})
-    liz.setProperty("fanart_image", fanartFile)
+    if os.path.exists(fanartFile):
+        liz.setProperty("fanart_image", fanartFile)
+    elif os.path.exists(coverFile):
+        liz.setProperty("fanart_image", coverFile)
     entries = []
     entries.append((translation(30134), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=playTrailer&url='+urllib.quote_plus(name)+')',))
     entries.append((translation(30115), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=removeFromQueue&url='+urllib.quote_plus(url)+')',))
@@ -672,11 +690,15 @@ def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="",
 def addSeasonDir(name, url, mode, iconimage, seriesName, seriesID):
     filename = (''.join(c for c in unicode(seriesID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".jpg"
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&seriesID="+str(seriesID)
+    coverFile = os.path.join(cacheFolderCoversTMDB, filename)
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&seriesID="+urllib.quote_plus(seriesID)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
     liz.setInfo(type="video", infoLabels={"title": name})
-    liz.setProperty("fanart_image", fanartFile)
+    if os.path.exists(fanartFile):
+        liz.setProperty("fanart_image", fanartFile)
+    elif os.path.exists(coverFile):
+        liz.setProperty("fanart_image", coverFile)
     entries = []
     entries.append((translation(30122), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=addSeriesToLibrary&url='+urllib.quote_plus(url)+'&name='+str(seriesName.strip())+'&seriesID='+str(seriesID)+')',))
     liz.addContextMenuItems(entries)
@@ -684,14 +706,18 @@ def addSeasonDir(name, url, mode, iconimage, seriesName, seriesID):
     return ok
 
 
-def addEpisodeDir(name, url, mode, iconimage, desc="", duration="", episodeNr="", seriesID="", playcount=""):
+def addEpisodeDir(name, url, mode, iconimage, desc="", duration="", season="", episodeNr="", seriesID="", playcount=""):
     filename = (''.join(c for c in unicode(seriesID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".jpg"
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
+    coverFile = os.path.join(cacheFolderCoversTMDB, filename)
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultTVShows.png", thumbnailImage=iconimage)
-    liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "episode": episodeNr, "playcount": playcount})
-    liz.setProperty("fanart_image", fanartFile)
+    liz.setInfo(type="video", infoLabels={"title": name, "plot": desc, "duration": duration, "season": season, "episode": episodeNr, "playcount": playcount})
+    if os.path.exists(fanartFile):
+        liz.setProperty("fanart_image", fanartFile)
+    elif os.path.exists(coverFile):
+        liz.setProperty("fanart_image", coverFile)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
