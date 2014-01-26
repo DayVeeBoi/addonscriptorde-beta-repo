@@ -12,3 +12,5 @@
 - Fixed some missing shows
 1.0.6
 - Fixed missing thumbs on episode listing
+1.0.7
+- Small bugfix
