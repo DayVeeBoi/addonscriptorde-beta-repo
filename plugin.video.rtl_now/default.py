@@ -19,7 +19,8 @@ socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
-channelFavsFile = xbmc.translatePath(os.path.join(addon.getAddonInfo('profile'), addonID+".favorites"))
+addonUserDataFolder = xbmc.translatePath(addon.getAddonInfo('profile'))
+channelFavsFile = os.path.join(addonUserDataFolder, addonID+".favorites")
 iconRTL = os.path.join(addonDir, 'iconRTL.png')
 iconRTL2 = os.path.join(addonDir, 'iconRTL2.png')
 iconVOX = os.path.join(addonDir, 'iconVOX.png')
@@ -29,7 +30,6 @@ iconNTV = os.path.join(addonDir, 'iconNTV.png')
 opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:24.0) Gecko/20100101 Firefox/24.0"
 opener.addheaders = [('User-Agent', userAgent)]
-
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
 viewMode = str(addon.getSetting("viewID"))
@@ -45,6 +45,9 @@ urlMainVOX = "http://www.voxnow.de"
 urlMainRTLNitro = "http://www.rtlnitronow.de"
 urlMainSuperRTL = "http://www.superrtlnow.de"
 urlMainNTV = "http://www.n-tvnow.de"
+
+if not os.path.isdir(addonUserDataFolder):
+    os.mkdir(addonUserDataFolder)
 
 
 def index():
