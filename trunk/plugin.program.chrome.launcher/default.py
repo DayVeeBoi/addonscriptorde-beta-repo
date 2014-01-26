@@ -119,10 +119,6 @@ def showSite(url, stopPlayback, kiosk, userAgent):
     if stopPlayback == "yes":
         xbmc.Player().stop()
     if osWin:
-        if startScriptBefore and scriptPath:
-            subprocess.Popen(scriptPath, shell=False)
-            if scriptDelay>0:
-                xbmc.sleep(scriptDelay*1000)
         path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
         path64 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
         if useCustomPath and os.path.exists(customPath):
@@ -138,10 +134,6 @@ def showSite(url, stopPlayback, kiosk, userAgent):
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
             addon.openSettings()
     elif osOsx:
-        if startScriptBefore and scriptPath:
-            subprocess.Popen(scriptPath, shell=True)
-            if scriptDelay>0:
-                xbmc.sleep(scriptDelay*1000)
         path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url, kiosk, userAgent)
@@ -153,10 +145,6 @@ def showSite(url, stopPlayback, kiosk, userAgent):
             xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+'!,5000)')
             addon.openSettings()
     elif osLinux:
-        if startScriptBefore and scriptPath:
-            subprocess.Popen(scriptPath, shell=True)
-            if scriptDelay>0:
-                xbmc.sleep(scriptDelay*1000)
         path = "/usr/bin/google-chrome"
         if useCustomPath and os.path.exists(customPath):
             fullUrl = getFullPath(customPath, url, kiosk, userAgent)
