@@ -21,3 +21,5 @@
 - Added (internal) custom User-Agent setting
 1.0.8
 - Changed custom script handling (thx @ rob hodge)
+1.0.9
+- Removed old settings references

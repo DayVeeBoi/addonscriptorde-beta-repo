@@ -62,3 +62,7 @@
 - Added watched status for episodes
 - Fixed adding "My List" to library
 - Fixed categories "Genres" / "Just for Kids" for multi-profile accounts
+1.2.4
+- Changed movie/tvshow detection
+- Win/Linux: Now using Silverlight fullscreen mode
+- Control Utitlity (Win): Added settings
