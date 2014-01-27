@@ -12,23 +12,23 @@ import xbmcaddon
 import xbmcgui
 import time
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = "plugin.video.arte_tv"
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = "plugin.video.arte_tv"
 forceViewMode = addon.getSetting("forceView") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewIDNew"))
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 baseUrl = "http://www.arte.tv"
-
-while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))):
-    addon.openSettings()
-
 language = addon.getSetting("language")
 language = ["de", "fr"][int(language)]
 maxVideoQuality = addon.getSetting("maxVideoQuality")
 maxVideoQuality = ["480p", "720p"][int(maxVideoQuality)]
+streamingType = addon.getSetting("streamingType")
+streamingType = ["HTTP", "RTMP"][int(streamingType)]
 
 
 def index():
@@ -221,14 +221,27 @@ def playVideoNew(url):
 def getStreamUrlNew(url):
     content = getUrl(url)
     match = re.compile('arte_vp_url="(.+?)">', re.DOTALL).findall(content)
-    url = match[0].replace("/player/","/")
-    content = getUrl(url)
-    match1 = re.compile('"HBBTV","VQU":"SQ","VMT":"mp4","VUR":"(.+?)"', re.DOTALL).findall(content)
-    match2 = re.compile('"HBBTV","VQU":"EQ","VMT":"mp4","VUR":"(.+?)"', re.DOTALL).findall(content)
-    if match1 and maxVideoQuality == "720p":
-        return match1[0]
-    elif match2:
-        return match2[0]
+    if streamingType=="HTTP":
+        url = match[0].replace("/player/","/")
+        content = getUrl(url)
+        match1 = re.compile('"HBBTV","VQU":"SQ","VMT":"mp4","VUR":"(.+?)"', re.DOTALL).findall(content)
+        match2 = re.compile('"HBBTV","VQU":"EQ","VMT":"mp4","VUR":"(.+?)"', re.DOTALL).findall(content)
+        if match1 and maxVideoQuality == "720p":
+            return match1[0]
+        elif match2:
+            return match2[0]
+    elif streamingType=="RTMP":
+        url = match[0]
+        content = getUrl(url)
+        match1 = re.compile('"RTMP_SQ_1":\\{"quality":"HD - 720p","width":.+?,"height":.+?,"mediaType":"rtmp","mimeType":"application/x-fcs","bitrate":.+?,"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
+        match2 = re.compile('"RTMP_MQ_1":\\{"quality":"SD - 400p","width":.+?,"height":.+?,"mediaType":"rtmp","mimeType":"application/x-fcs","bitrate":.+?,"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
+        if match1 and maxVideoQuality == "720p":
+            base = match1[0][0]
+            playpath = match1[0][1]
+        elif match2:
+            base = match2[0][0]
+            playpath = match2[0][1]
+        return base+" playpath=mp4:"+playpath
 
 
 def queueVideo(url, name):
