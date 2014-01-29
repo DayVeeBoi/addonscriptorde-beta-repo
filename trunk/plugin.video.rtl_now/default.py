@@ -338,9 +338,9 @@ def cleanTitle(title):
 
 def getPluginUrl():
     if xbox:
-        return "plugin://video/"+addon.getAddonInfo('name')+"/"
+        return "plugin://video/"+addon.getAddonInfo('name')
     else:
-        return "plugin://"+addonID+"/"
+        return "plugin://"+addonID
 
 
 def parameters_string_to_dict(parameters):
