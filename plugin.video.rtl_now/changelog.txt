@@ -14,3 +14,5 @@
 - Fixed missing thumbs on episode listing
 1.0.7
 - Small bugfix
+1.0.8
+- Small bugfix
