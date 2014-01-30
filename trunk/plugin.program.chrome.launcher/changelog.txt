@@ -25,3 +25,5 @@
 - Removed old settings references
 1.1.0
 - Removed old settings references
+1.1.1
+- Fixed bug with "special://" custom paths

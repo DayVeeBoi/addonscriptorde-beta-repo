@@ -164,7 +164,7 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies):
     duration = ""
     if match:
         duration = match[0].lower()
-    if "minutes" in duration:
+    if duration.split(' ')[-1] in ["minutes", "minutos", "minuter", "minutter", "minuuttia", "minuten"]:
         videoType = "movie"
         videoTypeTemp = videoType
         duration = duration.split(" ")[0]
@@ -472,7 +472,7 @@ def removeFromQueue(id):
 def login():
     content = opener.open("http://movies.netflix.com/").read()
     match = re.compile('"LOCALE":"(.+?)"', re.DOTALL).findall(content)
-    if match:
+    if match and not os.path.exists(localeFile):
         fh = open(localeFile, 'w')
         fh.write(match[0])
         fh.close()
@@ -490,7 +490,7 @@ def login():
             fh.close()
             content = opener.open("https://signup.netflix.com/Login", "authURL="+urllib.quote_plus(authUrl)+"&email="+urllib.quote_plus(username)+"&password="+urllib.quote_plus(password)+"&RememberMe=on").read()
             match = re.compile('"LOCALE":"(.+?)"', re.DOTALL).findall(content)
-            if match:
+            if match and not os.path.exists(localeFile):
                 fh = open(localeFile, 'w')
                 fh.write(match[0])
                 fh.close()

@@ -66,3 +66,5 @@
 - Changed movie/tvshow detection
 - Win/Linux: Now using Silverlight fullscreen mode
 - Control Utitlity (Win): Added settings
+1.2.5
+- Fixed problems for non US users
