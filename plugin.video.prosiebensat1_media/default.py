@@ -65,6 +65,7 @@ def mainSat1():
 
 def mainKabel1():
     addDir("Neue Folgen", baseUrlKabel1+"/videos/ganze-folgen", "listVideosKabel1", iconKabel1)
+    addDir("Sendungen", "", "listShowsKabel1", iconKabel1)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -149,24 +150,22 @@ def listVideosKabel1(urlMain):
     spl = content.split('<figure class="class-clip">')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        if ">Ganze Folge ansehen<" in entry:
-            match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-            url = baseUrlKabel1+match[0]
-            match = re.compile('<em>(.+?)</em>', re.DOTALL).findall(entry)
-            duration = match[0]
-            match = re.compile('<span class="subheadline" title="(.+?)"', re.DOTALL).findall(entry)
-            title = match[0]
-            match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
-            title = title+" - "+match[0]
-            title = cleanTitle(title)
-            match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-            thumb = baseUrlKabel1+match[0]
-            if "/full/" in thumb:
-                thumb = thumb[thumb.find("/full/"):]
-                thumb = thumb[:thumb.rfind("-")]
-                thumb = "http://thumbnails.sevenoneintermedia.de"+thumb+".jpg"
-            if "Preview:" not in title and "Highlight:" not in title and "Rückblick:" not in title and "Video" not in title:
-                addLink(title, url, 'playVideoMobile', thumb, "", duration)
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = baseUrlKabel1+match[0]
+        match = re.compile('<em>(.+?)</em>', re.DOTALL).findall(entry)
+        duration = match[0]
+        match = re.compile('<span class="subheadline" title="(.+?)"', re.DOTALL).findall(entry)
+        title = match[0]
+        match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title = title+" - "+match[0]
+        title = cleanTitle(title)
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb = baseUrlKabel1+match[0]
+        if "/full/" in thumb:
+            thumb = thumb[thumb.find("/full/"):]
+            thumb = thumb[:thumb.rfind("-")]
+            thumb = "http://thumbnails.sevenoneintermedia.de"+thumb+".jpg"
+        addLink(title, url, 'playVideoMobile', thumb, "", duration)
     spl = content.split('<li class="trackable_teaser"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
@@ -181,10 +180,35 @@ def listVideosKabel1(urlMain):
                 thumb = thumb[thumb.find("/full/"):]
                 thumb = thumb[:thumb.rfind("-")]
                 thumb = "http://thumbnails.sevenoneintermedia.de"+thumb+".jpg"
-            addLink(title, url, 'playVideoMobile', "")
+            addLink(title, url, 'playVideoMobile', iconKabel1)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
+
+
+def listShowsKabel1():
+    content = opener.open(baseUrlKabel1+"/tv").read()
+    spl = content.split('<li class="trackable_teaser"')
+    for i in range(1, len(spl), 1):
+        entry = spl[i]
+        if "Videos" in entry or "Clips" in entry:
+            match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+            url = baseUrlKabel1+match[0]
+            match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+            title = match[0]
+            title = cleanTitle(title)
+            match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+            thumb = baseUrlKabel1+match[0]
+            addDir(title, url, 'listShowKabel1', thumb)
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listShowKabel1(urlMain):
+    content = opener.open(urlMain).read()
+    if "/ganze-folgen" in content:
+        addDir("Ganze Folgen", urlMain+"/ganze-folgen", "listVideosKabel1", iconKabel1)
+    addDir("Clips", urlMain+"/videos", "listVideosKabel1", iconKabel1)
+    xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def listVideosMaxx(urlMain):
@@ -210,7 +234,7 @@ def listVideosMaxx(urlMain):
                 addLink(title, url, 'playVideoMobile', thumb, "", duration)
     match = re.compile('<li class="next">.+?data-href="(.+?)"', re.DOTALL).findall(content)
     if match:
-        addDir(translation(30001), baseUrlPro7Maxx+match[0], 'listVideosMaxx', "")
+        addDir(translation(30001), baseUrlPro7Maxx+match[0], 'listVideosMaxx', iconMaxx)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
@@ -416,6 +440,10 @@ elif mode == 'listVideosMaxx':
     listVideosMaxx(url)
 elif mode == 'listVideosSixx':
     listVideosSixx(url)
+elif mode == 'listShowsKabel1':
+    listShowsKabel1()
+elif mode == 'listShowKabel1':
+    listShowKabel1(url)
 elif mode == 'listShows':
     listShows()
 elif mode == 'listShow':
