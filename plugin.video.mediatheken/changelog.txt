@@ -6,3 +6,6 @@
 - Removed NOW channels
 - Added NOW addon
 - Added Tele5
+1.0.3
+- Added TV Today - Best of Mediatheken
+- Added ProSiebenSat.1 Media
