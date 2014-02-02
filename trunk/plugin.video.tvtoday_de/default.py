@@ -6,7 +6,7 @@ import urllib2
 import xbmcplugin
 import xbmcaddon
 import xbmcgui
-import random
+import time
 import sys
 import os
 import re
@@ -25,7 +25,12 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
 viewMode = str(addon.getSetting("viewID"))
 addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
+addonUserDataFolder = xbmc.translatePath(addon.getAddonInfo('profile'))
+cacheFile = os.path.join(addonUserDataFolder, 'cache')
 icon = os.path.join(addonDir, 'icon.png')
+
+if not os.path.isdir(addonUserDataFolder):
+    os.mkdir(addonUserDataFolder)
 
 
 def index():
@@ -40,7 +45,7 @@ def index():
 
 
 def listVideosAll():
-    content = opener.open(baseUrl+"/mediathek").read()
+    content = getUrl(baseUrl+"/mediathek")
     content = content[content.find('<div id="topTeaser"')+1:]
     spl = content.split('<div id="topTeaser')
     entries = []
@@ -66,7 +71,7 @@ def listVideosAll():
 
 
 def listVideos(type):
-    content = opener.open(baseUrl+"/mediathek").read()
+    content = getUrl(baseUrl+"/mediathek")
     content = content[content.find('id="'+type+'"'):]
     content = content[:content.find('</ul>')]
     spl = content.split('<li>')
@@ -115,6 +120,19 @@ def queueVideo(url, name):
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     listitem = xbmcgui.ListItem(name)
     playlist.add(url, listitem)
+
+
+def getUrl(url):
+    if os.path.exists(cacheFile) and (time.time()-os.path.getmtime(cacheFile) < 60*10):
+        fh = open(cacheFile, 'r')
+        content = fh.read()
+        fh.close()
+    else:
+        content = opener.open(url).read()
+        fh = open(cacheFile, 'w')
+        fh.write(content)
+        fh.close()
+    return content
 
 
 def translation(id):
