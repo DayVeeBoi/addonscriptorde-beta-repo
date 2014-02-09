@@ -10,7 +10,6 @@ import json
 import xbmcplugin
 import xbmcaddon
 import xbmcgui
-import time
 
 #addon = xbmcaddon.Addon()
 #addonID = addon.getAddonInfo('id')
@@ -23,6 +22,7 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewIDNew"))
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 baseUrl = "http://www.arte.tv"
+baseUrlConcert = "http://concert.arte.tv"
 language = addon.getSetting("language")
 language = ["de", "fr"][int(language)]
 maxVideoQuality = addon.getSetting("maxVideoQuality")
@@ -40,7 +40,7 @@ def index():
     addDir(translation(30006), "by_cluster", "listCats", "")
     addDir(translation(30007), "by_date", "listCats", "")
     addDir(translation(30008), "", "search", "")
-    addDir(translation(30012), "", "listWebLiveMain", "")
+    addDir(translation(30012), "", "listConcertsMain", "")
     addLink(translation(30009), "", "playLiveStream", icon)
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -154,60 +154,47 @@ def search():
         listSearchVideos(url)
 
 
-def searchWebLive():
-    keyboard = xbmc.Keyboard('', translation(30008))
-    keyboard.doModal()
-    if keyboard.isConfirmed() and keyboard.getText():
-        search_string = keyboard.getText().replace(" ", "+")
-        url = "http://liveweb.arte.tv/searchEvent.do?method=displayElements&globalNames="+search_string+"&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=norah%20jones&classification=0&categoryId=&displayMode=0&eventTagName="
-        listWebLive(url)
-
-
-def listWebLiveMain():
-    addDir(translation(30011), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&categoryId=&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30013), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&categoryId=8&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30014), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&categoryId=1&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30015), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&categoryId=11&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30016), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&categoryId=7&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30017), "http://liveweb.arte.tv/searchEvent.do?method=displayElements&categoryId=3&eventDateMode=0&moveValue=1&eventDateMode=0&chronology=&globalNames=&classification=0&displayMode=0&eventTagName=", "listWebLive", "")
-    addDir(translation(30008), "", "searchWebLive", "")
+def listConcertsMain():
+    addDir(translation(30002), "", "listConcerts", "")
+    addDir(translation(30003), baseUrlConcert+"/"+language+"/videos/all?sort=mostviewed", "listConcerts", "")
+    addDir(translation(30011), baseUrlConcert+"/"+language+"/videos/all", "listConcerts", "")
+    addDir(translation(30013), baseUrlConcert+"/"+language+"/videos/rockpop", "listConcerts", "")
+    if language=="de":
+        addDir(translation(30014), baseUrlConcert+"/de/videos/klassische-musik", "listConcerts", "")
+    else:
+        addDir(translation(30014), baseUrlConcert+"/fr/videos/musique-classique", "listConcerts", "")
+    addDir(translation(30015), baseUrlConcert+"/"+language+"/videos/jazz", "listConcerts", "")
+    if language=="de":
+        addDir(translation(30016), baseUrlConcert+"/de/videos/weltmusik", "listConcerts", "")
+    else:
+        addDir(translation(30016), baseUrlConcert+"/fr/videos/musique-du-monde", "listConcerts", "")
+    if language=="de":
+        addDir(translation(30017), baseUrlConcert+"/de/videos/tanz", "listConcerts", "")
+    else:
+        addDir(translation(30017), baseUrlConcert+"/fr/videos/danse", "listConcerts", "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def listWebLive(url):
-    urlMain = url
-    hasNextPage = False
-    content = getUrl(url, cookie="liveweb-language="+language.upper())
-    if 'class="next off"' not in content:
-        hasNextPage = True
-    content = content[content.find('<div id="wall-mosaique"'):]
-    content = content[:content.find('<div class="pagination-new">')]
-    spl = content.split('<div class="block')
+def listConcerts(url=""):
+    if not url:
+        url = baseUrlConcert+"/"+language
+    content = getUrl(url)
+    content = content[:content.find('<div class="video_box_tab_1')]
+    spl = content.split('<article')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        if entry.find("/video/") > 0 or entry.find("/festival/") > 0:
-            match = re.compile('<strong>(.+?)</strong>', re.DOTALL).findall(entry)
-            if match:
-                title = cleanTitle(match[0])
-            else:
-                match1 = re.compile('/video/(.+?)/', re.DOTALL).findall(entry)
-                match2 = re.compile('/festival/(.+?)/', re.DOTALL).findall(entry)
-                if match1:
-                    title = cleanTitle(match1[0]).replace("_", " ")
-                elif match2:
-                    title = cleanTitle(match2[0]).replace("_", " ")
-            match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-            url = match[0]
-            match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-            thumb = match[0]
-            addLink(title, url, 'playLiveEvent', thumb, "")
-    match = re.compile('moveValue=(.+?)&', re.DOTALL).findall(urlMain)
-    page = int(match[0])
-    if hasNextPage:
-        nextPage = str(page+1)
-        addDir(translation(30010)+" ("+nextPage+")", urlMain.replace("moveValue="+str(page)+"&", "moveValue="+nextPage+"&"), "listWebLive", "")
+        match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title = cleanTitle(match[0])
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = baseUrlConcert+match[0]
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0].replace("/alw_rectangle_376/","/alw_rectangle_690/").replace("/alw_highlight_480/","/alw_rectangle_690/")
+        addLink(title, url, 'playVideoNew', thumb, "")
+    match = re.compile('<li class="pager-next">.+?href="(.+?)"', re.DOTALL).findall(content)
+    if match:
+        addDir(translation(30010), baseUrlConcert+match[0], "listConcerts", "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -220,8 +207,17 @@ def playVideoNew(url):
 
 def getStreamUrlNew(url):
     content = getUrl(url)
-    match = re.compile('arte_vp_url="(.+?)">', re.DOTALL).findall(content)
-    if streamingType=="HTTP":
+    match = re.compile('arte_vp_url="(.+?)"', re.DOTALL).findall(content)
+    if "concert.arte.tv" in url:
+        url = match[0]
+        content = getUrl(url)
+        match1 = re.compile('"HTTP_SQ_1":.+?"url":"(.+?)"', re.DOTALL).findall(content)
+        match2 = re.compile('"HTTP_EQ_1":.+?"url":"(.+?)"', re.DOTALL).findall(content)
+        if match1 and maxVideoQuality == "720p":
+            return match1[0].replace("\\","")
+        elif match2:
+            return match2[0].replace("\\","")
+    elif streamingType=="HTTP":
         url = match[0].replace("/player/","/")
         content = getUrl(url)
         match1 = re.compile('"HBBTV","VQU":"SQ","VMT":"mp4","VUR":"(.+?)"', re.DOTALL).findall(content)
@@ -233,8 +229,8 @@ def getStreamUrlNew(url):
     elif streamingType=="RTMP":
         url = match[0]
         content = getUrl(url)
-        match1 = re.compile('"RTMP_SQ_1":\\{"quality":"HD - 720p","width":.+?,"height":.+?,"mediaType":"rtmp","mimeType":"application/x-fcs","bitrate":.+?,"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
-        match2 = re.compile('"RTMP_MQ_1":\\{"quality":"SD - 400p","width":.+?,"height":.+?,"mediaType":"rtmp","mimeType":"application/x-fcs","bitrate":.+?,"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
+        match1 = re.compile('"RTMP_SQ_1":.+?"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
+        match2 = re.compile('"RTMP_MQ_1":.+?"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
         if match1 and maxVideoQuality == "720p":
             base = match1[0][0]
             playpath = match1[0][1]
@@ -248,33 +244,6 @@ def queueVideo(url, name):
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     listitem = xbmcgui.ListItem(name)
     playlist.add(url, listitem)
-
-
-def playLiveEvent(url):
-    content = getUrl(url)
-    match = re.compile("eventId=(.+?)&", re.DOTALL).findall(content)
-    id = match[0]
-    content = getUrl("http://download.liveweb.arte.tv/o21/liveweb/events/event-"+id+".xml")
-    match1 = re.compile('<urlHd>(.+?)</urlHd>', re.DOTALL).findall(content)
-    match2 = re.compile('<urlSd>(.+?)</urlHd>', re.DOTALL).findall(content)
-    urlNew = ""
-    if match1:
-        urlNew = match1[0]
-    elif match2:
-        urlNew = match2[0]
-    if urlNew == "":
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30018)+'!,5000)')
-    else:
-        match = re.compile('e=(.+?)&', re.DOTALL).findall(urlNew)
-        expire = int(match[0])
-        if expire < time.time():
-            xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30019)+'!,5000)')
-        else:
-            urlNew = urlNew[:urlNew.find("?")].replace("/MP4:", "/mp4:")
-            base = urlNew[:urlNew.find("mp4:")]
-            playpath = urlNew[urlNew.find("mp4:"):]
-            listitem = xbmcgui.ListItem(path=base+" playpath="+playpath)
-            xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
 def playLiveStream():
@@ -297,7 +266,7 @@ def cleanTitle(title):
 
 def getUrl(url, cookie=None):
     req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:22.0) Gecko/20100101 Firefox/22.0')
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0')
     if cookie != None:
         req.add_header('Cookie', cookie)
     response = urllib2.urlopen(req)
@@ -361,13 +330,11 @@ elif mode == 'playLiveEvent':
     playLiveEvent(url)
 elif mode == 'playLiveStream':
     playLiveStream()
-elif mode == 'listWebLive':
-    listWebLive(url)
-elif mode == 'listWebLiveMain':
-    listWebLiveMain()
+elif mode == 'listConcerts':
+    listConcerts(url)
+elif mode == 'listConcertsMain':
+    listConcertsMain()
 elif mode == 'search':
     search()
-elif mode == 'searchWebLive':
-    searchWebLive()
 else:
     index()

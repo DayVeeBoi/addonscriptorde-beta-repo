@@ -18,3 +18,5 @@
 - Changed default view
 2.0.7
 - Added setting to choose streaming protocol
+2.0.8
+- Fixed site changes (concerts)
