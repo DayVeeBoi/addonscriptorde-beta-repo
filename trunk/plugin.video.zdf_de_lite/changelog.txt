@@ -42,3 +42,5 @@
 - Fixed livestreams
 2.1.8
 - Small bugfix
+2.1.9
+- Small bugfix
