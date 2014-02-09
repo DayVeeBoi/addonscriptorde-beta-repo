@@ -137,6 +137,8 @@ def listChannel(url):
 def listShows(url, bigThumb):
     if "/nachrichten/ganze-sendungen" in url:
         addShowLink("heute - 100sec", "", 'play100sec', baseUrl+"/ZDFmediathek/contentblob/257404/timg485x273blob/8232227")
+    if "/ZDFmediathek/hauptnavigation/themen" in url:
+        addDir("Olympia 2014", baseUrl+"/ZDFmediathek/event/aktuellste/2042758/Olympia-2014", 'listVideos', "")
     content = getUrl(url)
     spl = content.split('<div class="image">')
     for i in range(1, len(spl), 1):
@@ -207,7 +209,7 @@ def listVideos(url):
             else:
                 if ".20" in date:
                     date = date[:date.find(".20")]
-            if "," in title:
+            if "," in date:
                 title = date.split(",")[1].strip()+" - "+date.split(",")[0].strip()+": "+title
             if "/live/day0" in urlMain and ">LIVE</a></p>" in entry:
                 addLink(title.replace("live-bis 00:00, ", ""), url, 'playVideo', thumb, length)
