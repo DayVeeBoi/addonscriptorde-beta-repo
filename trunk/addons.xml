@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.7" provider-name="AddonScriptorDE">
+<addon id="plugin.audio.hypem_com" name="Hype Machine" version="1.0.8" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -228,6 +228,28 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.filmstarts_de" name="FilmStarts.de" version="2.1.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Deutsche Trailer, Filmnews und Interviews</summary>
+        <summary lang="en">German trailers, movie-news and interviews</summary>
+        <language>de</language>
+        <description lang="de">Deutsche Trailer, Filmnews und Interviews</description>
+        <description lang="en">German trailers, movie-news and interviews</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.filmstarts_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.filmstarts.de</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.giga_de" name="GIGA.de" version="2.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -249,9 +271,9 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.hypem_com" name="Hype Machine" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.hypem_com" name="Hype Machine" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="xbmc.python" version="2.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -890,7 +912,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>

@@ -10,11 +10,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.zdf_de_lite'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.zdf_de_lite'
-#addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
@@ -207,7 +208,7 @@ def listVideos(url):
                 if ".20" in date:
                     date = date[:date.find(".20")]
             title = date.split(",")[1].strip()+" - "+date.split(",")[0].strip()+": "+title
-            if "/live/day0" in urlMain and ">LIVE</a></p>" in entry and "Live TV" in entry:
+            if "/live/day0" in urlMain and ">LIVE</a></p>" in entry and ("Live TV" in entry or "JETZT" in entry):
                 addLink(title.replace("live-bis 00:00, ", ""), url, 'playVideo', thumb, length)
             elif urlMain.find("/live/day0") == -1 and entry.find(">LIVE</a></p>") == -1:
                 minutes = 999
