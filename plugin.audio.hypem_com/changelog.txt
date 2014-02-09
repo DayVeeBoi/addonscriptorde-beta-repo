@@ -19,4 +19,7 @@
 - Added context menu "More from artist"
 - Some other small improvements
 1.0.7
-- Added setting to show song covers
+- Added setting to load song covers while browsing
+1.0.8
+- Fixed time machine
+- Added thumb on playback

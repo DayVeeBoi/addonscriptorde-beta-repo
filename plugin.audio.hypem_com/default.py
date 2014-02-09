@@ -10,20 +10,20 @@ import os
 import time
 import json
 import base64
+import datetime
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
-from datetime import datetime
 
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 addon = xbmcaddon.Addon()
 addonID = addon.getAddonInfo('id')
 cj = cookielib.LWPCookieJar()
-urlMain = "http://www.hypem.com"
+urlMain = "http://hypem.com"
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:23.0) Gecko/20100101 Firefox/23.0"
-opener.addheaders = [('User-agent', userAgent)]
+userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:25.0) Gecko/20100101 Firefox/25.0"
+opener.addheaders = [('User-Agent', userAgent)]
 addonDir = xbmc.translatePath('special://home/addons/'+addonID)
 addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 downloadScript = os.path.join(addonDir, "downloadThumb.py")
@@ -61,7 +61,7 @@ def index():
     if showPopularNoRemix:
         addDir(translation(30003) + " (" + translation(30011) + ")", urlMain+"/popular/noremix/1?ax=1", 'listSongs', "")
     addDir(translation(30004), urlMain+"/popular/lastweek/1?ax=1", 'listSongs', "")
-    addDir(translation(30021), "", 'listTimeMachineYears', "")
+    addDir(translation(30021), "", 'listTimeMachine', "")
     if showZeitgeist:
         addDir(translation(30019), "", 'listZeitgeist', "")
     addDir(translation(30005), "", 'listGenres', "")
@@ -127,10 +127,17 @@ def playSong(url):
         content = opener.open(urlMain+url).read()
         match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
         url = match[0].replace("\\","")
+        try:
+            urlTrackInfo = url.replace("/stream", ".json")
+            content = opener.open(urlTrackInfo).read()
+            match = re.compile('"artwork_url":"(.+?)"', re.DOTALL).findall(content)
+            thumb = match[0].replace("-large.jpg", "-t500x500.jpg")
+        except:
+            thumb = ""
         content = opener.open(urlMain+"/serve/source/"+id+"/"+key+"?retry=1&bytesLoaded=null&duration=0&transferTime=0&prev_url="+base64.b64encode(url)).read()
         match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
         url = match[0].replace("\\","")
-        listitem = xbmcgui.ListItem(path=url+"|User-Agent="+userAgent)
+        listitem = xbmcgui.ListItem(path=url+"|User-Agent="+userAgent, thumbnailImage=thumb)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if username and password:
             opener.open("http://hypem.com/inc/user_action.php?act=log_action&type=listen&session="+getSession()+"&val="+id+"&playback_manual=1")
@@ -183,37 +190,19 @@ def listMyArtists():
 def listZeitgeist():
     addDir("2011", urlMain+"/zeitgeist/2011/songs_list?ax=1", 'listSongs', "")
     addDir("2012", urlMain+"/zeitgeist/2012/tracks_list?ax=1", 'listSongs', "")
+    addDir("2013", urlMain+"/zeitgeist/2013/tracks_list?ax=1", 'listSongs', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listTimeMachineYears():
-    #addDir("2008", "2008", 'listTimeMachineWeeks', "")
-    #addDir("2009", "2009", 'listTimeMachineWeeks', "")
-    addDir("2010", "2010", 'listTimeMachineWeeks', "")
-    addDir("2011", "2011", 'listTimeMachineWeeks', "")
-    addDir("2012", "2012", 'listTimeMachineWeeks', "")
-    addDir("2013", "2013", 'listTimeMachineWeeks', "")
-    xbmcplugin.endOfDirectory(pluginhandle)
-
-
-def listTimeMachineWeeks(year):
-    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-    for i in range(52, 0, -1):
-        now = datetime.date(datetime.now())
-        date_string = year+' '+str(i)+' 1'
-        format = '%Y %W %w'
-        try:
-            d = datetime.strptime(date_string, format)
-        except TypeError:
-            d = datetime(*(time.strptime(date_string, format)[0:6]))
-        month = int(d.strftime("%m"))-1
-        other = d.strftime("-%d-%Y")
-        title = months[month]+other
-        if year==now.strftime("%Y"):
-            if i<=int(now.strftime("%U")):
-                addDir(title, urlMain+"/popular/week:"+title+"/1?ax=1", 'listSongs', "")
-        else:
-            addDir(title, urlMain+"/popular/week:"+title+"/1?ax=1", 'listSongs', "")
+def listTimeMachine():
+    for i in range(1, 210, 1):
+        dt = datetime.date.today()
+        while dt.weekday()!=0:
+            dt -= datetime.timedelta(days=1)
+        dt -= datetime.timedelta(weeks=i)
+        months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        month = months[int(dt.strftime("%m"))-1]
+        addDir(dt.strftime("%b %d, %Y"), urlMain+"/popular/week:"+month+"-"+dt.strftime("%d-%Y")+"/1?ax=1", 'listSongs', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -294,10 +283,8 @@ elif mode == 'listMyArtists':
     listMyArtists()
 elif mode == 'listZeitgeist':
     listZeitgeist()
-elif mode == 'listTimeMachineYears':
-    listTimeMachineYears()
-elif mode == 'listTimeMachineWeeks':
-    listTimeMachineWeeks(url)
+elif mode == 'listTimeMachine':
+    listTimeMachine()
 elif mode == 'playSong':
     playSong(url)
 elif mode == 'search':
