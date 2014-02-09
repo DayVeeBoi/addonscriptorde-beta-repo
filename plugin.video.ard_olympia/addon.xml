@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.ard_olympia" name="ARD Olympia 2014" version="1.0.1" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">ARD Olympia 2014 Live</summary>
+        <summary lang="en">ARD Olympia 2014 Live</summary>
+        <language>de</language>
+        <description lang="de">ARD Olympia 2014 Live</description>
+        <description lang="en">ARD Olympia 2014 Live</description>
+    </extension>
+</addon>
