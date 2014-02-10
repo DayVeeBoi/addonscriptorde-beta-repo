@@ -43,7 +43,10 @@ def live():
         url = baseUrl+match[0]
         match = re.compile("'src':'(.+?)'", re.DOTALL).findall(entry)
         thumb = baseUrl+match[0]
-        thumb = thumb[:thumb.rfind("~")]+".jpg"
+        if ".jpg" in thumb:
+            thumb = thumb[:thumb.rfind("~")]+".jpg"
+        elif ".gif" in thumb:
+            thumb = thumb[:thumb.rfind("~")]+".gif"
         addLink(title, url, 'playLive', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     xbmc.executebuiltin('Container.SetViewMode(51)')
