@@ -52,7 +52,7 @@ def live():
 def ondemand():
     content = opener.open(baseUrl+"/olympia-sotschi-2014/zeitplan/index.html").read()
     spl = content.split('<div data-ctrl-klappe-klappe')
-    for i in range(1, len(spl), 1):
+    for i in range(len(spl)-1, 0, -1):
         entry = spl[i]
         if ">on demand<" in entry:
             match = re.compile('class="disciplineInformation">.+?>(.+?)</span>.+?>(.+?)<', re.DOTALL).findall(entry)
@@ -74,15 +74,25 @@ def playVideo(url):
     match = re.compile("dataURL:'(.+?)'", re.DOTALL).findall(content)
     content = opener.open(baseUrl+match[0]).read()
     match = re.compile('<iOSStreamingUrl>(.+?)</iOSStreamingUrl>', re.DOTALL).findall(content)
-    listitem = xbmcgui.ListItem(path=match[0])
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    finalUrl = match[0]
+    try:
+        opener.open(finalUrl)
+        listitem = xbmcgui.ListItem(path=finalUrl)
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    except:
+        xbmc.executebuiltin('XBMC.Notification(Info:,Sorry. Not available in your country!,10000)')
 
 
 def playLive(url):
     content = opener.open(url).read()
     match = re.compile('<asset type="Live HLS">.+?<url>(.+?)</url>', re.DOTALL).findall(content)
-    listitem = xbmcgui.ListItem(path=match[0])
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    finalUrl = match[0]
+    try:
+        opener.open(finalUrl)
+        listitem = xbmcgui.ListItem(path=finalUrl)
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    except:
+        xbmc.executebuiltin('XBMC.Notification(Info:,Sorry. Not available in your country!,10000)')
 
 
 def cleanTitle(title):
