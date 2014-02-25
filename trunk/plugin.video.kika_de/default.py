@@ -11,11 +11,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.kika_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.kika_de'
-#addonID = addon.getAddonInfo('id')
 ab3Only = addon.getSetting("ab3Only") == "true"
 playSound = addon.getSetting("playSound") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
@@ -75,7 +76,7 @@ def listVideosKN(url, audioUrl):
         xbmc.Player().play(audioUrl)
     if url.endswith("index.html"):
         content = opener.open(url).read()
-        match = re.compile('"page", "(.+?)"', re.DOTALL).findall(content)
+        match = re.compile('flashvars.page = "(.+?)"', re.DOTALL).findall(content)
         url = match[0]
     content = opener.open(url).read()
     spl = content.split('<movie>')
@@ -155,9 +156,10 @@ def playVideo(url):
 
 
 def playLive():
-    content = opener.open(urlMain+"/clients/kika/player/tvplayer.php").read()
-    match = re.compile("loadPlayer\\('(.+?)','(.+?)'", re.DOTALL).findall(content)
-    listitem = xbmcgui.ListItem(path=match[0][0]+"/"+match[0][1])
+    content = opener.open(urlMain+"/clients/kika/player/tvplayer.php?cmd=status").read()
+    matchServer = re.compile('"server":"(.+?)"', re.DOTALL).findall(content)
+    matchStream = re.compile('"stream":"(.+?)"', re.DOTALL).findall(content)
+    listitem = xbmcgui.ListItem(path=matchServer[0].replace("\\","")+"/"+matchStream[0].replace("\\",""))
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 

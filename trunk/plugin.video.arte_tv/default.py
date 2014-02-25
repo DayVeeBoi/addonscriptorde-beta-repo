@@ -32,16 +32,24 @@ streamingType = ["HTTP", "RTMP"][int(streamingType)]
 
 
 def index():
-    addDir(translation(30001), baseUrl+"/guide/"+language+"/plus7/plus_recentes.json", "listVideosNew", "")
-    addDir(translation(30002), baseUrl+"/guide/"+language+"/plus7/selection.json", "listVideosNew", "")
-    addDir(translation(30003), baseUrl+"/guide/"+language+"/plus7/plus_vues.json", "listVideosNew", "")
-    addDir(translation(30004), baseUrl+"/guide/"+language+"/plus7/derniere_chance.json", "listVideosNew", "")
-    addDir(translation(30005), "by_channel", "listCats", "")
-    addDir(translation(30006), "by_cluster", "listCats", "")
-    addDir(translation(30007), "by_date", "listCats", "")
+    content = getUrl(baseUrl+"/artews/js/geolocation.js")
+    match = re.compile('arte_geoip_zone_codes.+?return new Array\\((.+?)\\)', re.DOTALL).findall(content)
+    regionFilters = match[0].split(",")
+    regionFilter = ""
+    for filter in regionFilters:
+        regionFilter += filter.replace("'","").strip()+"%2C"
+    regionFilter = regionFilter[:-3]
+    addDir(translation(30001), baseUrl+"/guide/"+language+"/plus7/plus_recentes.json?regions="+regionFilter, "listVideosNew", "")
+    addDir(translation(30002), baseUrl+"/guide/"+language+"/plus7/selection.json?regions="+regionFilter, "listVideosNew", "")
+    addDir(translation(30003), baseUrl+"/guide/"+language+"/plus7/plus_vues.json?regions="+regionFilter, "listVideosNew", "")
+    addDir(translation(30004), baseUrl+"/guide/"+language+"/plus7/derniere_chance.json?regions="+regionFilter, "listVideosNew", "")
+    addDir(translation(30005), "by_channel", "listCats", "", regionFilter)
+    addDir(translation(30006), "by_cluster", "listCats", "", regionFilter)
+    addDir(translation(30007), "by_date", "listCats", "", regionFilter)
     addDir(translation(30008), "", "search", "")
     addDir(translation(30012), "", "listConcertsMain", "")
-    addLink(translation(30009), "", "playLiveStream", icon)
+    if regionFilter!="ALL":
+        addLink(translation(30009), "", "playLiveStream", icon)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -128,14 +136,14 @@ def listSearchVideos(urlMain):
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def listCats(type):
+def listCats(type, regionFilter):
     content = getUrl(baseUrl+"/guide/"+language+"/plus7")
     content = content[content.find('<ul class="span12" data-filter="'+type+'">'):]
     content = content[:content.find('</ul>')]
     match = re.compile('<a href="(.+?)" data-controller="catchup" data-action="refresh" >(.+?)</a>', re.DOTALL).findall(content)
     for url, title in match:
         title = cleanTitle(title)
-        url = baseUrl+url.replace("?", ".json?").replace("&amp;", "&")
+        url = baseUrl+url.replace("?", ".json?").replace("&amp;", "&")+"&regions="+regionFilter
         addDir(title, url, 'listVideosNew', "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
@@ -303,8 +311,8 @@ def addLink(name, url, mode, iconimage, desc="", duration=""):
     return ok
 
 
-def addDir(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+def addDir(name, url, mode, iconimage, regionFilter=""):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&regionFilter="+urllib.quote_plus(regionFilter)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
@@ -315,13 +323,14 @@ params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 name = urllib.unquote_plus(params.get('name', ''))
+regionFilter = urllib.unquote_plus(params.get('regionFilter', ''))
 
 if mode == 'listVideosNew':
     listVideosNew(url)
 elif mode == 'listSearchVideos':
     listSearchVideos(url)
 elif mode == 'listCats':
-    listCats(url)
+    listCats(url, regionFilter)
 elif mode == 'queueVideo':
     queueVideo(url, name)
 elif mode == 'playVideoNew':
