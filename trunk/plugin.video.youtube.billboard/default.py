@@ -146,7 +146,7 @@ def getYoutubeId(title):
     match=re.compile(':video:(.+?)"', re.DOTALL).findall(content)"""
     content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(title)+"&lclk=video").read()
     content = content[content.find('id="search-results"'):]
-    match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(content)
+    match=re.compile('data-video-ids="(.+?)"', re.DOTALL).findall(content)
     return match[0]
 
 
@@ -173,20 +173,17 @@ def listVideos(chartTitle):
     for i in range(1, len(spl), 1):
         try:
             entry=spl[i]
-            match=re.compile('data-context-item-id="(.+?)"', re.DOTALL).findall(entry)
+            match=re.compile('data-video-ids="(.+?)"', re.DOTALL).findall(entry)
             id=match[0]
-            match=re.compile('data-context-item-title="(.+?)"', re.DOTALL).findall(entry)
+            match=re.compile('<h3 class="yt-lockup-title">.+?title="(.+?)"', re.DOTALL).findall(entry)
             title=match[0]
             title = cleanTitle(title)
-            match=re.compile('data-context-item-views="(.+?)"', re.DOTALL).findall(entry)
-            views=match[0]
-            match=re.compile('data-context-item-time="(.+?)"', re.DOTALL).findall(entry)
-            length=match[0]
-            match=re.compile('<div class="yt-lockup-description.+?>(.+?)</div>', re.DOTALL).findall(entry)
+            match=re.compile('data-name=.+?<li>(.+?)</li><li>(.+?)<', re.DOTALL).findall(entry)
             desc = ""
             if match:
-                desc=cleanTitle(match[0].replace("<b>","").replace("</b>",""))
-            desc = views+"\n"+desc
+                desc=match[0][0]+" - "+match[0][1]
+            match=re.compile('class="video-time">(.+?)<', re.DOTALL).findall(entry)
+            length=match[0]
             thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
             addLink(title, id, "cache", thumb, desc, length, chartTitle)
         except:
@@ -245,10 +242,8 @@ def addLink(name, url, mode, iconimage, desc="", length="", chartTitle=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)+"&chartTitle="+str(chartTitle)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
     liz.setProperty('IsPlayable', 'true')
-    if length:
-        liz.addStreamInfo('video', {'duration': int(length)})
     entries = []
     entries.append((translation(30032), 'Container.Update(plugin://'+addonID+'/?mode=listVideos&url='+urllib.quote_plus(url)+')',))
     entries.append((translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
