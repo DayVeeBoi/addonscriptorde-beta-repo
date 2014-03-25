@@ -22,3 +22,6 @@
 - Fixed german translations
 1.1.0
 - Fixed Video playback for official channels
+1.1.1
+- Added M3U8 streaming type
+- Custom Channels: Changed CDN

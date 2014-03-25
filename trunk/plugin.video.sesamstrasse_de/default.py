@@ -11,11 +11,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.sesamstrasse_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.sesamstrasse_de'
-#addonID = addon.getAddonInfo('id')
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewMode"))
@@ -34,7 +35,7 @@ def index():
         match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-        url = urlMain+match[0].replace(".html","-avmeta.xml")
+        url = urlMain+match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = urlMain+match[0]
         thumb = thumb[:thumb.find("_")]+"_v-original.jpg"
@@ -54,12 +55,10 @@ def index():
 
 def playVideo(url):
     content = opener.open(url).read()
-    match1 = re.compile('<source format="mp4hq_prog" mimetype="video/mp4" protocol="http">(.+?)</source>', re.DOTALL).findall(content)
-    match2 = re.compile('<source format="mp4hi_prog" mimetype="video/mp4" protocol="http">(.+?)</source>', re.DOTALL).findall(content)
-    if match1:
-        finalURL = match1[0]
-    elif match2:
-        finalURL = match2[0]
+    match = re.compile("src:'(.+?)'", re.DOTALL).findall(content)
+    for url in match:
+        if url.endswith(".m3u8"):
+            finalURL = url
     listitem = xbmcgui.ListItem(path=finalURL)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
