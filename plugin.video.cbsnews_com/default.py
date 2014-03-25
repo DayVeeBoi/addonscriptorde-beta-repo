@@ -27,8 +27,8 @@ def index():
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     addDir("- "+translation(30002), "", "search", icon)
     content = getUrl(urlMain+"/videos")
-    match = re.compile('<a href="/videos/topics/(.+?)/">(.+?)</a>', re.DOTALL).findall(content)
-    for id, title in match:
+    match = re.compile('<a href="/videos/topics/([^\/]+)/"([^>]+)?>([^<]+)</a>', re.DOTALL).findall(content)
+    for id, ignored_grouping, title in match:
         if id=="48-hours":
             addDir(title, urlMain+"/latest/"+id+"/full-episodes/1", 'listEpisodes', icon)
         elif id=="60-minutes":
@@ -50,7 +50,8 @@ def listVideos(type, value, offset):
         #GetImageHash - unable to stat url (randomly)
         #thumb = video["image"]["full"]
         thumb = video["image"]["path"]
-        thumb = thumb[:thumb.find("?")]
+        if "?" in thumb:
+            thumb = thumb[:thumb.find("?")]
         addLink(video["title"], url, 'playVideo', thumb, video["dek"], video["date"].split(" ")[0], video["duration"], video["season"], video["episode"])
     addDir2(translation(30001), 'listVideos', "", type, value, str(int(offset)+30))
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -74,9 +75,10 @@ def listEpisodes(url):
         desc=cleanTitle(match[0])
         match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb=match[0]
-        ##GetImageHash - unable to stat url (randomly)
+        #GetImageHash - unable to stat url (randomly)
         #thumb=match[0].replace("/140x90/","/640x360/")
-        thumb = thumb[:thumb.find("?")]
+        if "?" in thumb:
+            thumb = thumb[:thumb.find("?")]
         match=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(entry)
         date=match[0]
         addLink(title, urlEpisode, 'playVideo', thumb, date+"\n"+desc)
