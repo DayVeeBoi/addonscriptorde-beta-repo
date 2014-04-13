@@ -51,18 +51,13 @@ def mainPro7():
     addDir("Joko gegen Klaas", baseUrlPro7+"/tv/joko-gegen-klaas/video/playlists/ganze-folgen", "listVideosPro7", iconPro7)
     addDir("Galileo", baseUrlPro7+"/tv/galileo/videos/playlists/ganze-folgen", "listVideosPro7", iconPro7)
     addDir("taff", baseUrlPro7+"/tv/taff/playlists/playlist-ganze-folgen-taff", "listVideosPro7", iconPro7)
-    addLink("TEST", "", "playVideoDesktop", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def mainSat1():
     addDir("Neue Folgen", baseUrlSat1+"/video", "listVideosSat1", iconSat1)
     #addDir("Alle Sendungen", "", "listShows", icon)
-    content = opener.open(baseUrlSat1+"/film/der-sat-1-filmfilm/video").read()
-    match = re.compile('<div class="cycle">.+?href="(.+?)".+?src="(.+?)".+?<h2><strong class="teaser-headline">(.+?)</strong>', re.DOTALL).findall(content)
-    if match:
-        addLink(match[0][2], baseUrlSat1+match[0][0], "playVideoMobile", baseUrlSat1+match[0][1])
-    xbmcplugin.endOfDirectory(pluginhandle)
+    listVideosSat1(baseUrlSat1+"/film/der-sat-1-filmfilm/video")
 
 
 def mainKabel1():
@@ -119,21 +114,18 @@ def listVideosSat1(urlMain):
         spl = content.split('<article class="teaser')
     elif '<div class="video_teaser' in content:
         spl = content.split('<div class="video_teaser')
+    elif 'class="teaser-image"' in content:
+        spl = content.split('class="teaser-image"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile('<span class="length full_length">Ganze Folge<', re.DOTALL).findall(entry)
-        if match:
-            duration = match[0]
+        if "Ganze Folge - " in entry:
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
             url = baseUrlSat1+match[0]
-            match = re.compile('class="teaser-headline">(.+?)<', re.DOTALL).findall(entry)
+            match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
             if match:
-                title = match[0]
-                match = re.compile('class="teaser-format-name">(.+?)<', re.DOTALL).findall(entry)
-                if match:
-                    title = match[0]+" - "+title
+                title = match[0].replace("Ganze Folge - ","")
                 title = cleanTitle(title)
-                match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+                match = re.compile("background-image:url\\('(.+?)'\\)", re.DOTALL).findall(entry)
                 thumb = match[0]
                 if "/full/" in thumb:
                     thumb = thumb[thumb.find("/full/"):]
@@ -141,7 +133,7 @@ def listVideosSat1(urlMain):
                     thumb = "http://thumbnails.sevenoneintermedia.de"+thumb+".jpg"
                 if not thumb.startswith("http"):
                     thumb = baseUrlSat1+thumb
-                addLink(title, url, 'playVideoMobile', thumb, "", duration)
+                addLink(title, url, 'playVideoMobile', thumb, "", "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
@@ -305,7 +297,7 @@ def playVideoMobile(url):
 
 
 def playVideoDesktop(url):
-    """content = opener.open(url).read()
+    content = opener.open(url).read()
     match = re.compile('"clip_id" : "(.+?)"', re.DOTALL).findall(content)
     videoID = match[0]
     clientID = ""
@@ -313,12 +305,7 @@ def playVideoDesktop(url):
     match = re.compile('"server_id":"(.+?)"', re.DOTALL).findall(content)
     serverID = match[0]
     content = opener.open("http://vas.sim-technik.de/vas/live/v2/videos/"+videoID+"/sources/url?access_token=testclient&client_location="+urllib.quote_plus(url)+"&client_name=kolibri-1.2.5&client_id="+clientID+"&server_id="+serverID+"&source_ids=1%2C3%2C4").read()
-    """
-    content = opener.open("http://vas.sim-technik.de/vas/live/v2/videos/2878017/sources/url?server_id=012f8c316a8a08f9b3b7afc2d85e26cfaf0f8690bc&access_token=testclient&source_ids=1%2C3&client_location=http%3A%2F%2Fwww.prosieben.de%2Ftv%2Fthe-millers%2Fvideo%2F15-folge-5-hexe-und-papagei-ganze-folge&client_id=01436b20bdcfbca74d624d35b60bd873fd46ba292b&client_name=kolibri-1.2.5").read()
-    match = re.compile('"url":"(.+?)","cdn":"(.+?)"', re.DOTALL).findall(content)
-    for url, cdn in match:
-        if cdn=="level3":
-            streamURL=url.replace("\\", "").replace("mp4:", " playpath=mp4:")+" app=psdvodrtmpdrm/ swfVfy=1 swfUrl=http://livepassdl.conviva.com/hf/ver/2.79.0.17083/LivePassModuleMain.swf pageUrl=http://www.prosieben.de/tv/the-millers/video/15-folge-5-hexe-und-papagei-ganze-folge"
+    streamURL = ""
     listitem = xbmcgui.ListItem(path=streamURL)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
