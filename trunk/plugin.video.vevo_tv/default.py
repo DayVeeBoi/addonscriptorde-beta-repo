@@ -48,10 +48,10 @@ showInfo = addon.getSetting("showInfo") == "true"
 infoType = addon.getSetting("infoType")
 infoDelay = int(addon.getSetting("infoDelay"))
 infoDuration = int(addon.getSetting("infoDuration"))
-bitrateOfficial = addon.getSetting("bitrateOfficialNew")
-bitrateOfficial = ["512000", "800000", "1392000", "2272000", "3500000", "AUTO"][int(bitrateOfficial)]
-bitrateCustom = addon.getSetting("bitrateCustom")
-bitrateCustom = ["564000", "864000", "1328000", "1728000", "2528000", "3328000", "4392000", "5392000", "AUTO"][int(bitrateCustom)]
+resolutionOfficial = addon.getSetting("resolutionOfficial")
+resolutionOfficial = ["1672000", "2640000", "4000000"][int(resolutionOfficial)]
+resolutionCustom = addon.getSetting("resolutionCustom")
+resolutionCustom = ["640x360", "960x540", "1280x720", "1920x1080"][int(resolutionCustom)]
 userAgent = "Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMainApi = "http://api.vevo.com/mobile/v1"
@@ -153,22 +153,17 @@ def listCustomModes(id, type=""):
 def playOfficial(id):
     content = opener.open(urlMain).read()
     if "noVTV: false" in content:
-        if bitrateOfficial=="AUTO":
-            if id=="TIVEVSTRUS00":
+        if id=="TIVEVSTRUS00":
                 fullUrl = "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8"
-            elif id=="TIVEVSTRUS01":
-                fullUrl = "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/appleman.m3u8"
-            elif id=="TIVEVSTRUS02":
-                fullUrl = "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/appleman.m3u8"
-            elif id=="TIVEVSTRDE00":
-                fullUrl = "http://vevoplaylist-eu01-live.hls.adaptive.level3.net/vevoeu/ch01/appleman.m3u8"
-        else:
-            content = opener.open("http://smil.lvl3.vevo.com/v3/smil/"+id+"/"+id+"r.smil").read()
-            matchBase = re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
-            matchPlaypath = re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
-            for url, bitrate in matchPlaypath:
-                if int(bitrate) <= int(bitrateOfficial):
-                    fullUrl = matchBase[0]+" playpath="+url+" swfUrl="+urlMain+"/swf/videoplayer.swf swfVfy=true live=true"
+        elif id=="TIVEVSTRUS01":
+            fullUrl = "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/appleman.m3u8"
+        elif id=="TIVEVSTRUS02":
+            fullUrl = "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/appleman.m3u8"
+        elif id=="TIVEVSTRDE00":
+            fullUrl = "http://vevoplaylist-eu01-live.hls.adaptive.level3.net/vevoeu/ch01/appleman.m3u8"
+        content = opener.open(fullUrl).read()
+        match = re.compile('BANDWIDTH='+resolutionOfficial+'.*?(.+?).m3u8', re.DOTALL).findall(content)
+        fullUrl = fullUrl[:fullUrl.rfind("/")]+"/"+match[len(match)-1].strip()+".m3u8"
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     else:
@@ -411,21 +406,11 @@ def playAdvancedChannel(channel):
 
 def playVideo(id):
     try:
-        #content = opener.open("http://vevoodfs.fplive.net/Video/V2/VFILE/"+id+"/"+id.lower()+"r.smil").read()
-        if bitrateCustom=="AUTO":
-            #fullUrl = "http://hls-lvl3.vevo.com/v3/hls/"+id+"/index.m3u8"
-            fullUrl = "http://hls-aws.vevo.com/v3/hls/"+id+"/index.m3u8"
-        else:
-            try:
-                content = opener.open("http://smil.lvl3.vevo.com/Video/V2/VFILE/"+id+"/"+id.lower()+"r.smil").read()
-                matchBase = re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
-            except:
-                content = opener.open("http://smil.lvl3.vevo.com/v3/smil/"+id+"/"+id.lower()+"r.smil").read()
-                matchBase = re.compile('<meta base="(.+?)" />', re.DOTALL).findall(content)
-            matchPlaypath = re.compile('<video src="(.+?)" system-bitrate="(.+?)" />', re.DOTALL).findall(content)
-            for url, bitrate in matchPlaypath:
-                if int(bitrate) <= int(bitrateCustom):
-                    fullUrl = matchBase[0]+" playpath="+url
+        #fullUrl = "http://hls-lvl3.vevo.com/v3/hls/"+id+"/index.m3u8"
+        fullUrl = "http://hls-aws.vevo.com/v3/hls/"+id+"/index.m3u8"
+        content = opener.open(fullUrl).read()
+        match = re.compile('RESOLUTION='+resolutionCustom+'.*?\n(.+?)\n', re.DOTALL).findall(content)
+        fullUrl = fullUrl[:fullUrl.rfind("/")]+"/"+match[len(match)-1].strip()
         listitem = xbmcgui.ListItem(path=fullUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showInfo:

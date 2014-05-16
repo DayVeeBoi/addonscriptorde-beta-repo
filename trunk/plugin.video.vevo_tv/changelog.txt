@@ -25,3 +25,6 @@
 1.1.1
 - Added M3U8 streaming type
 - Custom Channels: Changed CDN
+1.1.2
+- Added M3U8 quality selection
+- Removed rtmp streaming type
