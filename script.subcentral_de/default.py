@@ -3,11 +3,12 @@
 import xbmc, xbmcgui, xbmcaddon, urllib, urllib2, socket, cookielib, re, os, shutil, base64, xbmcvfs
 
 addon = xbmcaddon.Addon()
-socket.setdefaulttimeout(30)
+socket.setdefaulttimeout(60)
 addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 addonUserDataFolder=xbmc.translatePath("special://profile/addon_data/"+addonID)
 subTempDir=xbmc.translatePath("special://profile/addon_data/"+addonID+"/srtTemp/")
+icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 rarFile=xbmc.translatePath(addonUserDataFolder+"/sub.")
 subFile=xbmc.translatePath(addonUserDataFolder+"/sub.srt")
 favFile=xbmc.translatePath(addonUserDataFolder+"/favourites")
@@ -151,7 +152,7 @@ def search():
           title=title[:title.find("(")].strip()
         
         if title=="" or season=="" or episode=="":
-          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30014)+'!,3000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30014)+'!,3000,'+icon+')')
           main()
         else:
           if season[0:1]=="0":
@@ -257,13 +258,13 @@ def search():
               elif backNav=="true":
                 main()
             else:
-              xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000)')
+              xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000,'+icon+')')
               main()
           elif '"totalResults": "0"' in content:
-            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30015)+'!,3000,'+icon+')')
             main()
           else:
-            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30016)+'!,10000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30016)+'!,10000,'+icon+')')
             main()
 
 def getEpisodes(entry):
@@ -564,7 +565,7 @@ def setSubtitle(subUrl):
         elif len(files)!=0:
           tempFile = xbmc.translatePath(subTempDir+"/"+files[0])
         else:
-          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30017)+'!,3000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30017)+'!,3000,'+icon+')')
           if pause=="true" and xbmc.Player().isPlayingVideo():
             xbmc.Player().pause()
         if tempFile!="":
@@ -580,7 +581,7 @@ def setSubtitle(subUrl):
               pass
           clearSubTempDir()
           xbmc.Player().setSubtitles(subFile)
-          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30012)+'!,2000)')
+          xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+translation(30012)+'!,2000,'+icon+')')
           if pause=="true" and xbmc.Player().isPlayingVideo():
             xbmc.Player().pause()
 
@@ -602,7 +603,7 @@ def addToFavourites(seriesID,title):
             fh=open(favFile, 'a')
             fh.write(entry+"\n")
             fh.close()
-            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30008)+',3000)')
+            xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30008)+',3000,'+icon+')')
         else:
           fh=open(favFile, 'a')
           fh.write(entry+"\n")
@@ -618,7 +619,7 @@ def removeFromFavourites(seriesID,title):
         fh=open(favFile, 'w')
         fh.write(newContent)
         fh.close()
-        xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30009)+',3000)')
+        xbmc.executebuiltin('XBMC.Notification(SubCentral.de:,'+title+': '+translation(30009)+',3000,'+icon+')')
 
 def getUrl(url):
         req = urllib2.Request(url)

@@ -30,3 +30,7 @@
 1.1.1
 - Fixed subtitle archiving on network shares
 - Fixed search
+1.1.2
+- Changed timeout value
+1.1.3
+- Changed addon type because of gotham

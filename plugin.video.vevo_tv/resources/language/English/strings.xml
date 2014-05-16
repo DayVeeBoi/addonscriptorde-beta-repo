@@ -17,8 +17,8 @@
   <string id="30015">No videos available! Add artists first.</string>
   <string id="30030">VEVO is not available in your country!</string>
   <string id="30031">VEVO TV is not available in your country!</string>
-  <string id="30101">Bitrate (Official Mode)</string>
-  <string id="30102">Bitrate (Custom Mode)</string>
+  <string id="30101">Video-Quality (Official Mode)</string>
+  <string id="30102">Video-Quality (Custom Mode)</string>
   <string id="30103">Show info on video playback (Custom Mode)</string>
   <string id="30104">Type</string>
   <string id="30105">Delay in seconds</string>
