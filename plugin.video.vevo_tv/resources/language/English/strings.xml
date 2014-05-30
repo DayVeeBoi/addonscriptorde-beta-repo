@@ -17,14 +17,15 @@
   <string id="30015">No videos available! Add artists first.</string>
   <string id="30030">VEVO is not available in your country!</string>
   <string id="30031">VEVO TV is not available in your country!</string>
-  <string id="30101">Video-Quality (Official Mode)</string>
-  <string id="30102">Video-Quality (Custom Mode)</string>
+  <string id="30101">Quality (Official Mode)</string>
+  <string id="30102">Quality (Custom Mode)</string>
   <string id="30103">Show info on video playback (Custom Mode)</string>
   <string id="30104">Type</string>
   <string id="30105">Delay in seconds</string>
   <string id="30106">Duration in seconds</string>
   <string id="30107">Hide VEVO TV Channels</string>
   <string id="30108">Blacklist filter: seperated by ',' (Custom Mode)</string>
+  <string id="30109">CDN (Custom Mode)</string>
   <string id="30130">Top200</string>
   <string id="30131">Top10 (shuffled)</string>
   <string id="30132">Top20 (shuffled)</string>

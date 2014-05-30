@@ -17,12 +17,13 @@
   <string id="30015">Keine Videos verfügbar! Füge Interpreten hinzu.</string>
   <string id="30030">VEVO ist in deinem Land nicht verfügbar!</string>
   <string id="30031">VEVO TV ist in deinem Land nicht verfügbar!</string>
-  <string id="30101">Video-Qualität (Offizieller Modus)</string>
-  <string id="30102">Video-Qualität (Custom Modus)</string>
+  <string id="30101">Qualität (Offizieller Modus)</string>
+  <string id="30102">Qualität (Custom Modus)</string>
   <string id="30103">Info bei Wiedergabe anzeigen (Custom Modus)</string>
   <string id="30104">Typ</string>
   <string id="30105">Verzögerung in Sekunden</string>
   <string id="30106">Anzeigedauer in Sekunden</string>
   <string id="30108">Blacklist filter: getrennt durch ',' (Custom Modus)</string>
+  <string id="30109">CDN (Custom Modus)</string>
   <string id="30201">Allgemein</string>
 </strings>

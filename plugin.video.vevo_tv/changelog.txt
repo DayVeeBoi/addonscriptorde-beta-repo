@@ -28,3 +28,5 @@
 1.1.2
 - Added M3U8 quality selection
 - Removed rtmp streaming type
+1.1.3
+- Added M3U8 CDN selection

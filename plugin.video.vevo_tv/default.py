@@ -52,6 +52,8 @@ resolutionOfficial = addon.getSetting("resolutionOfficial")
 resolutionOfficial = ["1672000", "2640000", "4000000"][int(resolutionOfficial)]
 resolutionCustom = addon.getSetting("resolutionCustom")
 resolutionCustom = ["640x360", "960x540", "1280x720", "1920x1080"][int(resolutionCustom)]
+cdnCustom = addon.getSetting("cdnCustom")
+cdnCustom = ["hls-aws", "hls-aka", "hls-lvl3"][int(cdnCustom)]
 userAgent = "Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMainApi = "http://api.vevo.com/mobile/v1"
@@ -406,12 +408,21 @@ def playAdvancedChannel(channel):
 
 def playVideo(id):
     try:
-        #fullUrl = "http://hls-lvl3.vevo.com/v3/hls/"+id+"/index.m3u8"
-        fullUrl = "http://hls-aws.vevo.com/v3/hls/"+id+"/index.m3u8"
+        content = opener.open("http://videoplayer.vevo.com/VideoService/AuthenticateVideo?isrc="+id).read()
+        #matchTitle = re.compile('"title":"(.+?)"', re.DOTALL).findall(content)
+        #matchArtist = re.compile('"artistName":"(.+?)"', re.DOTALL).findall(content)
+        #title = matchArtist[0]+" - "+matchTitle[0]
+        content = str(json.loads(content))
+        match = re.compile('<rendition name="HTTP Live Streaming" url="(.+?)"', re.DOTALL).findall(content)
+        fullUrl = ""
+        for url in match:
+          if cdnCustom in url:
+              fullUrl = url
         content = opener.open(fullUrl).read()
         match = re.compile('RESOLUTION='+resolutionCustom+'.*?\n(.+?)\n', re.DOTALL).findall(content)
         fullUrl = fullUrl[:fullUrl.rfind("/")]+"/"+match[len(match)-1].strip()
         listitem = xbmcgui.ListItem(path=fullUrl)
+        #listitem.setInfo(type='Video', infoLabels={'Title':title})
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showInfo:
             xbmc.sleep(infoDelay*1000)

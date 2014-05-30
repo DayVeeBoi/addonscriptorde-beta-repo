@@ -2,6 +2,7 @@
     <category label="30201">
         <setting id="resolutionOfficial" type="enum" label="30101" values="360p|540p|720p" default="2"/>
         <setting id="resolutionCustom" type="enum" label="30102" values="360p|540p|720p|1080p" default="2"/>
+        <setting id="cdnCustom" type="enum" label="30109" values="Amazon|Akamai (title bug!)|Level3" default="0"/>
         <setting id="blacklist" type="text" label="30108" default=""/>
         <setting id="showInfo" type="bool" label="30103" default="true"/>
         <setting id="infoType" type="enum" label="30104" enable="eq(-1,true)" values="InfoView|Notification" default="1"/>
