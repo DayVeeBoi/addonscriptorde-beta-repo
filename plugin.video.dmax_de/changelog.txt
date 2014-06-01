@@ -10,3 +10,5 @@
 - Changed season listing
 1.0.6
 - Fixed autoplay modus under gotham
+1.0.7
+- Fixed site changes
