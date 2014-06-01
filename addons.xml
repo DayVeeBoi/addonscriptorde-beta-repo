@@ -822,6 +822,27 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.tlc_de" name="TLC.de" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.pyamf" version="0.6.1"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">TLC-Videothek</summary>
+        <language></language>
+        <description lang="en">TLC-Videothek</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.tlc_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.tlc.de/videos</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tvtoday_de" name="TV Today - Best of Mediatheken" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
