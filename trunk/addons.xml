@@ -76,7 +76,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="2.1.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -265,7 +265,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.pyamf" version="0.6.1"/>
@@ -537,6 +537,23 @@
         <description lang="en">TV-Shows, German charts, clip search, playlists, favorites</description>
         <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
     <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="plugin.video.myspass_de" name="MySpass.de" version="2.0.3" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob und vieles mehr...</summary>
+        <summary lang="en">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob and much more...</summary>
+        <language>de</language>
+        <description lang="de">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob und vieles mehr...</description>
+        <description lang="en">Schlag den Raab/Star, TV total, Elton vs. Simon, Pastewka, Dr. Psycho, Stromberg, South Park, Spongebob and much more...</description>
     </extension>
 </addon>
 
