@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <string id="30001">Featured Episodes</string>
-  <string id="30002">Most Popular Episodes</string>
+  <string id="30001">Latest Episodes</string>
+  <string id="30002">Popular Episodes</string>
   <string id="30003">Favorite Shows</string>
   <string id="30004">ulive Original Series</string>
   <string id="30005">HGTV</string>

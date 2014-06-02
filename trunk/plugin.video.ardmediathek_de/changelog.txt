@@ -1,2 +1,4 @@
 3.0.0
 - Initial release for new website layout
+3.0.1
+- Fixed stream/quality selection for some videos

@@ -4,12 +4,14 @@
   <string id="30002">My List</string>
   <string id="30003">Latest</string>
   <string id="30004">HD only</string>
-  <string id="30005">TV Shows</string>
+  <string id="30005">All Shows</string>
   <string id="30006">Documentaries</string>
   <string id="30007">Genres</string>
   <string id="30008">Search</string>
   <string id="30009">Just for Kids</string>
   <string id="30010">Viewing Activity</string>
+  <string id="30011">Movies</string>
+  <string id="30012">TV Shows</string>
   <string id="30101">eMail</string>
   <string id="30102">Password</string>
   <string id="30103">Single-User account (faster)</string>
@@ -34,7 +36,7 @@
   <string id="30123">Update library after adding media</string>
   <string id="30125">Delete cookies</string>
   <string id="30126">Sorry! Netflix is not available in your country yet.</string>
-  <string id="30127">You are not logged in. Restart the addon!</string>
+  <string id="30127">You are not logged in. Check your credentials!</string>
   <string id="30128">Language/Country</string>
   <string id="30129">Hide movies in Viewing Activity</string>
   <string id="30130">ViewID (Viewing Activity)</string>
@@ -45,6 +47,7 @@
   <string id="30135">Get covers &amp; fanart images from TMDb</string>
   <string id="30136">Linux: Use Silverlight fullscreen mode</string>
   <string id="30137">Enable remote/web control</string>
+  <string id="30138">Library path</string>
   <string id="30201">Account</string>
   <string id="30202">General</string>
   <string id="30203">Views</string>

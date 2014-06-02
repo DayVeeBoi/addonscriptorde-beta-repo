@@ -22,6 +22,7 @@ iconZDF=xbmc.translatePath('special://home/addons/'+addonID+'/iconZDF.png')
 iconTele5=xbmc.translatePath('special://home/addons/'+addonID+'/iconTele5.png')
 iconTT=xbmc.translatePath('special://home/addons/'+addonID+'/iconTT.png')
 iconPS=xbmc.translatePath('special://home/addons/'+addonID+'/iconPS.png')
+iconTLC=xbmc.translatePath('special://home/addons/'+addonID+'/iconTLC.png')
 
 
 def index():
@@ -43,6 +44,7 @@ def index():
     addDir("NOW","plugin://plugin.video.rtl_now", iconNOW)
     addDir("TV Today - Best of Mediatheken","plugin://plugin.video.tvtoday_de", iconTT)
     addDir("ProSiebenSat.1 Media","plugin://plugin.video.prosiebensat1_media", iconPS)
+    addDir("TLC","plugin://plugin.video.tlc_de", iconTLC)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
