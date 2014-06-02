@@ -250,18 +250,22 @@ def playVideo(videoID):
         xbmc.executebuiltin('XBMC.Notification(Info:,'+match[0].strip()+',15000)')
     else:
         content = getUrl(baseUrl+"/play/media/"+videoID+"?devicetype=pc&features=flash")
-        match = re.compile('"_quality":.+?,"_server":"(.*?)","_cdn":".*?","_stream":"(.+?)"', re.DOTALL).findall(content)
+        match1 = re.compile('"_stream":\\[(.+?)\\]', re.DOTALL).findall(content)
+        match2 = re.compile('"_quality":.+?,"_server":"(.*?)","_cdn":".*?","_stream":"(.+?)"', re.DOTALL).findall(content)
         matchUT = re.compile('"_subtitleUrl":"(.+?)"', re.DOTALL).findall(content)
         matchLive = re.compile('"_isLive":(.+?),', re.DOTALL).findall(content)
         url = ""
-        for server, stream in match:
-            if server.startswith("rtmp"):
-                if matchLive[0]=="true":
-                    url = server+" playpath="+stream+" live=true"
-                elif server:
-                    url = server+stream
-            elif matchLive[0]=="true" or not server:
-                url = stream
+        if match1:
+            url = match1[0].split(",")[0].replace('"','')
+        elif match2:
+            for server, stream in match2:
+                if server.startswith("rtmp"):
+                    if matchLive[0]=="true":
+                        url = server+" playpath="+stream+" live=true"
+                    elif server:
+                        url = server+stream
+                elif matchLive[0]=="true" or not server:
+                    url = stream
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showSubtitles and matchUT:

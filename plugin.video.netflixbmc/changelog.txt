@@ -73,3 +73,12 @@
 - Fixed gotham message bug
 - Some other small fixes
 - Added remote/webcontrol support
+1.2.7
+- Added custom library path
+- Added seperate Movie/TV listing
+- Changed internal setting storage
+- Changed xbmc maximizing after playback (Win)
+- Fixed/changed "Viewing Activity"
+- Fixed search on some systems
+- Fixed genre video listing
+- Fixed next page entry

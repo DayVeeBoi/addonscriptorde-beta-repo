@@ -76,7 +76,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -500,7 +500,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -557,7 +557,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -754,6 +754,29 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.spiegel_tv" name="Spiegel.tv" version="1.0.4" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Spiegel TV Mediathek (Reportagen/Dokumentationen)</summary>
+        <summary lang="en">Spiegel TV media library</summary>
+        <language>de</language>
+        <description lang="de">Spiegel TV Mediathek (Reportagen/Dokumentationen)</description>
+        <description lang="en">Spiegel TV media library</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.spiegel_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.spiegel.tv</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tele5_de" name="Tele5.de" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -863,7 +886,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ulive_com" name="ulive.com" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ulive_com" name="ulive.com" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>

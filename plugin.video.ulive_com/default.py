@@ -39,10 +39,10 @@ if not os.path.isdir(addonUserDataFolder):
 
 
 def index():
-    addDir(translation(30001), "", "listVideos", icon)
-    addDir(translation(30002), "", "listPopular", icon)
+    addDir(translation(30001), "", "listVideos", icon, "Recently Added Episodes")
+    addDir(translation(30002), "", "listVideos", icon, "Popular Episodes")
     addDir(translation(30003), "", "listShowsFavs", icon)
-    addDir(translation(30004), baseUrl+"/ulive-originals", "listShows", icon)
+    addDir(translation(30004), baseUrl+"/original-series-by-topic", "listShows", icon)
     addDir(translation(30005), baseUrl+"/hgtv", "listShows", iconHGTV)
     addDir(translation(30006), baseUrl+"/food-network", "listShows", iconFN)
     addDir(translation(30007), baseUrl+"/travel-channel", "listShows", iconTC)
@@ -52,25 +52,29 @@ def index():
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listVideos(urlMain):
+def listVideos(urlMain, type=""):
     if not urlMain:
         urlMain = baseUrl+"/shows"
     content = opener.open(urlMain).read()
-    spl = content.split('<div class="module media-module placeholder-container">')
+    if type:
+        content = content[content.find(type):]
+        if '<div class="row module-v2">' in content:
+            content = content[:content.find('<div class="row module-v2">')]
+    spl = content.split('<div class="tile-inner-v2 video')
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = baseUrl+match[0]
-        match = re.compile('<h2><a.+?>(.+?)<', re.DOTALL).findall(entry)
+        match = re.compile('class="teaser-title">(.+?)<', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
-        if urlMain==baseUrl+"/shows":
+        """if urlMain==baseUrl+"/shows":
             match = re.compile('class="channel-data">(.+?)<', re.DOTALL).findall(entry)
             titleShow = cleanTitle(match[0])
-            title = titleShow+" - "+title
+            title = titleShow+" - "+title"""
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0]
         thumb = urllib.unquote_plus(thumb[thumb.rfind("http"):]).replace("/resizes/500/","/")
-        match = re.compile('class="icon-time"></i>(.+?)<', re.DOTALL).findall(entry)
+        match = re.compile('<span class="duration-v2 right">(.+?)<', re.DOTALL).findall(entry)
         duration = match[0].strip()
         if duration.startswith("00:"):
             duration = "1"
@@ -80,58 +84,42 @@ def listVideos(urlMain):
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
-def listPopular(urlMain):
-    if not urlMain:
-        urlMain = baseUrl+"/shows"
+def listShows(urlMain, thumb):
+    if urlMain!=baseUrl+"/original-series-by-topic":
+        addDir(translation(30001), urlMain, "listVideos", thumb, "Recently Added Episodes")
+        addDir(translation(30002), urlMain, "listVideos", thumb, "Popular Episodes")
     content = opener.open(urlMain).read()
-    content = content[content.find('data-ulive-module="orderedList"'):]
-    content = content[:content.find('<div class="pagination">')]
-    spl = content.split('<a')
+    spl = content.split('<div class="tile-inner-v2 show')
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = baseUrl+match[0]
-        match = re.compile('class="video-title">(.+?)<', re.DOTALL).findall(entry)
+        match = re.compile('alt="(.+?)"', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = match[0]
-        thumb = urllib.unquote_plus(thumb[thumb.rfind("http"):]).replace("/resizes/500/","/")
-        match = re.compile('class="icon-time"></i>(.+?)<', re.DOTALL).findall(entry)
-        duration = match[0].strip()
-        addLink(title, url, 'playVideo', thumb, "", duration)
+        thumb = urllib.unquote_plus(match[0])
+        thumb = thumb[thumb.find("url=")+4:]
+        addShowDir(title, url, 'listVideosMain', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
-def listShows(url, thumb):
-    if url!=baseUrl+"/ulive-originals":
-        addDir("- "+translation(30002), url, "listPopular", thumb)
-    content = opener.open(url).read()
-    spl = content.split('<div data-xhr=')
-    for i in range(1, len(spl), 1):
-        entry = spl[i]
-        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-        url = baseUrl+match[0]
-        match = re.compile('<h2><a.+?>(.+?)<', re.DOTALL).findall(entry)
-        title = cleanTitle(match[0])
-        addShowDir(title, url, 'listVideosMain', thumb)
-    xbmcplugin.endOfDirectory(pluginhandle)
-
-
 def listVideosMain(url, thumb):
     content = opener.open(url).read()
     match = re.compile('"DetailId" : "(.+?)"', re.DOTALL).findall(content)
-    urlClips = baseUrl+"/ajax/showPageLoadMore.jsp?id="+match[0]+"&type=short&offset=0&limit=100"
-    urlEpisodes = baseUrl+"/ajax/showPageLoadMore.jsp?id="+match[0]+"&type=long&offset=0&limit=100"
-    if '<section id="long">' in content and '<section id="short">' not in content:
+    urlClips = baseUrl+"/ajax/showPage2LoadMore.jsp?id="+match[0]+"&isLongForm=false&offset=0&limit=100"
+    urlEpisodes = baseUrl+"/ajax/showPage2LoadMore.jsp?id="+match[0]+"&isLongForm=true&offset=0&limit=100"
+    if 'data-xhr-max="1"' in content:
+        listVideos(url)
+    elif 'isLongForm=true' in content and 'isLongForm=false' not in content:
         listVideos(urlEpisodes)
-    elif '<section id="long">' not in content and '<section id="short">' in content:
+    elif 'isLongForm=true' not in content and 'isLongForm=false' in content:
         listVideos(urlClips)
     else:
-        if '<section id="long">' in content:
+        if 'isLongForm=true' in content:
             addDir(translation(30010), urlEpisodes, "listVideos", thumb)
-        if '<section id="short">' in content:
+        if 'isLongForm=false' in content:
             addDir(translation(30011), urlClips, "listVideos", thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -288,11 +276,11 @@ def addLink(name, url, mode, iconimage, desc="", duration=""):
     return ok
 
 
-def addDir(name, url, mode, iconimage, desc=""):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)
+def addDir(name, url, mode, iconimage, type=""):
+    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&thumb="+urllib.quote_plus(iconimage)+"&type="+urllib.quote_plus(type)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
+    liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -323,13 +311,12 @@ mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
 name = urllib.unquote_plus(params.get('name', ''))
 thumb = urllib.unquote_plus(params.get('thumb', ''))
+type = urllib.unquote_plus(params.get('type', ''))
 
 if mode == 'listVideos':
-    listVideos(url)
+    listVideos(url, type)
 elif mode == 'listVideosMain':
     listVideosMain(url, thumb)
-elif mode == 'listPopular':
-    listPopular(url)
 elif mode == 'listSearch':
     listSearch(url)
 elif mode == 'listShows':
