@@ -243,7 +243,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.disneychannel_de" name="DisneyChannel.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.disneychannel_de" name="DisneyChannel.de" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -557,7 +557,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.7" provider-name="AddonScriptorDE">
+<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.8" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1227,6 +1227,25 @@
     <forum>http://forum.xbmc.org/showthread.php?tid=157479</forum>
     <email>AddonScriptorDE at yahoo dot de</email>
     <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="service.resume_livetv" name="Resume LiveTV" version="1.0.0" provider-name="AddonScriptorDE">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.service" library="default.py" start="login">
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="en">Resumes LiveTV after interrupting it with something else...</summary>
+    <language></language>
+    <description lang="en">Resumes LiveTV after interrupting it with something else...</description>
+    <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+    <source>https://github.com/AddonScriptorDE/service.resume_livetv</source>
+    <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+    <email>AddonScriptorDE at yahoo dot de</email>
+    <website></website>
   </extension>
 </addon>
 

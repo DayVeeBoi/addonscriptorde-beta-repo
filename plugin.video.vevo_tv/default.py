@@ -409,9 +409,6 @@ def playAdvancedChannel(channel):
 def playVideo(id):
     try:
         content = opener.open("http://videoplayer.vevo.com/VideoService/AuthenticateVideo?isrc="+id).read()
-        #matchTitle = re.compile('"title":"(.+?)"', re.DOTALL).findall(content)
-        #matchArtist = re.compile('"artistName":"(.+?)"', re.DOTALL).findall(content)
-        #title = matchArtist[0]+" - "+matchTitle[0]
         content = str(json.loads(content))
         match = re.compile('<rendition name="HTTP Live Streaming" url="(.+?)"', re.DOTALL).findall(content)
         fullUrl = ""
@@ -422,7 +419,6 @@ def playVideo(id):
         match = re.compile('RESOLUTION='+resolutionCustom+'.*?\n(.+?)\n', re.DOTALL).findall(content)
         fullUrl = fullUrl[:fullUrl.rfind("/")]+"/"+match[len(match)-1].strip()
         listitem = xbmcgui.ListItem(path=fullUrl)
-        #listitem.setInfo(type='Video', infoLabels={'Title':title})
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if showInfo:
             xbmc.sleep(infoDelay*1000)

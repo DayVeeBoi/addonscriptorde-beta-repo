@@ -120,49 +120,46 @@ def listVideos(url, type):
             if '<div id="queue"' in content:
                 content = content[content.find('<div id="queue"'):]
             content = content.replace("\\t","").replace("\\n", "").replace("\\", "")
-            match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?" src="(.+?)"', re.DOTALL).findall(content)
-            match2 = re.compile('<span class="title "><a id="b(.+?)_', re.DOTALL).findall(content)
+            match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?"', re.DOTALL).findall(content)
+            match2 = re.compile('<span class="title.*?"><a id="b(.+?)_', re.DOTALL).findall(content)
             match3 = re.compile('<a href="http://dvd.netflix.com/WiPlayer\?movieid=(.+?)&', re.DOTALL).findall(content)
             match4 = re.compile('<a class="playHover" href=".+?WiPlayer\?movieid=(.+?)&', re.DOTALL).findall(content)
             match5 = re.compile('"boxart":".+?","titleId":(.+?),', re.DOTALL).findall(content)
             if match1:
-                for videoID, thumbUrl in match1:
-                    listVideo(videoID, "", thumbUrl, False, False, type)
+                match = match1
             elif match2:
-                for videoID in match2:
-                    listVideo(videoID, "", "", False, False, type)
+                match = match2
             elif match3:
-                for videoID in match3:
-                    listVideo(videoID, "", "", False, False, type)
+                match = match3
             elif match4:
-                for videoID in match4:
-                    listVideo(videoID, "", "", False, False, type)
+                match = match4
             elif match5:
-                for videoID in match5:
-                    listVideo(videoID, "", "", False, False, type)
-            match = re.compile('&pn=(.+?)&', re.DOTALL).findall(url)
+                match = match5
+            for videoID in match:
+                listVideo(videoID, "", "", False, False, type)
+            match1 = re.compile('&pn=(.+?)&', re.DOTALL).findall(url)
             match2 = re.compile('&from=(.+?)&', re.DOTALL).findall(url)
-            if match:
-                currentPage = match[0]
+            matchApiRoot = re.compile('"API_ROOT":"(.+?)"', re.DOTALL).findall(content)
+            matchApiBase = re.compile('"API_BASE_URL":"(.+?)"', re.DOTALL).findall(content)
+            if match1:
+                currentPage = match1[0]
                 nextPage = str(int(currentPage)+1)
                 addDir(translation(30001), url.replace("&pn="+currentPage+"&", "&pn="+nextPage+"&"), 'listVideos', "", type)
+            elif "agid=" in url:
+                genreID = url[url.find("agid=")+5:]
+                addDir(translation(30001), matchApiRoot[0]+matchApiBase[0]+"/wigenre?genreId="+genreID+"&full=false&from=51&to=100&_retry=0", 'listVideos', "", type)
             elif match2:
                 currentFrom = match2[0]
-                if currentFrom=="0":
-                    nextFrom = str(int(currentFrom)+51)
-                    currentTo = str(int(currentFrom)+50)
-                    nextTo = str(int(currentFrom)+100)
-                else:
-                    nextFrom = str(int(currentFrom)+50)
-                    currentTo = str(int(currentFrom)+49)
-                    nextTo = str(int(currentFrom)+99)
+                nextFrom = str(int(currentFrom)+50)
+                currentTo = str(int(currentFrom)+49)
+                nextTo = str(int(currentFrom)+99)
                 addDir(translation(30001), url.replace("&from="+currentFrom+"&", "&from="+nextFrom+"&").replace("&to="+currentTo+"&", "&to="+nextTo+"&"), 'listVideos', "", type)
             if forceView:
                 xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
             xbmcplugin.endOfDirectory(pluginhandle)
     else:
         deleteCookies()
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30127))+',10000)')
+        xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30127))+',15000)')
 
 
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies, type):
@@ -246,14 +243,14 @@ def listGenres(type, videoType):
     if not singleProfile:
         setProfile()
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
-    content = opener.open(urlMain+"/WiGenre?agid=1").read()
+    content = opener.open(urlMain+"/WiHome").read()
     match = re.compile('/'+type+'\\?agid=(.+?)">(.+?)<', re.DOTALL).findall(content)
-    matchApiRoot = re.compile('"API_ROOT":"(.+?)"', re.DOTALL).findall(content)
-    matchApiBase = re.compile('"API_BASE_URL":"(.+?)"', re.DOTALL).findall(content)
     for genreID, title in match:
-        title = title.replace("&amp;", "&").strip()
-        if not title=="TV Shows" and not title.startswith("<"):
-            addDir(title, matchApiRoot[0]+matchApiBase[0]+"/wigenre?genreId="+genreID+"&full=false&from=0&to=50&_retry=0", 'listVideos', "", videoType)
+        if not title=="TV Shows":
+            if type=="KidsAltGenre":
+                addDir(title, urlMain+"/"+type+"?agid="+genreID+"&pn=1&np=1&actionMethod=json", 'listVideos', "", videoType)
+            else:
+                addDir(title, urlMain+"/"+type+"?agid="+genreID, 'listVideos', "", videoType)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -300,7 +297,11 @@ def listViewingActivity(type):
     if not singleProfile:
         setProfile()
     xbmcplugin.setContent(pluginhandle, "movies")
-    content = opener.open("https://api-global.netflix.com/desktop/account/viewinghistory.1?languages="+language+"&authURL="+auth+"&_retry=0&routing=redirect").read()
+    content = opener.open(urlMain+"/WiViewingActivity").read()
+    match = re.compile('&authURL=(.+?)"', re.DOTALL).findall(content)
+    authUrl = match[0]
+    addon.setSetting("auth", authUrl)
+    content = opener.open("https://api-global.netflix.com/desktop/account/viewinghistory.1?languages="+language+"&authURL="+authUrl+"&_retry=0&routing=redirect").read()
     content = json.loads(content)
     count = 0
     tvshows = []
@@ -362,10 +363,11 @@ def addMyListToLibrary():
             if '<div id="queue"' in content:
                 content = content[content.find('<div id="queue"'):]
             content = content.replace("\\t","").replace("\\n", "").replace("\\", "")
-            match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?" src=".+?">', re.DOTALL).findall(content)
-            match2 = re.compile('<span class="title "><a id="b(.+?)_', re.DOTALL).findall(content)
+            match1 = re.compile('<span id="dbs(.+?)_.+?alt=".+?"', re.DOTALL).findall(content)
+            match2 = re.compile('<span class="title.*?"><a id="b(.+?)_', re.DOTALL).findall(content)
             match3 = re.compile('<a href="http://dvd.netflix.com/WiPlayer\?movieid=(.+?)&', re.DOTALL).findall(content)
             match4 = re.compile('<a class="playHover" href=".+?WiPlayer\?movieid=(.+?)&', re.DOTALL).findall(content)
+            match5 = re.compile('"boxart":".+?","titleId":(.+?),', re.DOTALL).findall(content)
             if match1:
                 match = match1
             elif match2:
@@ -374,6 +376,8 @@ def addMyListToLibrary():
                 match = match3
             elif match4:
                 match = match4
+            elif match5:
+                match = match5
             for videoID in match:
                 videoDetails = getVideoInfo(videoID)
                 match = re.compile('<span class="title ".*?>(.+?)<\/span>', re.DOTALL).findall(videoDetails)
@@ -476,14 +480,27 @@ def configureUtility():
 def deleteCookies():
     if os.path.exists(cookieFile):
         os.remove(cookieFile)
+        xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,Cookies have been deleted!,5000)')
 
 
 def deleteCache():
     if os.path.exists(cacheFolder):
         try:
             shutil.rmtree(cacheFolder)
+            xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,Cache has been deleted!,5000)')
         except:
-            shutil.rmtree(cacheFolder)
+            pass
+
+
+def resetAddon():
+    dialog = xbmcgui.Dialog()
+    if dialog.yesno("NetfliXBMC:", "Really reset the addon?"):
+      if os.path.exists(addonUserDataFolder):
+          try:
+              shutil.rmtree(addonUserDataFolder)
+              xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,Addon has been reset!,5000)')
+          except:
+              pass
 
 
 def search(type):
@@ -527,7 +544,7 @@ def login():
             chooseProfile()
         return True
     else:
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30126))+',10000)')
+        xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30126))+',10000)')
         return False
 
 
@@ -559,7 +576,7 @@ def chooseProfile():
 
 def forceChooseProfile():
     addon.setSetting("singleProfile", "false")
-    xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30111))+',5000)')
+    xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30111))+',5000)')
     chooseProfile()
 
 
@@ -869,6 +886,8 @@ elif mode == 'deleteCookies':
     deleteCookies()
 elif mode == 'deleteCache':
     deleteCache()
+elif mode == 'resetAddon':
+    resetAddon()
 elif mode == 'playTrailer':
     playTrailer(url)
 elif mode == 'addMyListToLibrary':

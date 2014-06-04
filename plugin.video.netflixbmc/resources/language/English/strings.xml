@@ -36,7 +36,7 @@
   <string id="30123">Update library after adding media</string>
   <string id="30125">Delete cookies</string>
   <string id="30126">Sorry! Netflix is not available in your country yet.</string>
-  <string id="30127">You are not logged in. Check your credentials!</string>
+  <string id="30127">You are not logged in. Check your credentials and/or restart the addon!</string>
   <string id="30128">Language/Country</string>
   <string id="30129">Hide movies in Viewing Activity</string>
   <string id="30130">ViewID (Viewing Activity)</string>
@@ -48,6 +48,7 @@
   <string id="30136">Linux: Use Silverlight fullscreen mode</string>
   <string id="30137">Enable remote/web control</string>
   <string id="30138">Library path</string>
+  <string id="30139">Reset NetfliXBMC!</string>
   <string id="30201">Account</string>
   <string id="30202">General</string>
   <string id="30203">Views</string>

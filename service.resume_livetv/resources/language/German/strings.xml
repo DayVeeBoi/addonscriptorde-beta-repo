@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+  <string id="30101">pvr:// Streams als fortsetzbar setzen</string>
+  <string id="30102">Allgemeine Livestreams (ohne Dauer) als fortsetzbar setzen</string>
+  <string id="30103">Livestream Erkennungsverzögerung in Sekunden (Buffer)</string>
+</strings>

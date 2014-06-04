@@ -35,8 +35,7 @@ def index():
     addDir((datetime.date.today()-datetime.timedelta(days=5)).strftime("%b %d, %Y"), urlMain+"/_stream/search.json?q=video&filter[type]=Video&filter[start_date_s]="+(datetime.date.today()-datetime.timedelta(days=5)).strftime("%Y-%m-%d")+"&limit=50&offset=0", 'listVideos', icon)
     addDir((datetime.date.today()-datetime.timedelta(days=6)).strftime("%b %d, %Y"), urlMain+"/_stream/search.json?q=video&filter[type]=Video&filter[start_date_s]="+(datetime.date.today()-datetime.timedelta(days=6)).strftime("%Y-%m-%d")+"&limit=50&offset=0", 'listVideos', icon)
     addDir((datetime.date.today()-datetime.timedelta(days=7)).strftime("%b %d, %Y"), urlMain+"/_stream/search.json?q=video&filter[type]=Video&filter[start_date_s]="+(datetime.date.today()-datetime.timedelta(days=7)).strftime("%Y-%m-%d")+"&limit=50&offset=0", 'listVideos', icon)
-    #M3U8 via SSL is not supported in current XBMC builds
-    #addLink(translation(30003), "", 'playLive', icon)
+    addLink(translation(30003), "", 'playLive', icon)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
