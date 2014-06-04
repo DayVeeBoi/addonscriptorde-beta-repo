@@ -27,5 +27,6 @@
         <setting type="sep" />
         <setting label="30132" type="action" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=deleteCache)"/>
         <setting label="30125" type="action" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=deleteCookies)"/>
+        <setting label="30139" type="action" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=resetAddon)"/>
     </category>
 </settings>

@@ -1,0 +1,5 @@
+<settings>
+   <setting id="autoPvr" type="bool" label="30101" default="true"/>
+   <setting id="autoDuration" type="bool" label="30102" default="true"/>
+   <setting id="autoDurationDelay" enable="eq(-1,true)" type="number" label="30103" default="3"/>
+</settings>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+  <string id="30101">Set pvr:// streams as resumable</string>
+  <string id="30102">Set general livestreams (no duration) as resumable</string>
+  <string id="30103">Livestream detection delay in seconds (Buffer)</string>
+</strings>

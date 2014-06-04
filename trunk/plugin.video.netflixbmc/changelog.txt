@@ -82,3 +82,6 @@
 - Fixed search on some systems
 - Fixed genre video listing
 - Fixed next page entry
+1.2.8
+- Fixed "Viewing Activity"
+- Fixed genre video listing / next page
