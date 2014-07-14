@@ -10,11 +10,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.tele5_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.tele5_de'
-#addonID = addon.getAddonInfo('id')
 translation = addon.getLocalizedString
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
@@ -24,11 +25,13 @@ opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko
 
 
 def index():
-    listEntries(baseUrl+"/videos.html")  
+    addDir("Kalkofes Mattscheibe Rekalked", baseUrl+"/mattscheibe-rekalked/sendungen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/sendungen/kalkofes-mattscheibe-rekalked/sendung-teaser-kalkhofes-mattscheibe-rekalked.jpg")
+    addDir("Playlist", baseUrl+"/playlist/sendungen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/sendungen/playlist-sound-of-my-life/sendung-teaser-playlist.jpg")
+    #addDir("RAW", baseUrl+"/raw/ganze-folgen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/webshow/RAW-te_wwe_website_navibild_20140505_v2_jr.jpg")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listEntries(urlMain):
+def listVideos(urlMain):
     content = opener.open(urlMain).read()
     content = content[content.find('<div class="videosGesamt">'):]
     content = content[:content.find('</section>')]
@@ -45,10 +48,7 @@ def listEntries(urlMain):
         url = match[0]
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0]
-        if urlMain==baseUrl+"/videos.html":
-            addDir(title, url, 'listEntries', thumb, desc)
-        else:
-            addLink(title, url, 'playVideo', thumb, desc)
+        addLink(title, url, 'playVideo', thumb, desc)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -128,8 +128,8 @@ url = urllib.unquote_plus(params.get('url', ''))
 name = urllib.unquote_plus(params.get('name', ''))
 thumb = urllib.unquote_plus(params.get('thumb', ''))
 
-if mode == 'listEntries':
-    listEntries(url)
+if mode == 'listVideos':
+    listVideos(url)
 elif mode == 'playVideo':
     playVideo(url)
 elif mode == 'queueVideo':

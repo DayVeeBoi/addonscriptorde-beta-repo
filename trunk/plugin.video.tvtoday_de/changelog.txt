@@ -6,3 +6,5 @@
 - Small bugfix
 1.0.3
 - Fixed site changes
+1.0.4
+- Fixed ARD playback

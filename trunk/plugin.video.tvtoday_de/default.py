@@ -108,7 +108,15 @@ def playVideo(urlMain):
             finalUrl = getPluginUrl("plugin.video.zdf_de_lite")+"/?mode=playVideo&url="+urllib.quote_plus(match[0])
     elif url.startswith("http://videos.arte.tv"):
         finalUrl = getPluginUrl("plugin.video.arte_tv")+"/?mode=playVideoNew&url="+urllib.quote_plus(url)
-    elif url.startswith("http://mediathek.daserste.de/") or url.startswith("http://www.ardmediathek.de/"):
+    elif url.startswith("http://mediathek.daserste.de/"):
+        url = url[url.rfind("/"):]
+        if "_" in url:
+            url = url[:url.find("_")]
+        finalUrl = getPluginUrl("plugin.video.ardmediathek_de")+"/?mode=playVideo&url="+urllib.quote_plus(url)
+    elif url.startswith("http://www.ardmediathek.de/"):
+        url = url[url.find("documentId=")+11:]
+        if "&" in url:
+            url = url[:url.find("&")]
         finalUrl = getPluginUrl("plugin.video.ardmediathek_de")+"/?mode=playVideo&url="+urllib.quote_plus(url)
     elif url.startswith("http://rtl-now.rtl.de/") or url.startswith("http://rtl2now.rtl2.de/") or url.startswith("http://www.voxnow.de/") or url.startswith("http://www.rtlnitronow.de/") or url.startswith("http://www.superrtlnow.de/"):
         finalUrl = getPluginUrl("plugin.video.rtl_now")+"/?mode=playVideo&url="+urllib.quote_plus(url)

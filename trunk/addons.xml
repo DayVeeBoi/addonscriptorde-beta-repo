@@ -76,7 +76,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -222,7 +222,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.chefkoch_de" name="Chefkoch.de" version="2.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.chefkoch_de" name="Chefkoch.de" version="2.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -777,7 +777,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tele5_de" name="Tele5.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.tele5_de" name="Tele5.de" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -866,7 +866,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tvtoday_de" name="TV Today - Best of Mediatheken" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.tvtoday_de" name="TV Today - Best of Mediatheken" version="1.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1009,7 +1009,29 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.youtube.billboard" name="YouTube Billboard" version="1.1.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.welt_der_wunder" name="Welt der Wunder" version="1.0.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">Welt der Wunder Livestream und Mediathek</summary>
+        <summary lang="en">Welt der Wunder livestream and media library</summary>
+        <language>de</language>
+        <description lang="de">Welt der Wunder Livestream und Mediathek</description>
+        <description lang="en">Welt der Wunder livestream and media library</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.welt_der_wunder</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.weltderwunder.tv</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.youtube.billboard" name="YouTube Billboard" version="1.1.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -1072,7 +1094,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.1.9" provider-name="AddonScriptorDE">
+<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.2.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
