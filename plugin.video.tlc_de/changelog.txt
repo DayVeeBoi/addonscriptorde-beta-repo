@@ -1,2 +1,4 @@
 1.0.0
 - Initial release
+2.0.0
+- Incremented version because of another addon with the same ID (that replaced my addon)

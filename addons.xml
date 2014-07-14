@@ -845,7 +845,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tlc_de" name="TLC.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.tlc_de" name="TLC.de" version="2.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.pyamf" version="0.6.1"/>
