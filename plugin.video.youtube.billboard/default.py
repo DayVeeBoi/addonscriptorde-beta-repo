@@ -116,37 +116,15 @@ def listCharts(url):
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def cache(id, chartTitle):
-    fileTitle = (''.join(c for c in unicode(chartTitle, 'utf-8') if c not in '/\\:?"*|<>')).strip()
-    cacheFile = os.path.join(searchHistoryFolder, fileTitle)
-    fh = open(cacheFile, 'w')
-    fh.write(id)
-    fh.close()
-    listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(id))
+def playVideo(title):
+    listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(getYoutubeId(title)))
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
-def playVideo(title):
-    fileTitle = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
-    cacheFile = os.path.join(searchHistoryFolder, fileTitle)
-    if os.path.exists(cacheFile):
-        fh = open(cacheFile, 'r')
-        id = fh.read()
-        fh.close()
-        listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(id))
-        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    else:
-        id = getYoutubeId(title)
-        cache(id, title)
-
-
 def getYoutubeId(title):
-    #API sometimes delivers other results (when sorting by relevance) than site search!?!
-    """content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&alt=json&time=all_time&v=2").read()
-    match=re.compile(':video:(.+?)"', re.DOTALL).findall(content)"""
-    content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(title)+"&lclk=video").read()
-    content = content[content.find('id="search-results"'):]
-    match=re.compile('data-video-ids="(.+?)"', re.DOTALL).findall(content)
+    url = "http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2"
+    content = opener.open(url).read()
+    match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
     return match[0]
 
 

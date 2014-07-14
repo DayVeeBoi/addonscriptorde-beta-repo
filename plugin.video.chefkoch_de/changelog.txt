@@ -6,3 +6,5 @@
 - Fixed video playback
 2.0.3
 - Fixed site changes
+2.0.4
+- Fixed site changes

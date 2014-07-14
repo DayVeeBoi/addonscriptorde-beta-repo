@@ -1,5 +1,5 @@
 <settings>
-   <setting id="minLength" type="enum" label="30103" values="0|5|10|20|30" default="2"/>
+   <setting id="minLengthNew" type="enum" label="30103" values="0|5|10|20|30" default="0"/>
    <setting id="showSubtitles" type="bool" label="30105" default="false"/>
    <setting id="useThumbAsFanart" type="bool" label="30104" default="true"/>
    <setting id="forceView" type="bool" label="30101" default="true"/>

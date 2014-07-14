@@ -44,3 +44,5 @@
 - Small bugfix
 2.1.9
 - Small bugfix
+2.2.0
+- Some changes

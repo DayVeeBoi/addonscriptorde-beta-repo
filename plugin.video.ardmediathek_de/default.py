@@ -61,14 +61,16 @@ def listVideos(url):
         videoID = match[0]
         matchTitle = re.compile('class="headline">(.+?)<', re.DOTALL).findall(entry)
         match = re.compile('class="dachzeile">(.+?)<', re.DOTALL).findall(entry)
-        if match[0].endswith("Uhr"):
+        if match and match[0].endswith("Uhr"):
             date = match[0]
             date = date.split(" ")[0]
             date = date[:date.rfind(".")]
             if showDateInTitle:
                 title = date+" - "+matchTitle[0]
-        else:
+        elif match:
             title = match[0]+" - "+matchTitle[0]
+        else:
+            title = matchTitle[0]
         match = re.compile('class="subtitle">(.+?) \\| (.+?) min(.+?)</p>', re.DOTALL).findall(entry)
         match2 = re.compile('class="subtitle">(.+?) min.*?</p>', re.DOTALL).findall(entry)
         duration = ""
@@ -91,7 +93,7 @@ def listVideos(url):
         match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
         thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
         addLink(title, videoID, 'playVideo', thumb, duration, desc)
-    match = re.compile('class="entry" data-ctrl-content.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
+    match = re.compile('class="entry" data-ctrl-.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
     for url, type in match:
         if "&gt;" in type:
             addDir(translation(30009), baseUrl+url.replace("&amp;","&"), "listVideos", "")
@@ -130,7 +132,8 @@ def listLiveChannels():
         title = match[0]
         match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
         thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
-        addLink(cleanTitle(title), channelID, 'playLive', thumb)
+        if title!="Das Erste":
+            addLink(cleanTitle(title), channelID, 'playLive', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeShows+')')
@@ -286,7 +289,7 @@ def playLive(liveID):
 
 def playLiveARD():
     content = getUrl("http://live.daserste.de/de/livestream.xml")
-    match = re.compile('<streamingUrlIPad>(.+?)</streamingUrlIPad>', re.DOTALL).findall(content)
+    match = re.compile('<asset type=".*?Live HLS">.+?<fileName>(.+?)</fileName>', re.DOTALL).findall(content)
     url = ""
     if match:
         url = match[0]

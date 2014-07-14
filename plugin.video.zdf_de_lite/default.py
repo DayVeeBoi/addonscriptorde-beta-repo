@@ -31,7 +31,7 @@ forceViewMode = addon.getSetting("forceView") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 viewMode = str(addon.getSetting("viewIDVideos"))
 viewModeShows = str(addon.getSetting("viewIDShows"))
-minLength = addon.getSetting("minLength")
+minLength = addon.getSetting("minLengthNew")
 mins = [0, 5, 10, 20, 30]
 minLength = mins[int(minLength)]
 
@@ -137,8 +137,6 @@ def listChannel(url):
 def listShows(url, bigThumb):
     if "/nachrichten/ganze-sendungen" in url:
         addShowLink("heute - 100sec", "", 'play100sec', baseUrl+"/ZDFmediathek/contentblob/257404/timg485x273blob/8232227")
-    if "/ZDFmediathek/hauptnavigation/themen" in url:
-        addDir("Olympia 2014", baseUrl+"/ZDFmediathek/event/aktuellste/2042758/Olympia-2014", 'listVideos', "")
     content = getUrl(url)
     spl = content.split('<div class="image">')
     for i in range(1, len(spl), 1):

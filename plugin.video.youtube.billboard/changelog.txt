@@ -22,3 +22,5 @@
 - Reverted last changes because of bad search results
 1.1.0
 - Fixed site changes
+1.1.1
+- Some bugfixes
