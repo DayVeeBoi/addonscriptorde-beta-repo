@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+  <string id="30001">You need to create channels first</string>
+  <string id="30101">Channel directory</string>
+  <string id="30102">Blacklist artist filter (seperated by ',')</string>
+  <string id="30103">Show info on video playback</string>
+  <string id="30104">Type</string>
+  <string id="30105">Delay in seconds</string>
+  <string id="30106">Duration in seconds</string>
+  <string id="30107">Playlist directory</string>
+  <string id="30110">VEVO quality</string>
+  <string id="30111">VEVO CDN</string>
+  <string id="30112">Youtube settings</string>
+  <string id="30113">Dailymotion quality</string>
+  <string id="30114">Muzu quality</string>
+  <string id="30115">Cache directory</string>
+  <string id="30116">History directory</string>
+  <string id="30201">General</string>
+  <string id="30202">Quality</string>
+  <string id="30203">Directories</string>
+</strings>

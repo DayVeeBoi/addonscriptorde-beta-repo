@@ -1,0 +1,22 @@
+<settings>
+    <category label="30201">
+        <setting id="blacklist" type="text" label="30102" default=""/>
+        <setting id="showInfo" type="bool" label="30103" default="true"/>
+        <setting id="infoType" type="enum" label="30104" enable="eq(-1,true)" values="InfoView|Notification" default="1"/>
+        <setting id="infoDelay" type="number" label="30105" enable="eq(-2,true)" default="5"/>
+        <setting id="infoDuration" type="number" label="30106" enable="eq(-3,true)" default="5"/>
+    </category>
+    <category label="30202">
+        <setting id="resolutionVevo" type="enum" label="30110" values="360p|540p|720p|1080p" default="2"/>
+        <setting id="cdnVevo" type="enum" label="30111" values="Amazon|Akamai (title bug!)|Level3" default="0"/>
+        <setting id="resolutionMuzu" type="enum" label="30114" values="360p|480p|720p|1080p" default="2"/>
+        <setting id="resolutionDM" type="enum" label="30113" values="480p|720p|1080p" default="1"/>
+        <setting label="30112" type="action" action="RunPlugin(plugin://plugin.video.my_music_tv/?mode=openSettings&url=plugin.video.youtube)"/>
+    </category>
+    <category label="30203">
+        <setting id="channelDir" type="folder" label="30101" default="special://profile/addon_data/plugin.video.my_music_tv/channels"/>
+        <setting id="playlistDir" type="folder" label="30107" default="special://profile/addon_data/plugin.video.my_music_tv/playlists"/>
+        <setting id="historyDir" type="folder" label="30116" default="special://profile/addon_data/plugin.video.my_music_tv/history"/>
+        <setting id="cacheDir" type="folder" label="30115" default="special://profile/addon_data/plugin.video.my_music_tv/cache"/>
+    </category>
+</settings>
