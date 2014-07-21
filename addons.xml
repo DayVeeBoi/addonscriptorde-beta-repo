@@ -127,11 +127,11 @@
         <platform>all</platform>
         <summary lang="de">ARTE Mediathek (DE/FR)</summary>
         <summary lang="en">ARTE Media Library (DE/FR)</summary>
-        <summary lang="fr">ARTE mÃ©diathÃ¨que (DE/FR)</summary>
+        <summary lang="fr">ARTE médiathèque (DE/FR)</summary>
         <language>de fr</language>
         <description lang="de">Videos aus der ARTE Mediathek anschauen + Livestream (DE/FR)</description>
         <description lang="en">Watch Videos from the ARTE Media Library + Livestream (DE/FR)</description>
-        <description lang="fr">Regarder des vidÃ©os de la ARTE mÃ©diathÃ¨que + Livestream (DE/FR)</description>
+        <description lang="fr">Regarder des vidéos de la ARTE médiathèque + Livestream (DE/FR)</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.arte_tv</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
@@ -212,8 +212,8 @@
         <summary lang="de">Check Eins: das Kinderprogramm des Ersten.</summary>
         <summary lang="en">Check Eins: das Kinderprogramm des Ersten.</summary>
         <language>de</language>
-        <description lang="de">Check Eins: das Kinderprogramm des Ersten. Alle Kindersendungen auf einen Ãœberblick: Die Sendung mit der Maus, Wissen macht Ah!, neuneinhalb, Pumuckl und vieles mehr.</description>
-        <description lang="en">Check Eins: das Kinderprogramm des Ersten. Alle Kindersendungen auf einen Ãœberblick: Die Sendung mit der Maus, Wissen macht Ah!, neuneinhalb, Pumuckl und vieles mehr.</description>
+        <description lang="de">Check Eins: das Kinderprogramm des Ersten. Alle Kindersendungen auf einen Überblick: Die Sendung mit der Maus, Wissen macht Ah!, neuneinhalb, Pumuckl und vieles mehr.</description>
+        <description lang="en">Check Eins: das Kinderprogramm des Ersten. Alle Kindersendungen auf einen Überblick: Die Sendung mit der Maus, Wissen macht Ah!, neuneinhalb, Pumuckl und vieles mehr.</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.checkeins_de</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
@@ -428,8 +428,8 @@
         <summary lang="de">SWR3 Kindernetz Mediathek</summary>
         <summary lang="en">SWR3 Kindernetz media library</summary>
         <language>de</language>
-        <description lang="de">Das SWR Kindernetz ist die Kinderseite des SÃ¼dwestrundfunks. Zum Kindernetz gehÃ¶ren unter anderem die Sendungen Olis Wilde Welt, Tigerenten Club oder Motzgurke. FÃ¼r Vorschulkinder: Tom und das Erdbeermarmeladebrot mit Honig oder Ich kenne ein Tier.</description>
-        <description lang="en">Das SWR Kindernetz ist die Kinderseite des SÃ¼dwestrundfunks. Zum Kindernetz gehÃ¶ren unter anderem die Sendungen Olis Wilde Welt, Tigerenten Club oder Motzgurke. FÃ¼r Vorschulkinder: Tom und das Erdbeermarmeladebrot mit Honig oder Ich kenne ein Tier.</description>
+        <description lang="de">Das SWR Kindernetz ist die Kinderseite des Südwestrundfunks. Zum Kindernetz gehören unter anderem die Sendungen Olis Wilde Welt, Tigerenten Club oder Motzgurke. Für Vorschulkinder: Tom und das Erdbeermarmeladebrot mit Honig oder Ich kenne ein Tier.</description>
+        <description lang="en">Das SWR Kindernetz ist die Kinderseite des Südwestrundfunks. Zum Kindernetz gehören unter anderem die Sendungen Olis Wilde Welt, Tigerenten Club oder Motzgurke. Für Vorschulkinder: Tom und das Erdbeermarmeladebrot mit Honig oder Ich kenne ein Tier.</description>
         <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.kindernetz_de</source>
@@ -557,6 +557,28 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.my_music_tv" name="My Music TV" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video audio</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Create your own music video channels based on multiple sources</summary>
+        <language></language>
+        <description lang="en">Create your own music video channels based on multiple sources</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.my_music_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website></website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.8" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -600,7 +622,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.pfefferkoerner_de" name="PfefferkÃ¶rner.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.pfefferkoerner_de" name="Pfefferkörner.de" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -609,11 +631,11 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="de">PfefferkÃ¶rner Mediathek</summary>
-        <summary lang="en">PfefferkÃ¶rner media library</summary>
+        <summary lang="de">Pfefferkörner Mediathek</summary>
+        <summary lang="en">Pfefferkörner media library</summary>
         <language>de</language>
-        <description lang="de">Ganze Folgen von "Die PfefferkÃ¶rner" ansehen</description>
-        <description lang="en">Watch full episodes of "Die PfefferkÃ¶rner"</description>
+        <description lang="de">Ganze Folgen von "Die Pfefferkörner" ansehen</description>
+        <description lang="en">Watch full episodes of "Die Pfefferkörner"</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.pfefferkoerner_de</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
@@ -743,7 +765,7 @@
         <summary lang="de">South Park Folgen gucken</summary>
         <summary lang="en">Watch South Park episodes</summary>
         <language></language>
-        <description lang="de">South Park Folgen gucken. UnterstÃ¼tzte LÃ¤nder: US,DE,NL,DK,FI,NO,SE.</description>
+        <description lang="de">South Park Folgen gucken. Unterstützte Länder: US,DE,NL,DK,FI,NO,SE.</description>
         <description lang="en">Watch South Park episodes. Supported countries: US,DE,NL,DK,FI,NO,SE.</description>
         <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
@@ -774,6 +796,27 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.spiegel.tv</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.spotitube" name="SpotiTube" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video audio</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Spotify meets Youtube (no account needed)</summary>
+        <language></language>
+        <description lang="en">Spotify meets Youtube (no account needed)</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.spotitube</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website></website>
     </extension>
 </addon>
 
@@ -1241,9 +1284,9 @@
   <extension point="xbmc.python.subtitles" library="default.py" />
   <extension point="xbmc.addon.metadata">
     <summary lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</summary>
-    <summary lang="de">SubCentral.de - Hochwertige Untertitel fÃ¼r TV-Serien (DE/EN)</summary>
+    <summary lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</summary>
     <description lang="en">SubCentral.de - Quality subtitles for TV-Shows (DE/EN)</description>
-    <description lang="de">SubCentral.de - Hochwertige Untertitel fÃ¼r TV-Serien (DE/EN)</description>
+    <description lang="de">SubCentral.de - Hochwertige Untertitel für TV-Serien (DE/EN)</description>
     <website></website>
     <source>https://github.com/AddonScriptorDE/script.subcentral_de</source>
     <forum>http://forum.xbmc.org/showthread.php?tid=157479</forum>
@@ -1279,10 +1322,10 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
-    <summary lang="de">Die tÃ¤gliche Video Nutzungsdauer festlegen (PIN-geschÃ¼tzt)</summary>
+    <summary lang="de">Die tägliche Video Nutzungsdauer festlegen (PIN-geschützt)</summary>
     <summary lang="en">Limit the daily video screen time (PIN-protected)</summary>
     <language></language>
-    <description lang="de">Die tÃ¤gliche Video Nutzungsdauer festlegen (PIN-geschÃ¼tzt)</description>
+    <description lang="de">Die tägliche Video Nutzungsdauer festlegen (PIN-geschützt)</description>
     <description lang="en">Limit the daily video screen time (PIN-protected)</description>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     <source>https://github.com/AddonScriptorDE/service.screen_time</source>
