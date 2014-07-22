@@ -326,10 +326,10 @@ def playChannel(filename):
                     continue
                 if xbox:
                     url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + youtubeID
-                    url = "plugin://video/My Music TV/?url="+urllib.quote_plus(url)+"&mode=playUrl"
+                    url = "plugin://video/My Music TV/?url="+urllib.quote_plus(url)+"&mode=playYT"
                 else:
                     url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + youtubeID
-                    url = "plugin://"+addonID+"/?url="+urllib.quote_plus(url)+"&mode=playUrl"
+                    url = "plugin://"+addonID+"/?url="+urllib.quote_plus(url)+"&mode=playYT"
                 thumb = "http://img.youtube.com/vi/"+youtubeID+"/0.jpg"
                 if ((not unwatched) or unwatched and not url in historyContent) and not title in dupeList and not blacklistContains(url):
                     musicVideos.append([title, url, thumb])
@@ -391,10 +391,10 @@ def playChannel(filename):
                 if matchYoutube:
                     if xbox:
                         url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + matchYoutube[0]
-                        url = "plugin://video/My Music TV/?url="+urllib.quote_plus(url)+"&mode=playUrl"
+                        url = "plugin://video/My Music TV/?url="+urllib.quote_plus(url)+"&mode=playYT"
                     else:
                         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + matchYoutube[0]
-                        url = "plugin://"+addonID+"/?url="+urllib.quote_plus(url)+"&mode=playUrl"
+                        url = "plugin://"+addonID+"/?url="+urllib.quote_plus(url)+"&mode=playYT"
                 elif matchDailyMotion:
                     if xbox:
                         url = "plugin://video/My Music TV/?url="+matchDailyMotion[0]+"&mode=playDM"
@@ -562,6 +562,20 @@ def playDM(id):
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
             if infoEnabled:
                 showInfo()
+    except:
+        pass
+
+
+def playYT(url):
+    try:
+        if xbox:
+            addToHistory("plugin://video/My Music TV/?url="+urllib.quote_plus(url)+"&mode=playYT")
+        else:
+            addToHistory("plugin://"+addonID+"/?url="+urllib.quote_plus(url)+"&mode=playYT")
+        listitem = xbmcgui.ListItem(path=url)
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+        if infoEnabled:
+            showInfo()
     except:
         pass
 
@@ -795,6 +809,8 @@ elif mode == 'playMuzu':
     playMuzu(url)
 elif mode == 'playDM':
     playDM(url)
+elif mode == 'playYT':
+    playYT(url)
 elif mode == 'playUrl':
     playUrl(url)
 elif mode == 'playYTByTitle':
