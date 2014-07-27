@@ -12,53 +12,30 @@ import sys
 import re
 import os
 import json
+import time
 
 addon = xbmcaddon.Addon()
 pluginhandle = int(sys.argv[1])
 addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 userDataFolder=xbmc.translatePath("special://profile/addon_data/"+addonID)
-searchHistoryFolder=os.path.join(userDataFolder, "history")
+cacheDir = os.path.join(userDataFolder, "cache")
 socket.setdefaulttimeout(30)
 opener = urllib2.build_opener()
-userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0"
+userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMain = "http://www.billboard.com"
 
 if not os.path.isdir(userDataFolder):
   os.mkdir(userDataFolder)
-if not os.path.isdir(searchHistoryFolder):
-  os.mkdir(searchHistoryFolder)
-
-
-def getDbPath():
-    path = xbmc.translatePath("special://userdata/Database")
-    files = os.listdir(path)
-    latest = ""
-    for file in files:
-        if file[:8] == 'MyVideos' and file[-3:] == '.db':
-            if file > latest:
-                latest = file
-    if latest:
-        return os.path.join(path, latest)
-    else:
-        return ""
-
-
-def getPlayCount(url):
-    if dbPath:
-        c.execute('SELECT playCount FROM files WHERE strFilename=?', [url])
-        result = c.fetchone()
-        if result:
-            result = result[0]
-            if result:
-                return int(result)
-            return 0
-    return -1
+if not os.path.isdir(cacheDir):
+  os.mkdir(cacheDir)
 
 
 def index():
     addDir(translation(30005), urlMain+"/rss/charts/hot-100", "listCharts")
+    addDir("Trending 140", "Top 140 in Trending", "listChartsNew")
+    addDir("Last 24 Hours", "Top 140 in Overall", "listChartsNew")
     addDir(translation(30006), "genre", "listChartsTypes")
     addDir(translation(30007), "country", "listChartsTypes")
     addDir(translation(30008), "other", "listChartsTypes")
@@ -98,26 +75,46 @@ def listCharts(url):
     xbmcplugin.setContent(pluginhandle, "episodes")
     addDir("[B]- "+translation(30001)+"[/B]", url, "autoPlay", "all")
     addDir("[B]- "+translation(30002)+"[/B]", url, "autoPlay", "random")
-    if dbPath:
-        addDir("[B]- "+translation(30003)+"[/B]", url, "autoPlay", "unwatched")
     content = opener.open(url).read()
     match = re.compile('<item>.+?<artist>(.+?)</artist>.+?<chart_item_title>(.+?)</chart_item_title>', re.DOTALL).findall(content)
     for artist, title in match:
         title = cleanTitle(artist+" - "+title[title.find(":")+1:]).replace("Featuring", "Feat.")
-        fileTitle = (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip()
-        cacheFile = os.path.join(searchHistoryFolder, fileTitle)
-        thumb = ""
-        if os.path.exists(cacheFile):
-            fh = open(cacheFile, 'r')
-            id = fh.read()
-            fh.close()
-            thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-        addLink(title, title, "playVideo", thumb, "", "", title)
+        addLink(title, title, "playVideo", "", "", "", title)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
+def listChartsNew(url):
+    xbmcplugin.setContent(pluginhandle, "episodes")
+    addDir("[B]- "+translation(30001)+"[/B]", url, "autoPlayNew", "all")
+    addDir("[B]- "+translation(30002)+"[/B]", url, "autoPlayNew", "random")
+    content = opener.open("http://realtime.billboard.com/").read()
+    content = content[content.find("<h1>"+url+"</h1>"):]
+    content = content[:content.find("</table>")]
+    match = re.compile('<tr>.*?<td>(.+?)</td>.*?<td><a href=".*?">(.+?)</a></td>.*?<td>(.+?)</td>.*?<td>(.+?)</td>.*?</tr>', re.DOTALL).findall(content)
+    for nr, artist, title, rating in match:
+        if "(" in title:
+            title = title[:title.find("(")].strip()
+        title = cleanTitle(artist+" - "+title).replace("Featuring", "Feat.")
+        addLink(title, title, "playVideo", "", "", "", title)
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def cache(title):
+    cacheFile = os.path.join(cacheDir, (''.join(c for c in unicode(title, 'utf-8') if c not in '/\\:?"*|<>')).strip())
+    if os.path.exists(cacheFile) and (time.time()-os.path.getmtime(cacheFile) < 60*60*24):
+        fh = open(cacheFile, 'r')
+        content = fh.read()
+        fh.close()
+    else:
+        content = getYoutubeId(title)
+        fh = open(cacheFile, 'w')
+        fh.write(content)
+        fh.close()
+    return content
+
+
 def playVideo(title):
-    listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(getYoutubeId(title)))
+    listitem = xbmcgui.ListItem(path=getYoutubePluginUrl(cache(title)))
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
@@ -126,47 +123,6 @@ def getYoutubeId(title):
     content = opener.open(url).read()
     match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
     return match[0]
-
-
-def listVideos(chartTitle):
-    #API sometimes delivers other results (when sorting by relevance) than site search!?!
-    """content = opener.open("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(chartTitle)+"&max-results=20&start-index=1&orderby=relevance&alt=json&time=all_time&v=2").read()
-    content = json.loads(content)
-    for entry in content['feed']['entry']:
-        id=entry['media$group']['yt$videoid']['$t']
-        title=entry['title']['$t'].encode('utf-8')
-        views=str(entry['yt$statistics']['viewCount'])
-        rUp=entry['yt$rating']['numLikes']
-        rDown=entry['yt$rating']['numDislikes']
-        rating=str(int((float(rUp)/(float(rUp)+float(rDown)))*100)) + " % like it"
-        length= str(entry['media$group']['yt$duration']['seconds'])
-        desc= entry['media$group']['media$description']['$t'].encode('utf-8')
-        desc = views+" Views   |   "+rating+"\n"+desc
-        thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-        addLink(title, id, "cache", thumb, desc, length, chartTitle)
-    xbmcplugin.endOfDirectory(pluginhandle)"""
-    content = opener.open("https://www.youtube.com/results?search_query="+urllib.quote_plus(chartTitle)+"&lclk=video").read()
-    content = content[content.find('id="search-results"'):]
-    spl=content.split('<li class="yt-lockup clearfix')
-    for i in range(1, len(spl), 1):
-        try:
-            entry=spl[i]
-            match=re.compile('data-video-ids="(.+?)"', re.DOTALL).findall(entry)
-            id=match[0]
-            match=re.compile('<h3 class="yt-lockup-title">.+?title="(.+?)"', re.DOTALL).findall(entry)
-            title=match[0]
-            title = cleanTitle(title)
-            match=re.compile('data-name=.+?<li>(.+?)</li><li>(.+?)<', re.DOTALL).findall(entry)
-            desc = ""
-            if match:
-                desc=match[0][0]+" - "+match[0][1]
-            match=re.compile('class="video-time">(.+?)<', re.DOTALL).findall(entry)
-            length=match[0]
-            thumb = "http://img.youtube.com/vi/"+id+"/0.jpg"
-            addLink(title, id, "cache", thumb, desc, length, chartTitle)
-        except:
-            pass
-    xbmcplugin.endOfDirectory(pluginhandle)
 
 
 def getYoutubePluginUrl(id):
@@ -187,14 +143,35 @@ def autoPlay(url, type):
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
     content = opener.open(url).read()
-    match = re.compile('<item>.+?<title>(.+?)</title>', re.DOTALL).findall(content)
-    for title in match:
-        title = cleanTitle(title[title.find(":")+1:]).replace("Featuring", "Feat.")
+    match = re.compile('<item>.+?<artist>(.+?)</artist>.+?<chart_item_title>(.+?)</chart_item_title>', re.DOTALL).findall(content)
+    for artist, title in match:
+        title = cleanTitle(artist+" - "+title[title.find(":")+1:]).replace("Featuring", "Feat.")
         url = sys.argv[0]+"?url="+urllib.quote_plus(title)+"&mode=playVideo&name="+str(title)+"&chartTitle="+str(title)
         if type in ["all", "random"]:
             listitem = xbmcgui.ListItem(title)
             entries.append([title, url])
-        elif type=="unwatched" and getPlayCount(url) < 0:
+    if type=="random":
+        random.shuffle(entries)
+    for title, url in entries:
+        listitem = xbmcgui.ListItem(title)
+        playlist.add(url, listitem)
+    xbmc.Player().play(playlist)
+
+
+def autoPlayNew(url, type):
+    entries = []
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    content = opener.open("http://realtime.billboard.com/").read()
+    content = content[content.find("<h1>"+url+"</h1>"):]
+    content = content[:content.find("</table>")]
+    match = re.compile('<tr>.*?<td>(.+?)</td>.*?<td><a href=".*?">(.+?)</a></td>.*?<td>(.+?)</td>.*?<td>(.+?)</td>.*?</tr>', re.DOTALL).findall(content)
+    for nr, artist, title, rating in match:
+        if "(" in title:
+            title = title[:title.find("(")].strip()
+        title = cleanTitle(artist+" - "+title).replace("Featuring", "Feat.")
+        url = sys.argv[0]+"?url="+urllib.quote_plus(title)+"&mode=playVideo&name="+str(title)+"&chartTitle="+str(title)
+        if type in ["all", "random"]:
             listitem = xbmcgui.ListItem(title)
             entries.append([title, url])
     if type=="random":
@@ -223,7 +200,6 @@ def addLink(name, url, mode, iconimage, desc="", length="", chartTitle=""):
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": length})
     liz.setProperty('IsPlayable', 'true')
     entries = []
-    entries.append((translation(30032), 'Container.Update(plugin://'+addonID+'/?mode=listVideos&url='+urllib.quote_plus(url)+')',))
     entries.append((translation(30004), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',))
     liz.addContextMenuItems(entries)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -233,7 +209,7 @@ def addLink(name, url, mode, iconimage, desc="", length="", chartTitle=""):
 def addDir(name, url, mode, type=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&type="+str(type)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png")
+    liz = xbmcgui.ListItem(name, iconImage="DefaultMusicVideos.png")
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -249,12 +225,6 @@ def parameters_string_to_dict(parameters):
                 paramDict[paramSplits[0]] = paramSplits[1]
     return paramDict
 
-
-dbPath = getDbPath()
-if dbPath:
-    conn = sqlite3.connect(dbPath)
-    c = conn.cursor()
-
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
 url = urllib.unquote_plus(params.get('url', ''))
@@ -264,17 +234,21 @@ chartTitle = urllib.unquote_plus(params.get('chartTitle', ''))
 
 if mode == 'listCharts':
     listCharts(url)
+elif mode == 'listChartsNew':
+    listChartsNew(url)
 elif mode == 'listChartsTypes':
     listChartsTypes(url)
 elif mode == 'listVideos':
     listVideos(url)
 elif mode == 'cache':
-    cache(url, chartTitle)
+    cache(url)
 elif mode == 'playVideo':
     playVideo(url)
 elif mode == 'queueVideo':
     queueVideo(url, name)
 elif mode == 'autoPlay':
     autoPlay(url, type)
+elif mode == 'autoPlayNew':
+    autoPlayNew(url, type)
 else:
     index()

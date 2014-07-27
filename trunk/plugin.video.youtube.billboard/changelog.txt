@@ -24,3 +24,6 @@
 - Fixed site changes
 1.1.1
 - Some bugfixes
+1.1.2
+- Added category: Trending 140
+- Added category: Last 24 Hours
