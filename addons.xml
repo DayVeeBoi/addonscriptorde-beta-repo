@@ -99,23 +99,6 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ard_olympia" name="ARD Olympia 2014" version="1.0.3" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="de">ARD Olympia 2014 Live</summary>
-        <summary lang="en">ARD Olympia 2014 Live</summary>
-        <language>de</language>
-        <description lang="de">ARD Olympia 2014 Live</description>
-        <description lang="en">ARD Olympia 2014 Live</description>
-    </extension>
-</addon>
-
 <addon id="plugin.video.arte_tv" name="Arte.tv" version="2.0.9" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -160,7 +143,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.break_com" name="Break.com" version="2.0.4" provider-name="AddonScriptorDE">
+<addon id="plugin.video.break_com" name="Break.com" version="2.0.5" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.1.0"/>
@@ -265,7 +248,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.7" provider-name="AddonScriptorDE">
+<addon id="plugin.video.dmax_de" name="DMAX.de" version="1.0.8" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.pyamf" version="0.6.1"/>
@@ -557,7 +540,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.my_music_tv" name="My Music TV" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.my_music_tv" name="My Music TV" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -599,7 +582,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.nick_de" name="Nickelodeon.de" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.nick_de" name="Nickelodeon.de" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -799,7 +782,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.spotitube" name="SpotiTube" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.spotitube" name="SpotiTube" version="1.0.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>

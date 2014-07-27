@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <string id="30001">You need to create channels first</string>
+  <string id="30001">No channels found! You need to create some first...</string>
   <string id="30101">Channel directory</string>
   <string id="30102">Blacklist artist filter (seperated by ',')</string>
   <string id="30103">Show info on video playback</string>

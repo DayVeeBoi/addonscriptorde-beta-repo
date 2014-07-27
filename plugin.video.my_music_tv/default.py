@@ -31,6 +31,7 @@ playlistDir = xbmc.translatePath(addon.getSetting("playlistDir"))
 channelDir = xbmc.translatePath(addon.getSetting("channelDir"))
 historyDir = xbmc.translatePath(addon.getSetting("historyDir"))
 cacheDir = xbmc.translatePath(addon.getSetting("cacheDir"))
+plistDir = os.path.join(cacheDir, "plist")
 blacklist = addon.getSetting("blacklist").split(',')
 infoEnabled = addon.getSetting("showInfo") == "true"
 infoType = addon.getSetting("infoType")
@@ -59,13 +60,15 @@ if not historyDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')) and not 
     os.mkdir(historyDir)
 if not cacheDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')) and not os.path.isdir(cacheDir):
     os.mkdir(cacheDir)
+if not plistDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')) and not os.path.isdir(plistDir):
+    os.mkdir(plistDir)
 
 
 def index():
     dirs, files = xbmcvfs.listdir(channelDir)
     if files:
         for file in files:
-            fh = xbmcvfs.File(os.path.join(channelDir, file))
+            fh = xbmcvfs.File(os.path.join(channelDir, file), 'r')
             content = fh.read()
             fh.close()
             match=re.compile('thumb="(.*?)"', re.DOTALL).findall(content)
@@ -75,7 +78,7 @@ def index():
             fileTitle = file
             if "." in fileTitle:
                 fileTitle = fileTitle[:fileTitle.rfind(".")]
-            addChannelDir(fileTitle, file, 'playChannel', thumb)
+            addDir(fileTitle, file, 'playChannel', thumb)
     else:
         addDir(translation(30001)+"...", "", 'none', "")
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -84,7 +87,7 @@ def index():
 def playChannel(filename):
     addon.setSetting("currentChannel", filename)
     historyFile = os.path.join(historyDir, filename+".history")
-    fh = xbmcvfs.File(historyFile)
+    fh = xbmcvfs.File(historyFile, 'r')
     historyContent = fh.read()
     fh.close()
     filename = os.path.join(channelDir, filename)
@@ -92,7 +95,7 @@ def playChannel(filename):
     dupeList = []
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
-    fh = xbmcvfs.File(filename)
+    fh = xbmcvfs.File(filename, 'r')
     contentMain = fh.read()
     fh.close()
     match=re.compile('shuffled="(.+?)"', re.DOTALL).findall(contentMain)
@@ -470,6 +473,7 @@ def playChannel(filename):
     fh.close()
     if shuffled:
         random.shuffle(musicVideos)
+    addToPlist(musicVideos)
     for title, url, thumb in musicVideos:
         listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
         playlist.add(url, listitem)
@@ -619,12 +623,12 @@ def getYoutubeId(title):
 def cache(url, duration):
     cacheFile = os.path.join(cacheDir, (''.join(c for c in unicode(url, 'utf-8') if c not in '/\\:?"*|<>')).strip())
     if os.path.exists(cacheFile) and duration!=0 and (time.time()-os.path.getmtime(cacheFile) < 60*60*24*duration):
-        fh = open(cacheFile, 'r')
+        fh = xbmcvfs.File(cacheFile, 'r')
         content = fh.read()
         fh.close()
     else:
         content = opener.open(url).read()
-        fh = open(cacheFile, 'w')
+        fh = xbmcvfs.File(cacheFile, 'w')
         fh.write(content)
         fh.close()
     return content
@@ -633,12 +637,12 @@ def cache(url, duration):
 def cacheR(url, duration):
     cacheFile = os.path.join(cacheDir, (''.join(c for c in unicode(url, 'utf-8') if c not in '/\\:?"*|<>')).strip())
     if os.path.exists(cacheFile) and duration!=0 and (time.time()-os.path.getmtime(cacheFile) < 60*60*24*duration):
-        fh = open(cacheFile, 'r')
+        fh = xbmcvfs.File(cacheFile, 'r')
         content = fh.read()
         fh.close()
     else:
         content = openerR.open(url).read()
-        fh = open(cacheFile, 'w')
+        fh = xbmcvfs.File(cacheFile, 'w')
         fh.write(content)
         fh.close()
     return content
@@ -646,8 +650,21 @@ def cacheR(url, duration):
 
 def addToHistory(url):
     historyFile = os.path.join(historyDir, addon.getSetting("currentChannel")+".history")
-    fh = open(historyFile, 'a')
-    fh.write(url+"\n")
+    fh = xbmcvfs.File(historyFile, 'r')
+    content = fh.read()
+    fh.close()
+    fh = xbmcvfs.File(historyFile, 'w')
+    fh.write(content+url+"\n")
+    fh.close()
+
+
+def addToPlist(list):
+    plistFile = os.path.join(plistDir, addon.getSetting("currentChannel")+".plist")
+    content = ""
+    for item in list:
+        content+=str(item)+"\n"
+    fh = xbmcvfs.File(plistFile, 'w')
+    fh.write(content)
     fh.close()
 
 
@@ -724,15 +741,18 @@ def addToBlacklist():
     result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid": '+str(playlistID)+', "properties": ["file", "thumbnail"] }, "id": 1}')
     result = json.loads(result)
     item = result["result"]["items"][currentPos]
-    fh = open(blacklistFile, 'a')
-    fh.write(item["file"]+"\n")
+    fh = xbmcvfs.File(blacklistFile, 'r')
+    content = fh.read()
+    fh.close()
+    fh = xbmcvfs.File(blacklistFile, 'w')
+    fh.write(content+item["file"]+"\n")
     fh.close()
     xbmc.Player().playnext()
 
 
 def blacklistContains(url):
     if os.path.exists(blacklistFile):
-        fh = open(blacklistFile, 'r')
+        fh = xbmcvfs.File(blacklistFile, 'r')
         content = fh.read()
         fh.close()
         if url in content:
@@ -769,29 +789,10 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
-    ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name})
-    liz.setProperty('IsPlayable', 'true')
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
-    return ok
-
-
-def addChannelDir(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
-    ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultAudio.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name})
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
-    return ok
-
-
 def addDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage="DefaultMusicVideos.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
