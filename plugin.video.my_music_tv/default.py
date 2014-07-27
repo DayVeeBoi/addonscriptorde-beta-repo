@@ -224,11 +224,11 @@ def playChannel(filename):
                 content = cache("http://api.vevo.com/mobile/v2/playlist/"+value+".json", cacheDuration)
             elif vevoType=="artist":
                 if cacheDuration==-1:
-                    cacheDuration=7
+                    cacheDuration=30
                 content = cache("http://api.vevo.com/mobile/v1/artist/"+value+"/videos.json?order=MostViewedToday&offset=0&max=200", cacheDuration)
             elif vevoType=="charts" or vevoType=="livecharts":
                 if cacheDuration==-1:
-                    cacheDuration=1
+                    cacheDuration=7
                 vevoValues = value.split(":")
                 genreValue = vevoValues[0]
                 orderValue = vevoValues[1]
@@ -368,7 +368,7 @@ def playChannel(filename):
         elif type.lower().startswith("reddit"):
             xbmc.sleep(2000)
             if cacheDuration==-1:
-                cacheDuration=1
+                cacheDuration=7
             redditValues = value.split(":")
             subredditValue = redditValues[0]
             sortValue = redditValues[1]
@@ -435,7 +435,7 @@ def playChannel(filename):
                 content = cache("https://embed.spotify.com/?uri=spotify:album:"+value, cacheDuration)
             elif spotifyType=="artist":
                 if cacheDuration==-1:
-                    cacheDuration=7
+                    cacheDuration=30
                 content = cache("https://embed.spotify.com/?uri=spotify:artist:"+value, cacheDuration)
             spl=content.split('music-paused item')
             for i in range(1,len(spl),1):
