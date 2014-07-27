@@ -2,3 +2,6 @@
 - Initial release
 1.0.1
 - Fixed history (unwatched mode)
+1.0.2
+- Fixed bug when using network shares as data directories
+- Added needed modifications for PTVL

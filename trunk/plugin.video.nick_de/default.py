@@ -11,19 +11,21 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.nick_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = 'plugin.video.nick_de'
-#addonID = addon.getAddonInfo('id')
 jrOnly = addon.getSetting("jrOnly") == "true"
-forceViewMode = addon.getSetting("forceViewMode") == "true"
+forceViewMode = addon.getSetting("forceView") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
-viewMode = str(addon.getSetting("viewMode"))
+viewMode = str(addon.getSetting("viewID"))
 translation = addon.getLocalizedString
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 iconJr = xbmc.translatePath('special://home/addons/'+addonID+'/iconJr.png')
 urlMain = "http://www.nick.de"
+urlMainJR = "http://www.nickjr.de"
 opener = urllib2.build_opener()
 opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0')]
 
@@ -38,45 +40,90 @@ def index():
 
 
 def nickMain():
-    addDir(translation(30003), urlMain+"/videos", 'listEntries', icon)
-    addDir(translation(30004), urlMain+"/shows?active_tab=0&ajax", 'listEntries', icon)
+    addDir(translation(30003), urlMain+"/videos", 'listVideos', icon)
+    addDir(translation(30004), urlMain+"/videos", 'listShows', icon)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
 def nickJrMain():
-    addDir(translation(30003), "http://www.nickjr.de/videos", 'listEntries', iconJr)
-    addDir(translation(30004), urlMain+"/shows?active_tab=1&ajax", 'listEntries', iconJr)
+    addDir(translation(30003), urlMainJR+"/videos", 'listVideosJR', iconJr)
+    addDir(translation(30004), urlMainJR+"/videos", 'listShowsJR', iconJr)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def listEntries(url):
+def listVideos(url):
     content = opener.open(url).read()
-    content = content[:content.find('<!-- all shows -->')]
-    spl = content.split("teaser_item")
+    spl = content.split("class='playlist-item'")
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match1 = re.compile('title="(.*?)"', re.DOTALL).findall(entry)
-        match2 = re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
-        title = ""
-        if match1 and match1[0]:
-            title = match1[0]
-        elif match2:
-            title = match2[0]
-        title = cleanTitle(title).strip(" -")
+        match1 = re.compile("class='title'>(.+?)<", re.DOTALL).findall(entry)
+        match2 = re.compile("class='subtitle'>(.*?)<", re.DOTALL).findall(entry)
+        title = match1[0]
+        if match2 and match2[0]:
+            title = title+" - "+match2[0]
+        title = cleanTitle(title)
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         thumb = match[0].replace("140x105","640x")
-        match1 = re.compile('href="/videos/show/(.+?)"', re.DOTALL).findall(entry)
-        match2 = re.compile('href="/videos/(.+?)"', re.DOTALL).findall(entry)
-        if match1:
-            url = urlMain+"/videos/show/"+match1[0]
-            addDir(title, url, 'listEntries', thumb)
-        elif match2:
-            url = urlMain+"/videos/"+match2[0]
-            addLink(title, url, 'playVideo', thumb)
+        match = re.compile("href='(.+?)'", re.DOTALL).findall(entry)
+        url = match[0]
+        addLink(title, url, 'playVideo', thumb)
+    xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+
+
+def listShows(url):
+    content = opener.open(url).read()
+    match = re.compile('<li class=\'item\'><a href="(.+?)".*?alt="(.+?)" src="(.+?)"', re.DOTALL).findall(content)
+    for url, title, thumb in match:
+        if url.startswith("/shows/"):
+            title = title[:title.rfind(" - ")]
+            title = cleanTitle(title)
+            addDir(title, urlMain+url, 'listVideos', thumb)
+    xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+
+
+def listShowsJR(url):
+    content = opener.open(url).read()
+    content = content[content.find("id='teaser_collection_featured_franchise_videos'"):]
+    spl = content.split("class='teaser_item'")
+    for i in range(1, len(spl), 1):
+        entry = spl[i]
+        match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title = match[0]
+        title = cleanTitle(title)
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0]
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = urlMainJR+match[0]
+        addDir(title, url, 'listVideosJR', thumb)
+    xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+
+
+def listVideosJR(url):
+    content = opener.open(url).read()
+    if "id='teaser_collection_videos_hub_newest'" in content:
+        content = content[content.find("id='teaser_collection_videos_hub_newest'"):]
+        content = content[:content.find("<!-- all shows -->")]
+    spl = content.split("class='teaser_item'")
+    for i in range(1, len(spl), 1):
+        entry = spl[i]
+        match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title = match[0]
+        title = cleanTitle(title)
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0]
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = urlMainJR+match[0]
+        addLink(title, url, 'playVideo', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -84,8 +131,12 @@ def listEntries(url):
 
 def playVideo(url):
     content = opener.open(url).read()
-    match = re.compile("flashvars =.+?mrss.+?: '(.+?)'", re.DOTALL).findall(content)
-    content = opener.open(match[0]).read()
+    match1 = re.compile('flashvars.*?mrss.*?"(.+?)"', re.DOTALL).findall(content)
+    match2 = re.compile("flashvars.*?mrss.*?'(.+?)'", re.DOTALL).findall(content)
+    if urlMain in url:
+        content = opener.open(match1[0]).read()
+    elif urlMainJR in url:
+        content = opener.open(match2[0]).read()
     match = re.compile("<media:content.+?url='(.+?)'", re.DOTALL).findall(content)
     content = opener.open(match[0]).read()
     match = re.compile('type="video/mp4" bitrate="(.+?)">.+?<src>(.+?)</src>', re.DOTALL).findall(content)
@@ -128,8 +179,6 @@ def addLink(name, url, mode, iconimage, desc="", duration=""):
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
-    if useThumbAsFanart and iconimage!=icon and iconimage!=iconJr:
-        liz.setProperty("fanart_image", iconimage)
     liz.addContextMenuItems([(translation(30006), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+str(name)+'&thumb='+urllib.quote_plus(iconimage)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -140,10 +189,9 @@ def addDir(name, url, mode, iconimage):
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart and iconimage!=icon and iconimage!=iconJr:
-        liz.setProperty("fanart_image", iconimage)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
+
 
 params = parameters_string_to_dict(sys.argv[2])
 mode = urllib.unquote_plus(params.get('mode', ''))
@@ -151,8 +199,14 @@ url = urllib.unquote_plus(params.get('url', ''))
 name = urllib.unquote_plus(params.get('name', ''))
 thumb = urllib.unquote_plus(params.get('thumb', ''))
 
-if mode == 'listEntries':
-    listEntries(url)
+if mode == 'listVideos':
+    listVideos(url)
+elif mode == 'listVideosJR':
+    listVideosJR(url)
+elif mode == 'listShows':
+    listShows(url)
+elif mode == 'listShowsJR':
+    listShowsJR(url)
 elif mode == 'playVideo':
     playVideo(url)
 elif mode == 'queueVideo':

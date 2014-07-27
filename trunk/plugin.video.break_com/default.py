@@ -98,8 +98,9 @@ def listSearchVideos(url):
         spl=content.split('<article class=')
         for i in range(1,len(spl),1):
             entry=spl[i]
-            match=re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-            url=match[0]
+            match=re.compile('href="(.+?)">(.+?)<', re.DOTALL).findall(entry)
+            url=match[0][0]
+            title=cleanTitle(match[0][1])
             id = url[url.rfind("-")+1:]
             if "/" in id:
                 id = id[:id.find("/")]
@@ -108,8 +109,6 @@ def listSearchVideos(url):
             if len(match)>0:
               thumb=match[0]
             match=re.compile('alt="(.+?)"', re.DOTALL).findall(entry)
-            title=match[0]
-            title=cleanTitle(title)
             addLink(title,id,'playVideo',thumb,"")
         urlNext=""
         for url, title1, title2 in matchPage:
@@ -127,7 +126,7 @@ def playVideo(id):
           matchURL=re.compile('"uri": "(.+?)".+?"height": (.+?),', re.DOTALL).findall(content)
           matchYT=re.compile('"youtubeId": "(.*?)"', re.DOTALL).findall(content)
           finalUrl=""
-          if matchYT and matchYT[0]!="":
+          if matchYT and matchYT[0]:
             if xbox==True:
               finalUrl = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + matchYT[0]
             else:
@@ -138,6 +137,7 @@ def playVideo(id):
                   vidHeight=int(vidHeight)
                   if vidHeight>max:
                     finalUrl=url.replace(".wmv",".flv")+"?"+matchAuth[0]
+                    max=vidHeight
           listitem = xbmcgui.ListItem(path=finalUrl)
           xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
@@ -146,7 +146,7 @@ def search():
         keyboard.doModal()
         if keyboard.isConfirmed() and keyboard.getText():
           search_string = keyboard.getText().replace(" ","-")
-          listSearchVideos('http://www.break.com/surfacevideo/'+search_string+'/relevance/1/')
+          listSearchVideos('http://www.break.com/search/?q='+search_string)
 
 def cleanTitle(title):
         return title.replace("&lt;","<").replace("&gt;",">").replace("&amp;","&").replace("&#038;","&").replace("&#39;","'").replace("&#039;","'").replace("&#8211;","-").replace("&#8220;","-").replace("&#8221;","-").replace("&#8217;","'").replace("&quot;","\"").strip()

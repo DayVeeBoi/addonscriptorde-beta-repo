@@ -55,7 +55,7 @@ def listVideosMain(url, thumb):
     matchFE = re.compile('<h2>GANZE FOLGEN</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
     matchMV = re.compile('<h2>MEIST GESEHEN</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
     matchClips = re.compile('<h2>CLIPS</h2>.+?id="listing-container-(.+?)"', re.DOTALL).findall(content)
-    matchEpisodes = re.compile('<a href="(.+?)"><span>(.+?)<', re.DOTALL).findall(content)
+    matchEpisodes = re.compile('<a href="(.+?)".*?><span>(.+?)<', re.DOTALL).findall(content)
     showID = matchShowID[0]
     if matchFE:
         for url, title in matchEpisodes:
@@ -149,14 +149,10 @@ def listShows(urlMain):
     spl = content.split('<a')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile('alt="(.+?)"', re.DOTALL).findall(entry)
+        match = re.compile('<h3>(.+?)<\/h3>', re.DOTALL).findall(entry)
         title = match[0]
-        if "(" in title:
-            title = title[:title.rfind("(")].strip()
-        if title.endswith("Teil 1"):
-            title = title[:title.rfind("Teil 1")]
-        if title.endswith(" 1") and not title.endswith("Episode 1"):
-            title = title[:title.rfind(" 1")]
+        if " - Videos" in title:
+            title = title[:title.rfind(" - Videos")].strip()
         title = cleanTitle(title)
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = match[0]
@@ -211,10 +207,10 @@ def listSeasons(urlMain, thumb):
         if forceViewMode:
             xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
     else:
-        listEpisodes(urlMain)
+        listEpisodes(urlMain, thumb)
 
 
-def listEpisodes(url):
+def listEpisodes(url, thumb):
     content = opener.open(url).read()
     spl = content.split('<a class="dni-episode-browser-item pagetype-video"')
     for i in range(1, len(spl), 1):
@@ -239,7 +235,8 @@ def listEpisodes(url):
         if match:
             desc = cleanTitle(match[0])
         match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = cleanTitle(match[0]).replace("_thumb", "")
+        if match:
+            thumb = cleanTitle(match[0]).replace("_thumb", "")
         addDir(title, url, 'playVideo', thumb, title, desc)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
@@ -442,7 +439,7 @@ elif mode == 'listShows':
 elif mode == 'listSeasons':
     listSeasons(url, thumb)
 elif mode == 'listEpisodes':
-    listEpisodes(url)
+    listEpisodes(url, thumb)
 elif mode == 'playVideo':
     playVideo(url, title, thumb)
 elif mode == 'queueVideo':

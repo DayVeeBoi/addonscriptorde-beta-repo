@@ -12,3 +12,5 @@
 - Fixed autoplay modus under gotham
 1.0.7
 - Fixed site changes
+1.0.8
+- Fixed season listing
