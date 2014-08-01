@@ -2,9 +2,23 @@
 <strings>
   <string id="30001">Next Page</string>
   <string id="30002">Add to queue</string>
-  <string id="30003">Add to Addon favorites</string>
-  <string id="30004">Remove from favorites</string>
+  <string id="30003">Add to Addon favourites</string>
+  <string id="30004">Remove from favourites</string>
+  <string id="30005">Search</string>
+  <string id="30006">Favourites</string>
+  <string id="30007">New Episodes</string>
+  <string id="30008">New Videos</string>
+  <string id="30009">Media library</string>
+  <string id="30010">Latest</string>
+  <string id="30011">Archive</string>
+  <string id="30012">ProSieben</string>
+  <string id="30013">Sat.1</string>
+  <string id="30014">Kabel Eins</string>
+  <string id="30015">Sixx</string>
+  <string id="30016">ProSiebenMaxx</string>
+  <string id="30017">Sat.1 Gold</string>
   <string id="30101">Force View</string>
-  <string id="30102">ViewID</string>
-  <string id="30103">Use thumb as fanart</string>
+  <string id="30102">ViewID (Shows)</string>
+  <string id="30103">ViewID (Videos)</string>
+  <string id="30104">Use thumb instead of fanart</string>
 </strings>

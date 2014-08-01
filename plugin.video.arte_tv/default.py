@@ -221,10 +221,13 @@ def getStreamUrlNew(url):
         content = getUrl(url)
         match1 = re.compile('"HTTP_SQ_1":.+?"url":"(.+?)"', re.DOTALL).findall(content)
         match2 = re.compile('"HTTP_EQ_1":.+?"url":"(.+?)"', re.DOTALL).findall(content)
+        match3 = re.compile('"RMTP_HQ":.*?"streamer":"(.+?)","url":"(.+?)"', re.DOTALL).findall(content)
         if match1 and maxVideoQuality == "720p":
             return match1[0].replace("\\","")
         elif match2:
             return match2[0].replace("\\","")
+        elif match3:
+            return match3[0][0].replace("\\","")+match3[0][1].replace("\\","")+" swfUrl=http://www.arte.tv/flash/mediaplayer/mediaplayer.swf live=1 swfVfy=1"
     elif streamingType=="HTTP":
         url = match[0].replace("/player/","/")
         content = getUrl(url)

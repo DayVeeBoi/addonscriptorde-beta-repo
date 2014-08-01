@@ -13,3 +13,7 @@
 - Changed name from "SouthPark.de" to "South Park"
 1.0.7
 - Fixed geoblocking detection
+1.0.8
+- Fixed subtitle support
+- Fixed video playback (HD currently not supported)
+- Removed US site support (US site is now using hulu)

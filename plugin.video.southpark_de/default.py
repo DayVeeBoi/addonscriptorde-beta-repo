@@ -10,10 +10,12 @@ import xbmcplugin
 import xbmcgui
 import xbmcaddon
 
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.southpark_de'
+addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
-addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
@@ -21,8 +23,8 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
-baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "southparkstudios.com", "-"]
-baseUrl = addon.getSetting("country")
+baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "-"]
+baseUrl = addon.getSetting("countryNew")
 baseUrl = baseUrls[int(baseUrl)]
 language = addon.getSetting("language")
 language = ["de", "en"][int(language)]
@@ -106,10 +108,10 @@ def playVideo(url):
             if not "<title>South Park Intro" in entry:
                 match = re.compile('<media:content type="text/xml" medium="video" duration="(.+?)" isDefault="true" url="(.+?)"', re.DOTALL).findall(entry)
                 url = match[0][1].replace("&amp;", "&")
-                content = getUrl(url)
+                content = getUrl(url+"&acceptMethods=hdn1")
                 matchMp4 = re.compile('width=".+?" height=".+?" type="video/mp4" bitrate="(.+?)">.+?<src>(.+?)</src>', re.DOTALL).findall(content)
                 matchFlv = re.compile('width=".+?" height=".+?" type="video/x-flv" bitrate="(.+?)">.+?<src>(.+?)</src>', re.DOTALL).findall(content)
-                matchCC = re.compile('<transcript kind="captions".+?src="(.+?)"', re.DOTALL).findall(content)
+                matchCC = re.compile('<transcript kind="captions".*?format="ttml" src="(.+?)"', re.DOTALL).findall(content)
                 subTitleUrl = ""
                 if matchCC:
                     subTitleUrl = matchCC[0]
@@ -125,12 +127,14 @@ def playVideo(url):
                         if int(br) > bitrate:
                             bitrate = int(br)
                             urlNew = urlTemp
+                            """
                             if "/mtvnorigin/" in urlNew:
                                 urlNew = "http://mtvni.rd.llnwd.net/44620"+urlNew[urlNew.find("/mtvnorigin/"):]
                             elif "/viacomspstrm/" in urlNew:
                                 urlNew = "http://mtvni.rd.llnwd.net/44620/mtvnorigin/"+urlNew[urlNew.find("/viacomspstrm/")+14:]
                             elif "/mtviestor/" in urlNew:
                                 urlNew = "http://mtvni.rd.llnwd.net/44620/cdnorigin"+urlNew[urlNew.find("/mtviestor/"):]
+                            """
                     listitem = xbmcgui.ListItem("S"+matchSE[0][0]+"E"+matchSE[0][1]+" - "+matchTitle[0], thumbnailImage=matchThumb[0])
                     if xbox:
                         pluginUrl = "plugin://video/South Park/?url="+urllib.quote_plus(urlNew)+"&subtitleUrl="+urllib.quote_plus(subTitleUrl)+"&mode=playVideoPart"

@@ -21,7 +21,7 @@ iconWeltDerWunder=xbmc.translatePath('special://home/addons/'+addonID+'/iconWelt
 iconZDF=xbmc.translatePath('special://home/addons/'+addonID+'/iconZDF.png')
 iconTele5=xbmc.translatePath('special://home/addons/'+addonID+'/iconTele5.png')
 iconTT=xbmc.translatePath('special://home/addons/'+addonID+'/iconTT.png')
-iconPS=xbmc.translatePath('special://home/addons/'+addonID+'/iconPS.png')
+icon7TV=xbmc.translatePath('special://home/addons/'+addonID+'/icon7TV.png')
 iconTLC=xbmc.translatePath('special://home/addons/'+addonID+'/iconTLC.png')
 
 
@@ -43,7 +43,7 @@ def index():
     addDir("Tele 5","plugin://plugin.video.tele5_de",iconTele5)
     addDir("NOW","plugin://plugin.video.rtl_now", iconNOW)
     addDir("TV Today - Best of Mediatheken","plugin://plugin.video.tvtoday_de", iconTT)
-    addDir("ProSiebenSat.1 Media","plugin://plugin.video.prosiebensat1_media", iconPS)
+    addDir("7TV","plugin://plugin.video.prosiebensat1_media", icon7TV)
     addDir("TLC","plugin://plugin.video.tlc_de", iconTLC)
     xbmcplugin.endOfDirectory(pluginhandle)
 
