@@ -4,6 +4,13 @@
   <string id="30002">In Abspielliste einreihen</string>
   <string id="30003">Zu Addon Favoriten hinzufügen</string>
   <string id="30004">Aus Favoriten entfernen</string>
+  <string id="30005">Suchen</string>
+  <string id="30006">Favoriten</string>
+  <string id="30007">Neue Folgen</string>
+  <string id="30008">Neue Videos</string>
+  <string id="30009">Mediathek</string>
+  <string id="30010">Aktuell</string>
+  <string id="30011">Archiv</string>
   <string id="30101">View erzwingen</string>
-  <string id="30103">Thumb als Fanart nutzen</string>
+  <string id="30104">Thumb anstelle des Fanarts nutzen</string>
 </strings>
