@@ -18,3 +18,5 @@
 - Small bugfix
 1.0.9
 - Fixed site changes
+1.1.0
+- Added context menu to list all seasons

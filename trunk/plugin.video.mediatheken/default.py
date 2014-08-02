@@ -23,6 +23,7 @@ iconTele5=xbmc.translatePath('special://home/addons/'+addonID+'/iconTele5.png')
 iconTT=xbmc.translatePath('special://home/addons/'+addonID+'/iconTT.png')
 icon7TV=xbmc.translatePath('special://home/addons/'+addonID+'/icon7TV.png')
 iconTLC=xbmc.translatePath('special://home/addons/'+addonID+'/iconTLC.png')
+iconSTV=xbmc.translatePath('special://home/addons/'+addonID+'/iconSTV.png')
 
 
 def index():
@@ -45,6 +46,7 @@ def index():
     addDir("TV Today - Best of Mediatheken","plugin://plugin.video.tvtoday_de", iconTT)
     addDir("7TV","plugin://plugin.video.prosiebensat1_media", icon7TV)
     addDir("TLC","plugin://plugin.video.tlc_de", iconTLC)
+    addDir("Servus TV","plugin://plugin.video.servustv_com", iconSTV)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
