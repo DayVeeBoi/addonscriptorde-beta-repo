@@ -13,3 +13,5 @@
 - Added TLC
 1.0.5
 - Changed ProSiebenSat.1 to 7TV
+1.0.6
+- Added Servus TV
