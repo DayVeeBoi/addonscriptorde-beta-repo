@@ -470,6 +470,61 @@ def playChannel(filename):
                 if limit==pos:
                     break
                 pos+=1
+        elif type.lower().startswith("deezer:"):
+            deezerType = type.lower().split(":")[1]
+            if deezerType=="playlist":
+                if cacheDuration==-1:
+                    cacheDuration=7
+                content = cache("http://api.deezer.com/playlist/"+value, cacheDuration)
+            elif deezerType=="radio":
+                if cacheDuration==-1:
+                    cacheDuration=7
+                content = cache("http://api.deezer.com/radio/"+value+"/tracks?limit=100", cacheDuration)
+            elif deezerType=="charts":
+                if cacheDuration==-1:
+                    cacheDuration=7
+                content = cache("http://api.deezer.com/editorial/"+value+"/charts?limit=100", cacheDuration)
+            elif deezerType=="album":
+                if cacheDuration==-1:
+                    cacheDuration=30
+                content = cache("http://api.deezer.com/album/"+value, cacheDuration)
+            elif deezerType=="artist":
+                if cacheDuration==-1:
+                    cacheDuration=30
+                content = cache("https://api.deezer.com/artist/"+value+"/top?limit=100", cacheDuration)
+            content = json.loads(content)
+            try:
+                content = content["tracks"]["data"]
+            except:
+                content = content["data"]
+            try:
+                thumb = content["cover"]+"?size=big"
+            except:
+                thumb = ""
+            for item in content:
+                artist = item["artist"]["name"].encode('utf-8')
+                title = item["title"].encode('utf-8')
+                filtered = False
+                for entry2 in blacklist:
+                    if entry2.strip().lower() and entry2.lower() in artist.lower():
+                        filtered = True
+                if filtered:
+                    continue
+                title = artist+" - "+title
+                try:
+                    thumb = item["album"]["cover"]+"?size=big"
+                except:
+                    thumb = ""
+                if xbox:
+                    url = "plugin://video/My Music TV/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                else:
+                    url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                if ((not unwatched) or unwatched and not url in historyContent) and not title in dupeList and not blacklistContains(url):
+                    musicVideos.append([title, url, thumb])
+                    dupeList.append(title)
+                if limit==pos:
+                    break
+                pos+=1
     fh.close()
     if shuffled:
         random.shuffle(musicVideos)
