@@ -7,3 +7,5 @@
 - Added needed modifications for PTVL
 1.0.3
 - Changed default caching duration
+1.0.4
+- Added Deezer support

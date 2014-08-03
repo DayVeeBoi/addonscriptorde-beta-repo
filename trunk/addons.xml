@@ -540,7 +540,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.my_music_tv" name="My Music TV" version="1.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.my_music_tv" name="My Music TV" version="1.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -562,7 +562,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.8" provider-name="AddonScriptorDE">
+<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.2.9" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
