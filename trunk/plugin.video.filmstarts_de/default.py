@@ -6,6 +6,7 @@ import socket
 import xbmcplugin
 import xbmcaddon
 import xbmcgui
+import os
 import re
 import sys
 
@@ -16,6 +17,9 @@ addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 translation = addon.getLocalizedString
+addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
+defaultFanart = os.path.join(addonDir ,'fanart.png')
+icon = os.path.join(addonDir ,'icon.png')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 showAllTrailers = addon.getSetting("showAllTrailers") == "true"
 forceView = addon.getSetting("forceView") == "true"
@@ -61,7 +65,7 @@ def listVideos(urlFull):
             maxPage = int(match[0][2])
         except:
             pass
-    spl = content.split('<div class="datablock')
+    spl = content.split('class="datablock')
     for i in range(1, len(spl), 1):
         entry = spl[i]
         match = re.compile("src='(.+?)'", re.DOTALL).findall(entry)
@@ -227,6 +231,8 @@ def addLink(name, url, mode, iconimage):
     liz.setInfo(type="Video", infoLabels={"Title": name})
     if useCoverAsFanart:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     liz.setProperty('IsPlayable', 'true')
     liz.addContextMenuItems([(translation(30011), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -241,6 +247,8 @@ def addSmallThumbLink(name, url, mode, iconimage, fanart=""):
     liz.setProperty('IsPlayable', 'true')
     if useCoverAsFanart:
         liz.setProperty("fanart_image", fanart)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     liz.addContextMenuItems([(translation(30011), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -249,10 +257,12 @@ def addSmallThumbLink(name, url, mode, iconimage, fanart=""):
 def addDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+urllib.quote_plus(mode)+"&fanart="+urllib.quote_plus(iconimage)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useCoverAsFanart:
+    if useCoverAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
