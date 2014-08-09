@@ -9,3 +9,5 @@
 1.0.4
 - Changed content source to 7TV Api
 - Changed name from "ProSiebenSat.1 Media" to "7TV"
+1.0.5
+- "ProSiebenMaxx" and "Sat.1 Gold" are now officially supported

@@ -49,8 +49,8 @@ def index():
     addDir(translation(30013), "sat1", "channelMain", iconSat1)
     addDir(translation(30014), "kabel1", "channelMain", iconKabel1)
     addDir(translation(30015), "sixx", "channelMain", iconSixx)
-    #addDir(translation(30016), "prosiebenmaxx", "channelMain", iconMaxx)
-    #addDir(translation(30017), "sat1gold", "channelMain", iconGold)
+    addDir(translation(30016), "prosiebenmaxx", "channelMain", iconMaxx)
+    addDir(translation(30017), "sat1gold", "channelMain", iconGold)
     addDir(translation(30005), "", "search", thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
 

@@ -23,4 +23,6 @@
 2.0.9
 - Fixed geoblocking filter
 2.1.0
-- Fixed Concert livestreams
+- Fixed concert livestreams
+2.1.1
+- Added support for concert collections

@@ -14,6 +14,8 @@
 1.0.7
 - Fixed geoblocking detection
 1.0.8
-- Fixed subtitle support
 - Fixed video playback (HD currently not supported)
-- Removed US site support (US site is now using hulu)
+- Fixed subtitle support
+- Removed US site support
+1.0.9
+- Readded US site support
