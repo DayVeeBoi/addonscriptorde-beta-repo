@@ -20,3 +20,5 @@
 - Fixed site changes
 1.1.0
 - Added context menu to list all seasons
+1.1.1
+- Added setting to force listing without thumbs

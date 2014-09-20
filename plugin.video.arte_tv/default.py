@@ -140,9 +140,9 @@ def listSearchVideos(urlMain):
 
 def listCats(type, regionFilter):
     content = getUrl(baseUrl+"/guide/"+language+"/plus7")
-    content = content[content.find('<ul class="span12" data-filter="'+type+'">'):]
+    content = content[content.find("<ul data-filter='"+type+"'>"):]
     content = content[:content.find('</ul>')]
-    match = re.compile('<a href="(.+?)" data-controller="catchup" data-action="refresh" >(.+?)</a>', re.DOTALL).findall(content)
+    match = re.compile('data-controller="catchup" href="(.+?)">(.+?)<', re.DOTALL).findall(content)
     for url, title in match:
         title = cleanTitle(title)
         url = baseUrl+url.replace("?", ".json?").replace("&amp;", "&")+"&regions="+regionFilter
@@ -243,7 +243,7 @@ def playVideoNew(url):
 
 def getStreamUrlNew(url):
     content = getUrl(url)
-    match = re.compile('arte_vp_url="(.+?)"', re.DOTALL).findall(content)
+    match = re.compile('arte_vp_url=[\'"](.+?)[\'"]', re.DOTALL).findall(content)
     if "concert.arte.tv" in url:
         url = match[0]
         content = getUrl(url)

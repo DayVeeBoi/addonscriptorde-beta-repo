@@ -41,3 +41,6 @@
 - Fixed bug with mysql dbs
 1.1.6
 - Fixed bug with Chrome Launcher
+1.1.7
+- Removed Vimeo addon dependency (not working anymore)
+- Implemented Vimeo video url resolution

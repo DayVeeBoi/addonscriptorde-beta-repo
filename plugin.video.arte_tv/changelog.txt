@@ -26,3 +26,5 @@
 - Fixed concert livestreams
 2.1.1
 - Added support for concert collections
+2.1.2
+- Fixed site changes

@@ -15,10 +15,11 @@ import xbmcgui
 import xbmcaddon
 import SimpleDownloader
 
-
-addon = xbmcaddon.Addon()
+#addon = xbmcaddon.Addon()
+#addonID = addon.getAddonInfo('id')
+addonID = 'plugin.video.reddit_tv'
+addon = xbmcaddon.Addon(id=addonID)
 pluginhandle = int(sys.argv[1])
-addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 osWin = xbmc.getCondVisibility('system.platform.windows')
 osOsx = xbmc.getCondVisibility('system.platform.osx')
@@ -418,9 +419,9 @@ def getYoutubePlayPluginUrl(id):
 
 def getVimeoPlayPluginUrl(id):
     if xbox:
-        url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
+        url = "plugin://video/Reddit.com/?mode=playVimeoVideo&url=" + id
     else:
-        url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
+        url = "plugin://plugin.video.reddit_tv/?mode=playVimeoVideo&url=" + id
     return url
 
 
@@ -445,14 +446,6 @@ def getYoutubeDownloadPluginUrl(id):
         url = "plugin://video/YouTube/?path=/root/search&action=download&videoid=" + id
     else:
         url = "plugin://plugin.video.youtube/?path=/root/search&action=download&videoid=" + id
-    return url
-
-
-def getVimeoDownloadPluginUrl(id):
-    if xbox:
-        url = "plugin://video/Vimeo/?path=/root/search/new/search&action=download&videoid=" + id
-    else:
-        url = "plugin://plugin.video.vimeo/?path=/root/search/new/search&action=download&videoid=" + id
     return url
 
 
@@ -483,6 +476,17 @@ def getLiveLeakStreamUrl(id):
     return url
 
 
+def getVimeoStreamUrl(id):
+    content = opener.open("http://vimeo.com/"+id).read()
+    match = re.compile('data-config-url="(.+?)"', re.DOTALL).findall(content)
+    content = json.loads(opener.open(match[0].replace("&amp;","&")).read())
+    try:
+        url = content["request"]["files"]["h264"]["hd"]["url"]
+    except:
+        url = content["request"]["files"]["h264"]["sd"]["url"]
+    return url
+
+
 def playVideo(url):
     listitem = xbmcgui.ListItem(path=url)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
@@ -490,6 +494,10 @@ def playVideo(url):
 
 def playLiveLeakVideo(id):
     playVideo(getLiveLeakStreamUrl(id))
+
+
+def playVimeoVideo(id):
+    playVideo(getVimeoStreamUrl(id))
 
 
 def downloadLiveLeakVideo(id):
@@ -651,8 +659,8 @@ def addLink(name, mode, iconimage, description, date, nr, site, subreddit, hoste
     entries = []
     if hoster=="youtube":
         entries.append((translation(30025), 'RunPlugin('+getYoutubeDownloadPluginUrl(videoID)+')',))
-    elif hoster=="vimeo":
-        entries.append((translation(30025), 'RunPlugin('+getVimeoDownloadPluginUrl(videoID)+')',))
+    #elif hoster=="vimeo":
+    #    entries.append((translation(30025), 'RunPlugin('+getVimeoDownloadPluginUrl(videoID)+')',))
     elif hoster=="dailymotion":
         entries.append((translation(30025), 'RunPlugin('+getDailymotionDownloadPluginUrl(videoID)+')',))
     elif hoster=="liveleak":
@@ -736,10 +744,14 @@ elif mode == 'listFavourites':
     listFavourites(url)
 elif mode == 'playVideo':
     playVideo(url)
+elif mode == 'playVimeoVideo':
+    playVimeoVideo(url)
 elif mode == 'playLiveLeakVideo':
     playLiveLeakVideo(url)
 elif mode == 'downloadLiveLeakVideo':
     downloadLiveLeakVideo(url)
+elif mode == 'downloadVimeoVideo':
+    downloadVimeoVideo(url)
 elif mode == 'addSubreddit':
     addSubreddit(url)
 elif mode == 'removeSubreddit':
