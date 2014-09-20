@@ -30,6 +30,7 @@ iconNTV = os.path.join(addonDir, 'iconNTV.png')
 opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:24.0) Gecko/20100101 Firefox/24.0"
 opener.addheaders = [('User-Agent', userAgent)]
+useNoThumbMode = addon.getSetting("useNoThumbMode") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
 viewMode = str(addon.getSetting("viewID"))
@@ -68,10 +69,10 @@ def index():
 
 
 def listChannel(urlMain, thumb):
-    if urlMain == urlMainRTL:
+    if urlMain == urlMainRTL and not useNoThumbMode:
         addDir(translation(30016), urlMain+"/newsuebersicht.php", "listShowsThumb", thumb)
         addDir(translation(30015), urlMain+"/sendung_a_z.php", "listShowsThumb", thumb)
-    elif urlMain in [urlMainVOX, urlMainNTV, urlMainRTLNitro]:
+    elif urlMain in [urlMainVOX, urlMainNTV, urlMainRTLNitro] and not useNoThumbMode:
         addDir(translation(30014), urlMain+"/sendung_a_z.php", "listShowsThumb", thumb)
     else:
         addDir(translation(30014), urlMain, "listShowsNoThumb", thumb)
@@ -123,11 +124,12 @@ def listShowsNoThumb(urlMain, thumb):
         if match:
             title = cleanTitle(match[0]).replace(" online ansehen", "")
             match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-            url = urlMain+match[0]
-            if '>FREE<' in entry or '>NEW<' in entry:
-                if url not in entries:
-                    addShowDir(title, url, 'listVideos', thumb)
-                    entries.append(url)
+            if match and match[0].startswith("/"):
+                url = urlMain+match[0]
+                if '>FREE<' in entry or '>NEW<' in entry:
+                    if url not in entries:
+                        addShowDir(title, url, 'listVideos', thumb)
+                        entries.append(url)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')

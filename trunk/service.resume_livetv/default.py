@@ -27,6 +27,10 @@ class PlayerEvents(xbmc.Player):
                 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
                 listitem = xbmcgui.ListItem(self.currentVideoTitle, thumbnailImage=self.currentVideoThumb)
                 playlist.add(self.currentVideoUrl, listitem)
+    def onPlayBackStopped(self):
+        self.currentVideoUrl = ""
+        self.currentVideoTitle = ""
+        self.currentVideoThumb = ""
 
 
 player=PlayerEvents()

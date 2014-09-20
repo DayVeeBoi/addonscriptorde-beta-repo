@@ -29,6 +29,7 @@
   <string id="30101">Use thumb as fanart</string>
   <string id="30102">Force View</string>
   <string id="30103">ViewID</string>
+  <string id="30104">Use alternate listing without thumbs (if shows are missing)</string>
   <string id="30201">General</string>
   <string id="30202">Channels</string>
 </strings>

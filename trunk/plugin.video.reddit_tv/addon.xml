@@ -3,7 +3,6 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
-        <import addon="plugin.video.vimeo" version="2.3.0"/>
         <import addon="plugin.video.dailymotion_com" version="1.0.0"/>
         <import addon="script.module.simple.downloader" version="1.0.0"/>
         <import addon="plugin.program.chrome.launcher" version="1.0.0"/>

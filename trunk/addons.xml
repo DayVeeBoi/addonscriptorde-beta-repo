@@ -99,7 +99,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.1.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.1.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -651,7 +651,6 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
-        <import addon="plugin.video.vimeo" version="2.3.0"/>
         <import addon="plugin.video.dailymotion_com" version="1.0.0"/>
         <import addon="script.module.simple.downloader" version="1.0.0"/>
         <import addon="plugin.program.chrome.launcher" version="1.0.0"/>
@@ -671,7 +670,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.rtl_now" name="NOW" version="1.1.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.rtl_now" name="NOW" version="1.1.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1220,13 +1219,12 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.0.9" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.reddit_com" name="Video/Image Screensaver: Reddit.com" version="1.1.0" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.image.reddit_com" version="1.0.0"/>
     <import addon="plugin.video.reddit_tv" version="1.0.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
-    <import addon="plugin.video.vimeo" version="2.3.0"/>
     <import addon="plugin.video.dailymotion_com" version="1.0.0"/>
   </requires>
   <extension library="screensaver.py" point="xbmc.ui.screensaver"/>
@@ -1300,7 +1298,7 @@
   </extension>
 </addon>
 
-<addon id="service.resume_livetv" name="Resume LiveTV" version="1.0.0" provider-name="AddonScriptorDE">
+<addon id="service.resume_livetv" name="Resume LiveTV" version="1.0.1" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>

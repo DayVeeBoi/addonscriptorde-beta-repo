@@ -220,9 +220,9 @@ def getYoutubeUrl(id):
 
 def getVimeoUrl(id):
     if xbox:
-        url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
+        url = "plugin://video/Reddit.tv/?url=" + id + "&mode=playVimeoVideo"
     else:
-        url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
+        url = "plugin://plugin.video.reddit_tv/?url=" + id + "&mode=playVimeoVideo"
     return url
 
 

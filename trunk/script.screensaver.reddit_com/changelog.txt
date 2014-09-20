@@ -19,3 +19,6 @@
 - Added image screensaver function
 1.0.9
 - Fixed volume detection on Gotham
+1.1.0
+- Removed Vimeo addon dependency (not working anymore)
+- Vimeo video url resolution is now done via the Reddit.tv addon
