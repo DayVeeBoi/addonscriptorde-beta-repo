@@ -12,7 +12,9 @@ import shutil
 
 def download(videoID, title, year):
     filename = (''.join(c for c in unicode(videoID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".jpg"
+    filenameNone = (''.join(c for c in unicode(videoID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".none"
     coverFile = os.path.join(cacheFolderCoversTMDB, filename)
+    coverFileNone = os.path.join(cacheFolderCoversTMDB, filenameNone)
     fanartFile = os.path.join(cacheFolderFanartTMDB, filename)
     content = opener.open("http://api.themoviedb.org/3/search/"+videoType+"?api_key="+data+"&query="+urllib.quote_plus(title.strip())+"&year="+urllib.quote_plus(year)+"&language=en").read()
     match = re.compile('"poster_path":"(.+?)"', re.DOTALL).findall(content)
@@ -21,6 +23,10 @@ def download(videoID, title, year):
         contentJPG = opener.open(coverUrl).read()
         fh = open(coverFile, 'wb')
         fh.write(contentJPG)
+        fh.close()
+    else:
+        fh = open(coverFileNone, 'w')
+        fh.write("")
         fh.close()
     match = re.compile('"backdrop_path":"(.+?)"', re.DOTALL).findall(content)
     if match:

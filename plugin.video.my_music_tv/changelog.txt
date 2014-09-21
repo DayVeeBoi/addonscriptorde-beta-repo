@@ -9,3 +9,6 @@
 - Changed default caching duration
 1.0.4
 - Added Deezer support
+1.0.5
+- Added iTunes Charts support
+- Fixed Youtube playlist bug

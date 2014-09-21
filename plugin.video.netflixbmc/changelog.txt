@@ -99,3 +99,11 @@
 - Added context menus for browsing similar movies/tvshows
 - Changed UserAgent (native support on Linux systems without wine/pipelight)
 - Switched to HTML5 Player: Chrome >=38 required (Win/OSX/Linux)
+1.3.1
+- Added more personal stuff to Suggestions
+- Fixed Suggestions for multi-profile accounts
+- Fixed bug with empty search results
+- Readded support for IExplorer (HTML5 only supported in combination with Win 8.1)
+- Added notification to inform users about new HTML5 Player / required Chrome version
+- Webremote: changed xdotool key-definitons
+- Improved downloading of tmdb content

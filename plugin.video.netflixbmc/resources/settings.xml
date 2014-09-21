@@ -21,6 +21,7 @@
         <setting label="30116" type="action" enable="eq(-1,true)" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=configureUtility)"/>
         <setting id="remoteControl" type="bool" label="30137" default="false"/>
         <setting id="dontUseKiosk" type="bool" label="30133" default="false"/>
+        <setting id="winBrowserNew" type="enum" label="30104" values="Chrome|IExplorer" default="0"/>
         <setting type="sep" />
         <setting label="30132" type="action" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=deleteCache)"/>
         <setting label="30125" type="action" action="RunPlugin(plugin://plugin.video.netflixbmc/?mode=deleteCookies)"/>
