@@ -107,3 +107,5 @@
 - Added notification to inform users about new HTML5 Player / required Chrome version
 - Webremote: changed xdotool key-definitons
 - Improved downloading of tmdb content
+1.3.2
+- Changed notification (Chrome beta is not required anymore)
