@@ -303,7 +303,7 @@ def playChannel(filename):
                 cacheDuration=7
             """
             #Not usable: max 50 items
-            content = cache("https://gdata.youtube.com/feeds/api/playlists/"+spl[1].strip()+"?v=2", cacheDuration)
+            content = cache("https://gdata.youtube.com/feeds/api/playlists/"+value+"?v=2", cacheDuration)
             match = re.compile("<media:title type='plain'>(.+?)</media:title>.+?<yt:videoid>(.+?)</yt:videoid>", re.DOTALL).findall(content)
             #Not usable: max 100 items
             content = cache("https://www.youtube.com/playlist?list="+spl[1].strip(), cacheDuration)
@@ -313,7 +313,7 @@ def playChannel(filename):
             content = cache("https://gdata.youtube.com/feeds/api/playlists/"+value+"?v=2", cacheDuration)
             match = re.compile("<media:title type='plain'>(.+?)</media:title>.+?<yt:videoid>(.+?)</yt:videoid>", re.DOTALL).findall(content)
             xbmc.sleep(random.randint(500,1000))
-            content = cache("https://www.youtube.com/watch?v="+match[0][1]+"&list="+spl[1].strip(), cacheDuration)
+            content = cache("https://www.youtube.com/watch?v="+match[0][1]+"&list="+value, cacheDuration)
             spl=content.split('class="yt-uix-scroller-scroll-unit')
             for i in range(1,len(spl),1):
                 entry=spl[i]
@@ -515,6 +515,45 @@ def playChannel(filename):
                     thumb = item["album"]["cover"]+"?size=big"
                 except:
                     thumb = ""
+                if xbox:
+                    url = "plugin://video/My Music TV/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                else:
+                    url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                if ((not unwatched) or unwatched and not url in historyContent) and not title in dupeList and not blacklistContains(url):
+                    musicVideos.append([title, url, thumb])
+                    dupeList.append(title)
+                if limit==pos:
+                    break
+                pos+=1
+        elif type.lower()=="itunes":
+            if cacheDuration==-1:
+                cacheDuration=7
+            iTunesValues = value.split(":")
+            countryID = iTunesValues[0]
+            genreID = iTunesValues[1]
+            url = "https://itunes.apple.com/"+countryID+"/rss/topsongs/limit=100"
+            if genreID!="0":
+                url += "/genre="+genreID
+            url += "/explicit=true/xml"
+            content = cache(url, cacheDuration)
+            spl=content.split('<entry>')
+            for i in range(1,len(spl),1):
+                entry=spl[i]
+                match=re.compile('<im:artist href=".*?">(.+?)</im:artist>', re.DOTALL).findall(entry)
+                artist=match[0]
+                match=re.compile('<im:name>(.+?)</im:name>', re.DOTALL).findall(entry)
+                videoTitle=match[0]
+                if " (" in videoTitle:
+                    videoTitle=videoTitle[:videoTitle.rfind(" (")]
+                title=cleanTitle(artist+" - "+videoTitle)
+                match=re.compile('<im:image height="170">(.+?)</im:image>', re.DOTALL).findall(entry)
+                thumb=match[0].replace("170x170-75.jpg","400x400-75.jpg")
+                filtered = False
+                for entry2 in blacklist:
+                    if entry2.strip().lower() and entry2.strip().lower() in title.lower():
+                        filtered = True
+                if filtered:
+                    continue
                 if xbox:
                     url = "plugin://video/My Music TV/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
                 else:

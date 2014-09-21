@@ -55,6 +55,7 @@ password = addon.getSetting("password")
 viewIdVideos = addon.getSetting("viewIdVideos")
 viewIdEpisodes = addon.getSetting("viewIdEpisodesNew")
 viewIdActivity = addon.getSetting("viewIdActivity")
+winBrowser = int(addon.getSetting("winBrowserNew"))
 language = addon.getSetting("language")
 auth = addon.getSetting("auth")
 if len(language.split("-"))>1:
@@ -86,7 +87,12 @@ while (username == "" or password == ""):
     username = addon.getSetting("username")
     password = addon.getSetting("password")
 
+if not addon.getSetting("html5MessageShown"):
+    dialog = xbmcgui.Dialog()
+    ok = dialog.ok('IMPORTANT!', 'NetfliXBMC >=1.3.0 only supports the new Netflix HTML5 User Interface! The only browsers working with HTML5 DRM playback for now are Chrome >=38 (currently only available as beta!) and IExplorer (only in combination with Win 8.1). Make sure you have it installed and check your Netflix settings. Using Silverlight may still partially work, but its not supported anymore. The HTML5 Player is also much faster, supports 1080p and gives you a smoother playback (especially on Linux). See forum.xbmc.org for more info...')
+    addon.setSetting("html5MessageShown", "true")
 
+    
 def index():
     if login():
         addDir(translation(30011), "", 'main', "", "movie")
@@ -99,7 +105,6 @@ def main(type):
     addDir(translation(30002), urlMain+"/MyList?leid=595&link=seeall", 'listVideos', "", type)
     addDir(translation(30010), "", 'listViewingActivity', "", type)
     addDir(translation(30003), urlMain+"/WiRecentAdditionsGallery?nRR=releaseDate&nRT=all&pn=1&np=1&actionMethod=json", 'listVideos', "", type)
-    #addDir(translation(30004), urlMain+"/WiHD?dev=PC&pn=1&np=1&actionMethod=json", 'listVideos', "", type)
     if type=="tv":
         addDir(translation(30005), urlMain+"/WiGenre?agid=83", 'listVideos', "", type)
         addDir(translation(30007), "", 'listTvGenres', "", type)
@@ -111,11 +116,17 @@ def main(type):
 
 
 def wiHome(type):
-    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+    if not singleProfile:
+        setProfile()
     content = opener.open(urlMain+"/WiHome").read()
-    match = re.compile('<div class="hd clearfix"><h3><a href=".+?/WiAltGenre\\?agid=(.+?)">(.+?)<', re.DOTALL).findall(content)
-    for genreID, title in match:
-        addDir(title.strip(), urlMain+"/WiAltGenre?agid="+genreID, 'listVideos', "", type)
+    match1 = re.compile('<div class="mrow(.+?)"><div class="hd clearfix"><h3> (.+?)</h3></div><div class="bd clearfix"><div class="slider triangleBtns " id="(.+?)"', re.DOTALL).findall(content)
+    match2 = re.compile('class="hd clearfix"><h3><a href="(.+?)">(.+?)<', re.DOTALL).findall(content)
+    for temp, title, sliderID in match1:
+        if not "hide-completely" in temp:
+            addDir(title.strip(), sliderID, 'listSliderVideos', "", type)
+    for url, title in match2:
+        if "WiAltGenre" in url or "WiSimilarsByViewType" in url or "WiRecentAdditionsGallery" in url:
+            addDir(title.strip(), url, 'listVideos', "", type)
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -179,6 +190,45 @@ def listVideos(url, type):
         xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30127))+',15000,'+icon+')')
 
 
+def listSliderVideos(sliderID, type):
+    pDialog = xbmcgui.DialogProgress()
+    pDialog.create('NetfliXBMC', translation(30142)+"...")
+    if not singleProfile:
+        setProfile()
+    xbmcplugin.setContent(pluginhandle, "movies")
+    content = opener.open(urlMain+"/WiHome").read()
+    if not 'id="page-LOGIN"' in content:
+        if singleProfile and 'id="page-ProfilesGate"' in content:
+            forceChooseProfile()
+        else:
+            content = content.replace("\\t","").replace("\\n", "").replace("\\", "")
+            contentMain = content
+            content = content[content.find('id="'+sliderID+'"'):]
+            content = content[:content.find('class="ft"')]
+            match = re.compile('<span id="dbs(.+?)_', re.DOTALL).findall(content)
+            i = 1
+            for videoID in match:
+                listVideo(videoID, "", "", False, False, type)
+                i+=1
+            spl = contentMain.split('"remainderHTML":')
+            for i in range(1, len(spl), 1):
+                entry = spl[i]
+                entry = entry[:entry.find('"rowId":')]
+                if '"domId":"'+sliderID+'"' in entry:
+                    match = re.compile('<span id="dbs(.+?)_', re.DOTALL).findall(entry)
+                    i = 1
+                    for videoID in match:
+                        pDialog.update(i*100/(len(match)+10), translation(30142)+"...")
+                        listVideo(videoID, "", "", False, False, type)
+                        i+=1
+            if forceView:
+                xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
+            xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        deleteCookies()
+        xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30127))+',15000,'+icon+')')
+
+
 def listSearchVideos(url, type):
     pDialog = xbmcgui.DialogProgress()
     pDialog.create('NetfliXBMC', translation(30142)+"...")
@@ -188,13 +238,16 @@ def listSearchVideos(url, type):
     content = opener.open(url).read()
     content = json.loads(content)
     i = 1
-    for item in content["galleryVideos"]["items"]:
-        pDialog.update(i*100/len(content["galleryVideos"]["items"]), translation(30142)+"...")
-        listVideo(str(item["id"]), "", "", False, False, type)
-        i+=1
-    if forceView:
-        xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
-    xbmcplugin.endOfDirectory(pluginhandle)
+    if "galleryVideos" in content:
+        for item in content["galleryVideos"]["items"]:
+            pDialog.update(i*100/len(content["galleryVideos"]["items"]), translation(30142)+"...")
+            listVideo(str(item["id"]), "", "", False, False, type)
+            i+=1
+        if forceView:
+            xbmc.executebuiltin('Container.SetViewMode('+viewIdVideos+')')
+        xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        xbmc.executebuiltin('XBMC.Notification(NetfliXBMC:,'+str(translation(30146))+',5000,'+icon+')')
 
 
 def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies, type):
@@ -239,8 +292,10 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies, type):
         if "-" in yearTemp:
             yearTemp = yearTemp.split("-")[0]
         filename = (''.join(c for c in unicode(videoID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".jpg"
+        filenameNone = (''.join(c for c in unicode(videoID, 'utf-8') if c not in '/\\:?"*|<>')).strip()+".none"
         coverFile = os.path.join(cacheFolderCoversTMDB, filename)
-        if not os.path.exists(coverFile):
+        coverFileNone = os.path.join(cacheFolderCoversTMDB, filenameNone)
+        if not os.path.exists(coverFile) and not os.path.exists(coverFileNone):
             xbmc.executebuiltin('XBMC.RunScript('+downloadScript+', '+urllib.quote_plus(videoTypeTemp)+', '+urllib.quote_plus(videoID)+', '+urllib.quote_plus(titleTemp)+', '+urllib.quote_plus(yearTemp)+')')
     match = re.compile('src=".+?">.*?<.*?>(.+?)<', re.DOTALL).findall(videoDetails)
     desc = ""
@@ -501,7 +556,15 @@ def playVideo(id):
         except:
             pass
     elif osWin:
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
+        if winBrowser == 1:
+            path = 'C:\\Program Files\\Internet Explorer\\iexplore.exe'
+            path64 = 'C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe'
+            if os.path.exists(path):
+                subprocess.Popen('"'+path+'" -k "'+url+'"', shell=False)
+            elif os.path.exists(path64):
+                subprocess.Popen('"'+path64+'" -k "'+url+'"', shell=False)
+        else:
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
         if useUtility:
             subprocess.Popen('"'+utilityPath+'"', shell=False)
     if remoteControl:
@@ -825,7 +888,7 @@ class window(xbmcgui.WindowXMLDialog):
             procAll = ""
             for line in proc.stdout:
                 procAll+=line
-            if "chrome.exe" in procAll or "iexplore.exe" in procAll:
+            if "chrome.exe" in procAll:
                 if action in [ACTION_SHOW_INFO, ACTION_SHOW_GUI, ACTION_STOP, ACTION_PARENT_DIR, ACTION_PREVIOUS_MENU, KEY_BUTTON_BACK]:
                     subprocess.Popen('"'+sendKeysPath+'"'+' sendKey=Close', shell=False)
                     self.close()
@@ -848,19 +911,18 @@ class window(xbmcgui.WindowXMLDialog):
                 procAll+=line
             if "chrome" in procAll or "chromium" in procAll:
                 if action in [ACTION_SHOW_INFO, ACTION_SHOW_GUI, ACTION_STOP, ACTION_PARENT_DIR, ACTION_PREVIOUS_MENU, KEY_BUTTON_BACK]:
-                    subprocess.Popen('xdotool key esc', shell=True)
-                    subprocess.Popen('xdotool key alt+f4', shell=True)
+                    subprocess.Popen('xdotool key alt+F4', shell=True)
                     self.close()
                 elif action==ACTION_SELECT_ITEM:
-                    subprocess.Popen('xdotool key return', shell=True)
+                    subprocess.Popen('xdotool key Return', shell=True)
                 elif action==ACTION_MOVE_LEFT:
-                    subprocess.Popen('xdotool key left', shell=True)
+                    subprocess.Popen('xdotool key Left', shell=True)
                 elif action==ACTION_MOVE_RIGHT:
-                    subprocess.Popen('xdotool key right', shell=True)
+                    subprocess.Popen('xdotool key Right', shell=True)
                 elif action==ACTION_MOVE_UP:
-                    subprocess.Popen('xdotool key up', shell=True)
+                    subprocess.Popen('xdotool key Up', shell=True)
                 elif action==ACTION_MOVE_DOWN:
-                    subprocess.Popen('xdotool key down', shell=True)
+                    subprocess.Popen('xdotool key Down', shell=True)
             else:
                 self.close()
         elif osOSX:
@@ -868,7 +930,7 @@ class window(xbmcgui.WindowXMLDialog):
             procAll = ""
             for line in proc.stdout:
                 procAll+=line
-            if "chrome" in procAll or "safari" in procAll:
+            if "chrome" in procAll:
                 if action in [ACTION_SHOW_INFO, ACTION_SHOW_GUI, ACTION_STOP, ACTION_PARENT_DIR, ACTION_PREVIOUS_MENU, KEY_BUTTON_BACK]:
                     subprocess.Popen('cliclick kd:alt', shell=True)
                     subprocess.Popen('cliclick kp:f4', shell=True)
@@ -902,6 +964,8 @@ elif mode == 'wiHome':
     wiHome(type)
 elif mode == 'listVideos':
     listVideos(url, type)
+elif mode == 'listSliderVideos':
+    listSliderVideos(url, type)
 elif mode == 'listSearchVideos':
     listSearchVideos(url, type)
 elif mode == 'addToQueue':
