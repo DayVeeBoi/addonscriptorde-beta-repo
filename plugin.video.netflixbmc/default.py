@@ -32,6 +32,7 @@ addonUserDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 utilityPath = xbmc.translatePath('special://home/addons/'+addonID+'/resources/NetfliXBMC_Utility.exe')
 sendKeysPath = xbmc.translatePath('special://home/addons/'+addonID+'/resources/NetfliXBMC_SendKeys.exe')
+fakeVidPath = xbmc.translatePath('special://home/addons/'+addonID+'/resources/fakeVid.mp4')
 downloadScript = xbmc.translatePath('special://home/addons/'+addonID+'/download.py')
 searchHistoryFolder = os.path.join(addonUserDataFolder, "history")
 cacheFolder = os.path.join(addonUserDataFolder, "cache")
@@ -314,7 +315,7 @@ def listVideo(videoID, title, thumbUrl, tvshowIsEpisode, hideMovies, type):
     if rating:
         rating = match[0]
     title = title.replace("&amp;", "&")
-    nextMode = "playVideo"
+    nextMode = "playVideoMain"
     if browseTvShows and videoType == "tvshow":
         nextMode = "listSeasons"
     added = False
@@ -390,7 +391,7 @@ def listEpisodes(seriesID, season):
                     thumb = item["stills"][0]["url"]
                 except:
                     thumb = ""
-                addEpisodeDir(episodeTitle, episodeID, 'playVideo', thumb, desc, str(duration), season, episodeNr, seriesID, playcount)
+                addEpisodeDir(episodeTitle, episodeID, 'playVideoMain', thumb, desc, str(duration), season, episodeNr, seriesID, playcount)
     if forceView:
         xbmc.executebuiltin('Container.SetViewMode('+viewIdEpisodes+')')
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -466,6 +467,8 @@ def getSeriesInfo(seriesID):
 
 
 def addMyListToLibrary():
+    if not singleProfile:
+        setProfile()
     content = opener.open(urlMain+"/MyList?leid=595&link=seeall").read()
     if not 'id="page-LOGIN"' in content:
         if singleProfile and 'id="page-ProfilesGate"' in content:
@@ -519,6 +522,14 @@ def addMyListToLibrary():
 
 
 def playVideo(id):
+    playVideoMain(id)
+    xbmc.sleep(5000) 
+    listitem = xbmcgui.ListItem(path=fakeVidPath)
+    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    xbmc.PlayList(xbmc.PLAYLIST_VIDEO).clear()
+      
+
+def playVideoMain(id):
     xbmc.Player().stop()
     if singleProfile:
         url = urlMain+"/WiPlayer?movieid="+id
@@ -569,8 +580,8 @@ def playVideo(id):
             subprocess.Popen('"'+utilityPath+'"', shell=False)
     if remoteControl:
         myWindow = window('window.xml', addon.getAddonInfo('path'), 'default',)
-        myWindow.doModal()    
-
+        myWindow.doModal()
+        
 
 def configureUtility():
     if osWin:
@@ -785,7 +796,7 @@ def addVideoDir(name, url, mode, iconimage, videoType="", desc="", duration="", 
     entries = []
     if videoType == "tvshow":
         if browseTvShows:
-            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideoMain&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
         else:
             entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     if videoType != "episode":
@@ -819,7 +830,7 @@ def addVideoDirR(name, url, mode, iconimage, videoType="", desc="", duration="",
     entries = []
     if videoType == "tvshow":
         if browseTvShows:
-            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideo&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
+            entries.append((translation(30121), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=playVideoMain&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
         else:
             entries.append((translation(30118), 'Container.Update(plugin://plugin.video.netflixbmc/?mode=listSeasons&url='+urllib.quote_plus(url)+'&thumb='+urllib.quote_plus(iconimage)+')',))
     entries.append((translation(30134), 'RunPlugin(plugin://plugin.video.netflixbmc/?mode=playTrailer&url='+urllib.quote_plus(name)+')',))
@@ -974,6 +985,8 @@ elif mode == 'removeFromQueue':
     removeFromQueue(url)
 elif mode == 'playVideo':
     playVideo(url)
+elif mode == 'playVideoMain':
+    playVideoMain(url)
 elif mode == 'search':
     search(type)
 elif mode == 'login':
