@@ -98,7 +98,7 @@
 - Added progress dialog for listing videos
 - Added context menus for browsing similar movies/tvshows
 - Changed UserAgent (native support on Linux systems without wine/pipelight)
-- Switched to HTML5 Player: Chrome >=38 required (Win/OSX/Linux)
+- Switched to HTML5 Player: Chrome >=37 required (Win/OSX/Linux)
 1.3.1
 - Added more personal stuff to Suggestions
 - Fixed Suggestions for multi-profile accounts
@@ -109,3 +109,7 @@
 - Improved downloading of tmdb content
 1.3.2
 - Changed notification (Chrome beta is not required anymore)
+1.3.3
+- Fixed adding "My List" to library for multi-profile accounts
+- Added fake video playback to avoid notification when playing via library
+- Fixed bug with enabled "Play the next video automatically" setting when playing via library

@@ -331,6 +331,22 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.ign_com" name="IGN.com" version="2.0.5" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Game and Movie trailers/reviews/news</summary>
+        <language>en</language>
+        <description lang="en">Game and Movie trailers/reviews/news</description>
+    <platform>all</platform>
+    </extension>
+</addon>
+
 <addon id="plugin.video.infinitylist_com" name="InfinityList.com" version="2.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -562,7 +578,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.3.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.netflixbmc" name="NetfliXBMC" version="1.3.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -644,6 +660,27 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website></website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.redbull_tv" name="RedBull.tv" version="2.0.6" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.pyamf" version="0.6.1"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">RedBullTV: Shows and live events</summary>
+        <language>en</language>
+        <description lang="en">RedBullTV: Shows and live events</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+        <website>http://www.redbull.tv</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.redbull_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=135532</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
 
