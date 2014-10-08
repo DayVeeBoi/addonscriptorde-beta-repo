@@ -56,7 +56,7 @@ def listVideos(url):
 
 def playVideo(url):
     content = opener.open(url).read()
-    match = re.compile('"url":"(.+?)"', re.DOTALL).findall(content)
+    match = re.compile('<meta property="og:video" content="(.+?)">', re.DOTALL).findall(content)
     finalURL = match[0].replace("https","http")
     listitem = xbmcgui.ListItem(path=finalURL)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)

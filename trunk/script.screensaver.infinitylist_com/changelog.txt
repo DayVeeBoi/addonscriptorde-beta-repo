@@ -14,3 +14,6 @@
 - Fixed bug when exiting screensaver
 1.0.8
 - Fixed volume detection on Gotham
+1.0.9
+- Implemented Vimeo video url resolution
+- Removed Vimeo addon dependency (not working anymore)

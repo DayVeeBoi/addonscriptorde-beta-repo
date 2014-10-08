@@ -2,3 +2,8 @@
 - Initial release
 1.0.1
 - Changed default folder icon
+1.0.2
+- Changed name to "Youtube Music"
+- Removed info when not using Autoplay mode
+- Added support for Billboard Charts
+- Added support for iTunes Charts

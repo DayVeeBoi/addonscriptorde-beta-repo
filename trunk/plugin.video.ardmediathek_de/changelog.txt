@@ -5,3 +5,5 @@
 3.0.2
 - Fixed search
 - Fixed "Das Erste" live stream
+3.0.3
+- Fixed show listing

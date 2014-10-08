@@ -76,7 +76,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -99,7 +99,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.1.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.arte_tv" name="Arte.tv" version="2.1.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -117,7 +117,7 @@
         <description lang="fr">Regarder des vidéos de la ARTE médiathèque + Livestream (DE/FR)</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.arte_tv</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <forum>http://forum.xbmc.org/showthread.php?tid=204803</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.arte.tv</website>
     </extension>
@@ -163,7 +163,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.cbsnews_com" name="CBSnews.com" version="2.1.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.cbsnews_com" name="CBSnews.com" version="2.1.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -226,7 +226,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.disneychannel_de" name="DisneyChannel.de" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.disneychannel_de" name="DisneyChannel.de" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -266,6 +266,28 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.dmax.de/videos</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.fernsehkritik_tv" name="Fernsehkritik.tv" version="2.1.2" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">The satirical-crucial TV magazin</summary>
+        <summary lang="de">Das satirisch-kritische TV Magazin</summary>
+        <language>de</language>
+        <description lang="en">The satirical-crucial TV magazin</description>
+        <description lang="de">Das satirisch-kritische TV Magazin</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.fernsehkritik_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.fernsehkritik.tv</website>
     </extension>
 </addon>
 
@@ -347,11 +369,10 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.infinitylist_com" name="InfinityList.com" version="2.0.4" provider-name="AddonScriptorDE">
+<addon id="plugin.video.infinitylist_com" name="InfinityList.com" version="2.0.5" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
-        <import addon="plugin.video.vimeo" version="2.3.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -517,6 +538,25 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website></website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.mpora_com" name="Mpora.com" version="2.0.6" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">MPORA - Action Sports Network (Snowboarding, Surfing, Skateboarding, BMX, BMX Racing, Mountain Biking, Motocross, Skiing, Wakeboarding, Windsurfing, Kitesurfing, Road Cycling, Outdoor)</summary>
+        <language>en</language>
+        <description lang="en">MPORA - Action Sports Network (Snowboarding, Surfing, Skateboarding, BMX, BMX Racing, Mountain Biking, Motocross, Skiing, Wakeboarding, Windsurfing, Kitesurfing, Road Cycling, Outdoor)</description>
+        <website></website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.mpora_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=135470</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
 
@@ -840,7 +880,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.spotitube" name="SpotiTube" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.spotitube" name="Youtube Music" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -850,9 +890,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Spotify meets Youtube (no account needed)</summary>
+        <summary lang="en">Play music videos via Youtube</summary>
         <language></language>
-        <description lang="en">Spotify meets Youtube (no account needed)</description>
+        <description lang="en">Play music videos via Youtube</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.spotitube</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
@@ -884,7 +924,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.thatguywiththeglasses_com" name="ThatGuyWithTheGlasses.com" version="2.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.thatguywiththeglasses_com" name="ThatGuyWithTheGlasses.com" version="2.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -903,6 +943,25 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=136044</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.tgwtg.com</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.theonion_com" name="TheOnion.com" version="2.0.5" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">America's Finest News Source</summary>
+        <language>en</language>
+        <description lang="en">America's Finest News Source</description>
+        <website>http://www.theonion.com</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.theonion_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=137871</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
 
@@ -1129,6 +1188,7 @@
         <language></language>
         <description lang="en">Play Billboard charts via YouTube</description>
         <website>http://www.youtube.com</website>
+        <broken>Not supported anymore! Use the YouTube Music addon instead...</broken>
         <source>https://github.com/AddonScriptorDE/plugin.video.youtube.billboard</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=171123</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
@@ -1235,11 +1295,10 @@
   </extension>
 </addon>
 
-<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.8" provider-name="AddonScriptorDE">
+<addon id="script.screensaver.infinitylist_com" name="Video Screensaver: InfinityList.com" version="1.0.9" provider-name="AddonScriptorDE">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.youtube" version="3.0.0"/>
-    <import addon="plugin.video.vimeo" version="2.3.0"/>
   </requires>
   <extension library="screensaver.py" point="xbmc.ui.screensaver"/>
   <extension point="xbmc.addon.metadata">

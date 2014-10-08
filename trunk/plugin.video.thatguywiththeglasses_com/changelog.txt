@@ -19,3 +19,5 @@
 - Added show favorites
 - Fixed video playback on some vids
 - Added new Blip.tv addon dependency
+2.0.7
+- Fixed playback for some older videos

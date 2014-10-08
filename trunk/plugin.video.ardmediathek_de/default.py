@@ -29,7 +29,7 @@ defaultThumb = baseUrl+"/ard/static/pics/default/16_9/default_webM_16_9.jpg"
 defaultBackground = "http://www.ard.de/pool/img/ard/background/base_xl.jpg"
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
-channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/fav_new")
+channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favs.new")
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
 
 if not os.path.isdir(addon_work_folder):
@@ -91,7 +91,9 @@ def listVideos(url):
                 duration = 1
         title = cleanTitle(title)
         match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
-        thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
+        thumb = ""
+        if match:
+            thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
         addLink(title, videoID, 'playVideo', thumb, duration, desc)
     match = re.compile('class="entry" data-ctrl-.*Loader-source="{&#039;pixValue&#039;.+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
     for url, type in match:
@@ -152,13 +154,13 @@ def listShowsAZ(letter):
     spl = content.split('<div class="teaser" data-ctrl')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile('documentId=(.+?)&', re.DOTALL).findall(entry)
-        showID = match[0]
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = match[0].replace("&amp;","&")
         match = re.compile('class="headline">(.+?)<', re.DOTALL).findall(entry)
         title = match[0]
         match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
         thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
-        addShowDir(cleanTitle(title), baseUrl+"/tv/Sendung?documentId="+showID, 'listVideos', thumb)
+        addShowDir(cleanTitle(title), baseUrl+url, 'listVideos', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeShows+')')

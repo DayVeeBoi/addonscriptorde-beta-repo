@@ -13,6 +13,7 @@
         <language></language>
         <description lang="en">Play Billboard charts via YouTube</description>
         <website>http://www.youtube.com</website>
+        <broken>Not supported anymore! Use the YouTube Music addon instead...</broken>
         <source>https://github.com/AddonScriptorDE/plugin.video.youtube.billboard</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=171123</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
