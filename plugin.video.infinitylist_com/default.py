@@ -5,6 +5,7 @@ import urllib2
 import socket
 import sys
 import re
+import json
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
@@ -99,7 +100,14 @@ def playYoutubeVideo(id):
 
 
 def playVimeoVideo(id):
-    listItem = xbmcgui.ListItem(path=getVimeoUrl(id))
+    content = getUrl("http://vimeo.com/"+id)
+    match = re.compile('data-config-url="(.+?)"', re.DOTALL).findall(content)
+    content = json.loads(getUrl(match[0].replace("&amp;","&")))
+    try:
+        streamUrl = content["request"]["files"]["h264"]["hd"]["url"]
+    except:
+        streamUrl = content["request"]["files"]["h264"]["sd"]["url"]
+    listItem = xbmcgui.ListItem(path=streamUrl)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
 
 
@@ -108,14 +116,6 @@ def getYoutubeUrl(id):
         url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + id
     else:
         url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + id
-    return url
-
-
-def getVimeoUrl(id):
-    if xbox:
-        url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
-    else:
-        url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
     return url
 
 

@@ -9,3 +9,6 @@
 - Fixed site changes (video title)
 2.0.4
 - Fixed site changes
+2.0.5
+- Implemented Vimeo video url resolution
+- Removed Vimeo addon dependency (not working anymore)

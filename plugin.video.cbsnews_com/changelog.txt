@@ -24,3 +24,5 @@
 2.1.1
 - Fixed thumbnails
 - Fixed category listing (thx@nkanand4)
+2.1.2
+- Fixed 60 minutes episode listing

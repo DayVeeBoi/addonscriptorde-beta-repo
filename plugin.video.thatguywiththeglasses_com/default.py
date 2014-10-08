@@ -169,8 +169,10 @@ def playVideo(url):
         if len(match1) > 1 and "http://www.blisteredthumbs.net/" not in url:
             url = listParts(match1)
         else:
-            url = "http://blip.tv/play/"+match1[0]
-            url = url[:url.rfind('.')]
+            url = match1[0]
+            if "." in url:
+                url = url[:url.find(".")]
+            url = "http://blip.tv/play/"+url
         content = urllib.unquote_plus(getRedirectedUrl(url))
         if "file=" in content:
             id = content[content.find("/rss/flash/")+11:]

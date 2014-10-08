@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.spotitube" name="SpotiTube" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.spotitube" name="Youtube Music" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="plugin.video.youtube" version="3.0.0"/>
@@ -9,9 +9,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Spotify meets Youtube (no account needed)</summary>
+        <summary lang="en">Play music videos via Youtube</summary>
         <language></language>
-        <description lang="en">Spotify meets Youtube (no account needed)</description>
+        <description lang="en">Play music videos via Youtube</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <source>https://github.com/AddonScriptorDE/plugin.video.spotitube</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=</forum>

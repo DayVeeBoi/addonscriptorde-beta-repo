@@ -17,7 +17,6 @@ addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
-useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
 viewID = str(addon.getSetting("viewIDNew"))
 urlMain = "http://www.cbsnews.com"
@@ -82,16 +81,41 @@ def listEpisodes(url):
         match=re.compile('<span class="date">(.+?)</span>', re.DOTALL).findall(entry)
         date=match[0]
         addLink(title, urlEpisode, 'playVideo', thumb, date+"\n"+desc)
-    currentPage = url.split("/")[-1]
-    nextPage = str(int(currentPage)+1)
-    addDir(translation(30001), url.replace("/full-episodes/"+currentPage, "/full-episodes/"+nextPage), 'listEpisodes', "")
+    try:
+        currentPage = url.split("/")[-1]
+        nextPage = str(int(currentPage)+1)
+        addDir(translation(30001), url.replace("/full-episodes/"+currentPage, "/full-episodes/"+nextPage), 'listEpisodes', "")
+    except:
+        pass
+    xbmcplugin.endOfDirectory(pluginhandle)
+    if forceViewMode:
+        xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
+
+
+def listEpisodes2(url):
+    xbmcplugin.setContent(pluginhandle, "episodes")
+    content = getUrl(url)
+    spl=content.split('class="main"')
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match=re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        urlEpisode=urlMain+match[0]
+        match=re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title=cleanTitle(match[0])
+        match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb=match[0]
+        #GetImageHash - unable to stat url (randomly)
+        #thumb=match[0].replace("/140x90/","/640x360/")
+        if "?" in thumb:
+            thumb = thumb[:thumb.find("?")]
+        addLink(title, urlEpisode, 'playVideo', thumb, "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
 def list60MinutesMain(id):
-    addDir(translation(30003), urlMain+"/latest/"+id+"/full-episodes/1", 'listEpisodes', "")
+    addDir(translation(30003), urlMain+"/"+id+"/full-episodes/", 'listEpisodes2', "")
     addDir2(translation(30004), 'listVideos', "", "category", id, "0")
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -179,8 +203,6 @@ def addLink(name, url, mode, iconimage, desc="", date="", duration="", season=""
     liz.setProperty('IsPlayable', 'true')
     if duration:
         liz.addStreamInfo('video', {'duration': int(duration)})
-    if useThumbAsFanart:
-        liz.setProperty("fanart_image", iconimage)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
 
@@ -213,6 +235,8 @@ if mode == 'listVideos':
     listVideos(type, value, offset)
 elif mode == 'listEpisodes':
     listEpisodes(url)
+elif mode == 'listEpisodes2':
+    listEpisodes2(url)
 elif mode == 'list60MinutesMain':
     list60MinutesMain(url)
 elif mode == 'listEveningNewsMain':

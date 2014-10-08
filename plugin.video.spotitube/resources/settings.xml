@@ -8,6 +8,15 @@
         <setting id="cacheDir" type="folder" label="30111" default="special://profile/addon_data/plugin.video.spotitube/cache"/>
     </category>
     <category label="30202">
+        <setting id="itunesShowSubGenres" type="bool" label="30112" default="true"/>
+        <setting id="itunesForceCountry" type="bool" label="30113" default="false"/>
+        <setting id="itunesCountry" type="text" label="30114" enable="eq(-1,true)" default=""/>
+    </category>
+    <category label="30203">
+        <setting id="spotifyForceCountry" type="bool" label="30115" default="false"/>
+        <setting id="spotifyCountry" type="text" label="30116" enable="eq(-1,true)" default=""/>
+    </category>
+    <category label="30204">
         <setting id="forceView" type="bool" label="30107" default="true"/>
         <setting id="viewIDVideos" enable="eq(-1,true)" type="number" label="30108" default="500"/>
         <setting id="viewIDPlaylists" enable="eq(-2,true)" type="number" label="30109" default="500"/>

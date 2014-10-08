@@ -140,8 +140,8 @@ def listSearchVideos(urlMain):
 
 def listCats(type, regionFilter):
     content = getUrl(baseUrl+"/guide/"+language+"/plus7")
-    content = content[content.find("<ul data-filter='"+type+"'>"):]
-    content = content[:content.find('</ul>')]
+    content = content[content.find("data-filter='"+type+"'>"):]
+    content = content[:content.find('</div>\n</div>')]
     match = re.compile('data-controller="catchup" href="(.+?)">(.+?)<', re.DOTALL).findall(content)
     for url, title in match:
         title = cleanTitle(title)

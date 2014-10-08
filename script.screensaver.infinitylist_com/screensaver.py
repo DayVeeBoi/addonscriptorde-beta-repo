@@ -7,6 +7,7 @@ import urllib
 import urllib2
 import random
 import re
+import json
 
 
 class XBMCPlayer(xbmc.Player):
@@ -140,11 +141,13 @@ def getYoutubeUrl(id):
 
 
 def getVimeoUrl(id):
-    if xbox:
-        url = "plugin://video/Vimeo/?path=/root/video&action=play_video&videoid=" + id
-    else:
-        url = "plugin://plugin.video.vimeo/?path=/root/video&action=play_video&videoid=" + id
-    return url
+    content = getUrl("http://vimeo.com/"+id)
+    match = re.compile('data-config-url="(.+?)"', re.DOTALL).findall(content)
+    content = json.loads(getUrl(match[0].replace("&amp;","&")))
+    try:
+        return content["request"]["files"]["h264"]["hd"]["url"]
+    except:
+        return content["request"]["files"]["h264"]["sd"]["url"]
 
 
 def cleanTitle(title):
