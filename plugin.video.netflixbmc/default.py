@@ -63,7 +63,7 @@ if len(language.split("-"))>1:
     country = language.split("-")[1]
 
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-userAgent = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2114.2 Safari/537.36"
+userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0"
 opener.addheaders = [('User-agent', userAgent)]
 
 if not os.path.isdir(addonUserDataFolder):
@@ -556,7 +556,7 @@ def playVideoMain(id):
         except:
             pass
     elif osLinux:
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+"&userAgent="+urllib.quote_plus(userAgent)+")")
+        xbmc.executebuiltin("RunPlugin(plugin://plugin.program.chrome.launcher/?url="+urllib.quote_plus(url)+"&mode=showSite&kiosk="+kiosk+")")
         try:
             xbmc.sleep(5000)
             subprocess.Popen('xdotool mousemove 9999 9999', shell=True)
