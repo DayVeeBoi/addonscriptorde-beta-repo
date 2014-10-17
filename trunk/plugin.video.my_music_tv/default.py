@@ -534,20 +534,19 @@ def playChannel(filename):
             url = "https://itunes.apple.com/"+countryID+"/rss/topsongs/limit=100"
             if genreID!="0":
                 url += "/genre="+genreID
-            url += "/explicit=true/xml"
-            content = cache(url, cacheDuration)
-            spl=content.split('<entry>')
-            for i in range(1,len(spl),1):
-                entry=spl[i]
-                match=re.compile('<im:artist href=".*?">(.+?)</im:artist>', re.DOTALL).findall(entry)
-                artist=match[0]
-                match=re.compile('<im:name>(.+?)</im:name>', re.DOTALL).findall(entry)
-                videoTitle=match[0]
+            url += "/explicit=true/json"
+            content = cache(url, 1)
+            content = json.loads(content)
+            for item in content['feed']['entry']:
+                artist=item['im:artist']['label'].encode('utf-8')
+                videoTitle=item['im:name']['label'].encode('utf-8')
                 if " (" in videoTitle:
                     videoTitle=videoTitle[:videoTitle.rfind(" (")]
                 title=cleanTitle(artist+" - "+videoTitle)
-                match=re.compile('<im:image height="170">(.+?)</im:image>', re.DOTALL).findall(entry)
-                thumb=match[0].replace("170x170-75.jpg","400x400-75.jpg")
+                try:
+                    thumb=item['im:image'][2]['label'].replace("170x170-75.jpg","400x400-75.jpg")
+                except:
+                    thumb=""
                 filtered = False
                 for entry2 in blacklist:
                     if entry2.strip().lower() and entry2.strip().lower() in title.lower():

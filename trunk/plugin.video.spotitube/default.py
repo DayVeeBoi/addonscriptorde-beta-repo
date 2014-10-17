@@ -44,7 +44,9 @@ spotifyForceCountry = addon.getSetting("spotifyForceCountry") == "true"
 spotifyCountry = addon.getSetting("spotifyCountry")
 userAgent = "Mozilla/5.0 (Windows NT 6.1; rv:30.0) Gecko/20100101 Firefox/30.0"
 opener.addheaders = [('User-Agent', userAgent)]
-urlMain = "http://www.billboard.com"
+urlMainBB = "http://www.billboard.com"
+urlMainOC = "http://www.officialcharts.com"
+urlMainBP = "http://www.beatport.com"
 if itunesForceCountry and itunesCountry:
     iTunesRegion = itunesCountry
 else:
@@ -61,8 +63,10 @@ if not cacheDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')) and not os
 
 
 def index():
-    addDir(translation(30002), "", "billboardMain", "")
+    addDir("Beatport", "", "bpMain", "")
+    addDir("Billboard", "", "billboardMain", "")
     addDir(translation(30043), "", "itunesMain", "")
+    addDir("Official Charts Company (UK)", "", "ocMain", "")
     addDir(translation(30044), "", "spotifyMain", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -71,6 +75,32 @@ def spotifyMain():
     addDir(translation(30041), "http://api.tunigo.com/v3/space/toplists?region="+spotifyRegion+"&page=0&per_page=50&platform=web", "listSpotifyPlaylists", "")
     addDir(translation(30042), "http://api.tunigo.com/v3/space/featured-playlists?region="+spotifyRegion+"&page=0&per_page=50&dt="+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M").replace(":","%3A")+"%3A00&platform=web", "listSpotifyPlaylists", "")
     addDir(translation(30006), "http://api.tunigo.com/v3/space/genres?region="+spotifyRegion+"&per_page=1000&platform=web", "listSpotifyGenres", "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def ocMain():
+    addAutoPlayDir("Official", urlMainOC+"/singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Sales", urlMainOC+"/singles-sales-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Downloads", urlMainOC+"/singles-download-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Streaming", urlMainOC+"/official-audio-streaming-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Classical", urlMainOC+"/official-classical-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Rock & Metal", urlMainOC+"/rock-and-metal-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Independent", urlMainOC+"/independent-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Catalogue", urlMainOC+"/catalogue-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("R&B", urlMainOC+"/r-and-b-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Dance", urlMainOC+"/dance-singles-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Asian", urlMainOC+"/asian-chart/", "listOC", "", "", "browse")
+    addAutoPlayDir("Scottish", urlMainOC+"/scottish-singles-chart/", "listOC", "", "", "browse")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def bpMain():
+    addAutoPlayDir("All Genres", urlMainBP+"/top-100", "listBP", "", "", "browse")
+    content = cache(urlMainBP, 30)
+    match=re.compile('<span class="fl.+?">  <a href="http://www.beatport.com/genre/(.+?)">(.+?)<', re.DOTALL).findall(content)
+    for genreID, title in match:
+        title = cleanTitle(title)
+        addAutoPlayDir(title, urlMainBP+"/genre/"+genreID+"/top-100", "listBP", "", "", "browse")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -96,7 +126,7 @@ def itunesMain():
 
 
 def billboardMain():
-    addAutoPlayDir(translation(30005), urlMain+"/rss/charts/hot-100", "listBillboardCharts", "", "", "browse")
+    addAutoPlayDir(translation(30005), urlMainBB+"/rss/charts/hot-100", "listBillboardCharts", "", "", "browse")
     addAutoPlayDir("Trending 140", "Top 140 in Trending", "listBillboardChartsNew", "", "", "browse")
     addAutoPlayDir("Last 24 Hours", "Top 140 in Overall", "listBillboardChartsNew", "", "", "browse")
     addDir(translation(30006), "genre", "listBillboardChartsTypes", "", "", "browse")
@@ -107,30 +137,30 @@ def billboardMain():
 
 def listBillboardChartsTypes(type):
     if type=="genre":
-        addAutoPlayDir(translation(30009), urlMain+"/rss/charts/pop-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30010), urlMain+"/rss/charts/rock-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30011), urlMain+"/rss/charts/alternative-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30012), urlMain+"/rss/charts/r-b-hip-hop-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30013), urlMain+"/rss/charts/r-and-b-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30014), urlMain+"/rss/charts/rap-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30015), urlMain+"/rss/charts/country-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30016), urlMain+"/rss/charts/latin-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30017), urlMain+"/rss/charts/jazz-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30018), urlMain+"/rss/charts/dance-club-play-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30019), urlMain+"/rss/charts/dance-electronic-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30020), urlMain+"/rss/charts/heatseekers-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30009), urlMainBB+"/rss/charts/pop-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30010), urlMainBB+"/rss/charts/rock-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30011), urlMainBB+"/rss/charts/alternative-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30012), urlMainBB+"/rss/charts/r-b-hip-hop-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30013), urlMainBB+"/rss/charts/r-and-b-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30014), urlMainBB+"/rss/charts/rap-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30015), urlMainBB+"/rss/charts/country-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30016), urlMainBB+"/rss/charts/latin-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30017), urlMainBB+"/rss/charts/jazz-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30018), urlMainBB+"/rss/charts/dance-club-play-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30019), urlMainBB+"/rss/charts/dance-electronic-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30020), urlMainBB+"/rss/charts/heatseekers-songs", "listBillboardCharts", "", "", "browse")
     elif type=="country":
-        addAutoPlayDir(translation(30021), urlMain+"/rss/charts/canadian-hot-100", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30022), urlMain+"/rss/charts/k-pop-hot-100", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30023), urlMain+"/rss/charts/japan-hot-100", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30024), urlMain+"/rss/charts/germany-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30025), urlMain+"/rss/charts/france-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30026), urlMain+"/rss/charts/united-kingdom-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30021), urlMainBB+"/rss/charts/canadian-hot-100", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30022), urlMainBB+"/rss/charts/k-pop-hot-100", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30023), urlMainBB+"/rss/charts/japan-hot-100", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30024), urlMainBB+"/rss/charts/germany-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30025), urlMainBB+"/rss/charts/france-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30026), urlMainBB+"/rss/charts/united-kingdom-songs", "listBillboardCharts", "", "", "browse")
     elif type=="other":
-        addAutoPlayDir(translation(30028), urlMain+"/rss/charts/radio-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30029), urlMain+"/rss/charts/digital-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30030), urlMain+"/rss/charts/streaming-songs", "listBillboardCharts", "", "", "browse")
-        addAutoPlayDir(translation(30031), urlMain+"/rss/charts/on-demand-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30028), urlMainBB+"/rss/charts/radio-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30029), urlMainBB+"/rss/charts/digital-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30030), urlMainBB+"/rss/charts/streaming-songs", "listBillboardCharts", "", "", "browse")
+        addAutoPlayDir(translation(30031), urlMainBB+"/rss/charts/on-demand-songs", "listBillboardCharts", "", "", "browse")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -227,29 +257,130 @@ def listSpotifyVideos(type, url, limit):
         xbmc.Player().play(playlist)
 
 
+def listOC(type, url, limit):
+    if type=="play":
+        musicVideos = []
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playlist.clear()
+    content = cache(url, 1)
+    spl=content.split('class="entry"')
+    pos = 1
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match=re.compile('<h4>(.+?)</h4>', re.DOTALL).findall(entry)
+        artist=match[0]
+        match=re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
+        videoTitle=match[0]
+        if " FT " in artist:
+            artist=artist[:artist.find(" FT ")].strip()
+        if "/" in artist:
+            artist=artist[:artist.find("/")].strip()
+        if "&amp;" in artist:
+            artist=artist[:artist.find("&amp;")].strip()
+        title=cleanTitle(artist+" - "+videoTitle)
+        match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb=match[0].replace("_50.jpg","_500.jpg")
+        filtered = False
+        for entry2 in blacklist:
+            if entry2.strip().lower() and entry2.strip().lower() in title.lower():
+                filtered = True
+        if filtered:
+            continue
+        if type=="browse":
+            addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
+        else:
+            if xbox:
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+            else:
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+            musicVideos.append([title, url, thumb])
+            if limit and int(limit)==pos:
+                break
+            pos+=1
+    if type=="browse":
+        xbmcplugin.endOfDirectory(pluginhandle)
+        if forceView:
+            xbmc.executebuiltin('Container.SetViewMode('+viewIDVideos+')')
+    else:
+        random.shuffle(musicVideos)
+        for title, url, thumb in musicVideos:
+            listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
+            playlist.add(url, listitem)
+        xbmc.Player().play(playlist)
+
+
+def listBP(type, url, limit):
+    if type=="play":
+        musicVideos = []
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playlist.clear()
+    content = cache(url, 1)
+    spl=content.split('"type":"track"')
+    pos = 1
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match=re.compile('"artists":.+?"name":"(.+?)"', re.DOTALL).findall(entry)
+        artist=match[0]
+        match=re.compile('"title":"(.+?)"', re.DOTALL).findall(entry)
+        videoTitle=match[0]
+        if "(Original Mix)" in videoTitle:
+            videoTitle=videoTitle[:videoTitle.find("(Original Mix)")].strip()
+        if "feat" in videoTitle:
+            videoTitle=videoTitle[:videoTitle.find("feat")].strip()
+        title=cleanTitle(artist+" - "+videoTitle)
+        match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+        thumb=match[0].replace("/24x24/","/500x500/")
+        filtered = False
+        for entry2 in blacklist:
+            if entry2.strip().lower() and entry2.strip().lower() in title.lower():
+                filtered = True
+        if filtered:
+            continue
+        if type=="browse":
+            addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
+        else:
+            if xbox:
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+            else:
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+            musicVideos.append([title, url, thumb])
+            if limit and int(limit)==pos:
+                break
+            pos+=1
+    if type=="browse":
+        xbmcplugin.endOfDirectory(pluginhandle)
+        if forceView:
+            xbmc.executebuiltin('Container.SetViewMode('+viewIDVideos+')')
+    else:
+        random.shuffle(musicVideos)
+        for title, url, thumb in musicVideos:
+            listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
+            playlist.add(url, listitem)
+        xbmc.Player().play(playlist)
+
+
 def listItunesVideos(type, genreID, limit):
     if type=="play":
         musicVideos = []
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         playlist.clear()
-    url = "https://itunes.apple.com/"+region+"/rss/topsongs/limit=100"
+    url = "https://itunes.apple.com/"+iTunesRegion+"/rss/topsongs/limit=100"
     if genreID!="0":
         url += "/genre="+genreID
-    url += "/explicit=true/xml"
+    url += "/explicit=true/json"
     content = cache(url, 1)
-    spl=content.split('<entry>')
+    content = json.loads(content)
     pos = 1
-    for i in range(1,len(spl),1):
-        entry=spl[i]
-        match=re.compile('<im:artist href=".*?">(.+?)</im:artist>', re.DOTALL).findall(entry)
-        artist=match[0]
-        match=re.compile('<im:name>(.+?)</im:name>', re.DOTALL).findall(entry)
-        videoTitle=match[0]
+    for item in content['feed']['entry']:
+        artist=item['im:artist']['label'].encode('utf-8')
+        videoTitle=item['im:name']['label'].encode('utf-8')
         if " (" in videoTitle:
             videoTitle=videoTitle[:videoTitle.rfind(" (")]
         title=cleanTitle(artist+" - "+videoTitle)
-        match=re.compile('<im:image height="170">(.+?)</im:image>', re.DOTALL).findall(entry)
-        thumb=match[0].replace("170x170-75.jpg","400x400-75.jpg")
+        try:
+            thumb=item['im:image'][2]['label'].replace("170x170-75.jpg","400x400-75.jpg")
+        except:
+            thumb=""
         filtered = False
         for entry2 in blacklist:
             if entry2.strip().lower() and entry2.strip().lower() in title.lower():
@@ -423,7 +554,7 @@ def translation(id):
 
 
 def cleanTitle(title):
-    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
+    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#039;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
     title = title.replace("&Auml;", "Ä").replace("&Uuml;", "Ü").replace("&Ouml;", "Ö").replace("&auml;", "ä").replace("&uuml;", "ü").replace("&ouml;", "ö")
     title = title.strip()
     return title
@@ -494,6 +625,14 @@ elif mode == 'itunesMain':
     itunesMain()
 elif mode == 'billboardMain':
     billboardMain()
+elif mode == 'ocMain':
+    ocMain()
+elif mode == 'bpMain':
+    bpMain()
+elif mode == 'listOC':
+    listOC(type, url, limit)
+elif mode == 'listBP':
+    listBP(type, url, limit)
 elif mode == 'listSpotifyGenres':
     listSpotifyGenres(url)
 elif mode == 'listSpotifyPlaylists':
