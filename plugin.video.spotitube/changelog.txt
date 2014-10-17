@@ -5,5 +5,10 @@
 1.0.2
 - Changed name to "Youtube Music"
 - Removed info when not using Autoplay mode
-- Added support for Billboard Charts
 - Added support for iTunes Charts
+- Added support for Billboard
+1.0.3
+- Fixed setting: "iTunes: Force region"
+- Changed iTunes Charts listing (xml->json)
+- Added support for Official Charts Company (UK)
+- Added support for Beatport
