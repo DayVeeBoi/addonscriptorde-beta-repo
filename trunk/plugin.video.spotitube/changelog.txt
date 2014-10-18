@@ -12,3 +12,5 @@
 - Changed iTunes Charts listing (xml->json)
 - Added support for Official Charts Company (UK)
 - Added support for Beatport
+1.0.4
+- Billboard: small encoding bugfix
