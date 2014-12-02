@@ -14,3 +14,7 @@
 - Fixed site changes
 1.0.8
 - Fixed season listing
+1.0.9
+- Added default fanart
+1.1.0
+- Fixed video playback

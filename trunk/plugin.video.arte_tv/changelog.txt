@@ -30,3 +30,5 @@
 - Fixed site changes
 2.1.3
 - Fixed listing (Genres, Shows, by Date)
+2.1.4
+- Fixed listing (latest videos)

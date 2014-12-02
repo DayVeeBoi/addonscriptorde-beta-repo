@@ -56,10 +56,9 @@ def index():
 
 
 def channelMain(channel, thumb):
-    addDir(translation(30007), mainUrl+"/mega-app/v1/"+channel+"/tablet/homepage", "listVideos", thumb, "", "Aktuelle ganze Folgen")
-    addDir(translation(30008), mainUrl+"/mega-app/v1/"+channel+"/tablet/homepage", "listVideos", thumb, "", "Neueste Videos")
-    addDir(translation(30009)+" - "+translation(30010), mainUrl+"/mega-app/v1/"+channel+"/tablet/format", "listShows", thumb, "", "Aktuell")
-    addDir(translation(30009)+" - "+translation(30011), mainUrl+"/mega-app/v1/"+channel+"/tablet/format", "listShows", thumb, "", "Archiv")
+    addDir(translation(30007), mainUrl+"/mega-app/v2/"+channel+"/tablet/homepage", "listVideos", thumb, "", "Aktuelle ganze Folgen")
+    addDir(translation(30008), mainUrl+"/mega-app/v2/"+channel+"/tablet/homepage", "listVideos", thumb, "", "Neueste Clips")
+    addDir(translation(30009), mainUrl+"/mega-app/v2/"+channel+"/tablet/format", "listShows", thumb, "", "Aktuell")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -84,7 +83,7 @@ def listVideos(url, type, thumb):
             except:
                 count=0
             if count>0:
-                addDir(vt, mainUrl+"/mega-app/v1/"+content["screen"]["id"].split(":")[0]+"/tablet/format/show/"+content["screen"]["id"], "listVideos", thumb, fanart, vt)
+                addDir(vt, mainUrl+"/mega-app/v2/"+content["screen"]["id"].split(":")[0]+"/tablet/format/show/"+content["screen"]["id"], "listVideos", thumb, fanart, vt)
     for videoType in content["screen"]["screen_objects"]:
         try:
             try:
@@ -173,24 +172,18 @@ def listVideosFavs(url):
 def listShows(url, type):
     content = opener.open(url).read()
     content = json.loads(content)
-    for videoType in content["screen"]["screen_objects"][0]["screen_objects"]:
-        try:
-            vt=videoType["title"]
-        except:
-            vt=""
-        if vt==type:
-            for item in videoType["screen_objects"]:
-                title = item["title"].encode('utf-8')
-                showID = str(item["id"])
-                cacheFile = os.path.join(cacheDir, showID.replace(":","#"))
-                if os.path.exists(cacheFile):
-                    fh = open(cacheFile, 'r')
-                    fanart = fh.read()
-                    fh.close()
-                else:
-                    fanart = ""
-                thumb = item["image_url"].replace("mega_app_420x236","mega_app_1280x720")
-                addShowDir(title, mainUrl+"/mega-app/v1/"+showID.split(":")[0]+"/tablet/format/show/"+showID, "listVideos", thumb, fanart, "Ganze Folgen", showID)
+    for item in content["screen"]["screen_objects"]:
+        title = item["title"].encode('utf-8')
+        showID = str(item["id"])
+        cacheFile = os.path.join(cacheDir, showID.replace(":","#"))
+        if os.path.exists(cacheFile):
+            fh = open(cacheFile, 'r')
+            fanart = fh.read()
+            fh.close()
+        else:
+            fanart = ""
+        thumb = item["image_url"].replace("mega_app_420x236","mega_app_1280x720")
+        addShowDir(title, mainUrl+"/mega-app/v2/"+showID.split(":")[0]+"/tablet/format/show/"+showID, "listVideos", thumb, fanart, "Ganze Folgen", showID)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewIDShows+')')
@@ -223,7 +216,7 @@ def search(thumb):
     keyboard.doModal()
     if keyboard.isConfirmed() and keyboard.getText():
         search_string = keyboard.getText().replace(" ", "+")
-        listVideos(mainUrl+"/mega-app/v1/tablet/search?query="+search_string, "", thumb)
+        listVideos(mainUrl+"/mega-app/v2/tablet/search?query="+search_string, "", thumb)
 
 
 def listShowsFavs():
@@ -238,7 +231,7 @@ def listShowsFavs():
             ids += url+","
         if ids:
             ids = ids[:-1]
-            addDir("- Neue Folgen", mainUrl+"/mega-app/v1/tablet/videos/favourites?ids=["+ids+"]", "listVideosFavs", "")
+            addDir("- Neue Folgen", mainUrl+"/mega-app/v2/tablet/videos/favourites?ids=["+ids+"]", "listVideosFavs", "")
         for line in all_lines:
             title = line[line.find("###TITLE###=")+12:]
             title = title[:title.find("#")]
@@ -254,7 +247,7 @@ def listShowsFavs():
                 fanart = ""
             thumb = line[line.find("###THUMB###=")+12:]
             thumb = thumb[:thumb.find("#")]
-            addShowFavDir(urllib.unquote_plus(title), mainUrl+"/mega-app/v1/"+showID.split(":")[0]+"/tablet/format/show/"+showID, "listVideos", urllib.unquote_plus(thumb), fanart, "Ganze Folgen", showID)
+            addShowFavDir(urllib.unquote_plus(title), mainUrl+"/mega-app/v2/"+showID.split(":")[0]+"/tablet/format/show/"+showID, "listVideos", urllib.unquote_plus(thumb), fanart, "Ganze Folgen", showID)
         fh.close()
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
