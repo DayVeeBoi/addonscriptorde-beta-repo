@@ -41,7 +41,7 @@ def index():
     for filter in regionFilters:
         regionFilter += filter.replace("'","").strip()+"%2C"
     regionFilter = regionFilter[:-3]
-    addDir(translation(30001), baseUrl+"/guide/"+language+"/plus7/plus_recentes.json?regions="+regionFilter, "listVideosNew", "")
+    addDir(translation(30001), baseUrl+"/guide/"+language+"/plus7.json?regions="+regionFilter, "listVideosNew", "")
     addDir(translation(30002), baseUrl+"/guide/"+language+"/plus7/selection.json?regions="+regionFilter, "listVideosNew", "")
     addDir(translation(30003), baseUrl+"/guide/"+language+"/plus7/plus_vues.json?regions="+regionFilter, "listVideosNew", "")
     addDir(translation(30004), baseUrl+"/guide/"+language+"/plus7/derniere_chance.json?regions="+regionFilter, "listVideosNew", "")

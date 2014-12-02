@@ -21,6 +21,8 @@ socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 translation = addon.getLocalizedString
+addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
+defaultFanart = os.path.join(addonDir ,'fanart.png')
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 userDataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
@@ -33,7 +35,7 @@ qual = [512000, 1024000, 1536000, 2048000, 2560000, 3072000]
 maxBitRate = qual[int(maxBitRate)]
 baseUrl = "http://www.dmax.de"
 opener = urllib2.build_opener()
-userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0"
+userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0"
 opener.addheaders = [('User-Agent', userAgent)]
 
 if not os.path.isdir(userDataFolder):
@@ -246,7 +248,7 @@ def listEpisodes(url, thumb):
 def playVideo(url, title, thumb):
     content = opener.open(url).read()
     matchMulti = re.compile('<li data-number="(.+?)" data-guid="(.+?)"', re.DOTALL).findall(content)
-    matchSingle = re.compile('&playlist=(.+?)"', re.DOTALL).findall(content)
+    matchSingle = re.compile('name="@videoPlayer" value="(.+?)"', re.DOTALL).findall(content)
     if matchMulti:
         addDir(title+": Alle Teile", url, "playVideoAll", thumb, title)
         for part, videoID in matchMulti:
@@ -378,6 +380,8 @@ def addLink(name, url, mode, iconimage, title, isSingle="no", desc="", duration=
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart and iconimage != icon:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     liz.addContextMenuItems([(translation(30009), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&title='+str(name)+'&thumb='+urllib.quote_plus(iconimage)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -390,6 +394,8 @@ def addDir(name, url, mode, iconimage, title, desc=""):
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     if useThumbAsFanart and iconimage != icon:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -401,6 +407,8 @@ def addShowDir(name, url, mode, iconimage, title, desc=""):
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     if useThumbAsFanart and iconimage != icon:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=ADD###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30011), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
@@ -414,6 +422,8 @@ def addShowRDir(name, url, mode, iconimage, title, desc=""):
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     if useThumbAsFanart and iconimage != icon:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=REMOVE###REFRESH###=TRUE###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30012), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
