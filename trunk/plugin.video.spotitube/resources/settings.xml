@@ -6,6 +6,7 @@
         <setting id="infoDelay" type="number" label="30105" enable="eq(-2,true)" default="5"/>
         <setting id="infoDuration" type="number" label="30106" enable="eq(-3,true)" default="5"/>
         <setting id="cacheDir" type="folder" label="30111" default="special://profile/addon_data/plugin.video.spotitube/cache"/>
+        <setting id="youtubeAddon" type="enum" label="30117" values="Official version|Bromix's version" default="0"/>
     </category>
     <category label="30202">
         <setting id="itunesShowSubGenres" type="bool" label="30112" default="true"/>

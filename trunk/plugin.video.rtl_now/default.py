@@ -30,7 +30,7 @@ iconNTV = os.path.join(addonDir, 'iconNTV.png')
 opener = urllib2.build_opener()
 userAgent = "Mozilla/5.0 (Windows NT 5.1; rv:24.0) Gecko/20100101 Firefox/24.0"
 opener.addheaders = [('User-Agent', userAgent)]
-useNoThumbMode = addon.getSetting("useNoThumbMode") == "true"
+useNoThumbMode = addon.getSetting("useNoThumbModeNew") == "true"
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
 viewMode = str(addon.getSetting("viewID"))
@@ -274,7 +274,8 @@ def playVideo(urlMain):
                 playpath = "mp4:"+playpath
             finalUrl = "rtmpe://"+matchRTMPE[0][0]+"/"+matchRTMPE[0][1]+"/ playpath="+playpath+" swfVfy=1 swfUrl=http://"+hosterURL+"/includes/vodplayer.swf app="+matchRTMPE[0][1]+"/_definst_ tcUrl=rtmpe://"+matchRTMPE[0][0]+"/"+matchRTMPE[0][1]+"/ pageUrl="+urlMain
         elif matchHDS:
-            finalUrl = "rtmpe://fms-fra"+str(random.randint(1, 34))+".rtl.de/"+matchHDS[0][2]+"/ playpath=mp4:"+matchHDS[0][4].replace(".f4m", "")+" swfVfy=1 swfUrl=http://"+hosterURL+"/includes/vodplayer.swf app="+matchHDS[0][2]+"/_definst_ tcUrl=rtmpe://fms-fra"+str(random.randint(1, 34))+".rtl.de/"+matchHDS[0][2]+"/ pageUrl="+urlMain
+            server = str(random.choice((21,22,23,26,27,28,32,33)))
+            finalUrl = "rtmpe://fms-fra"+server+".rtl.de/"+matchHDS[0][2]+"/ playpath=mp4:"+matchHDS[0][4].replace(".f4m", "")+" swfVfy=1 swfUrl=http://"+hosterURL+"/includes/vodplayer.swf app="+matchHDS[0][2]+"/_definst_ tcUrl=rtmpe://fms-fra"+server+".rtl.de/"+matchHDS[0][2]+"/ pageUrl="+urlMain
         if finalUrl:
             listitem = xbmcgui.ListItem(path=finalUrl)
             xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)

@@ -123,6 +123,26 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.baeblemusic_com" name="BaebleMusic.com" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch concerts, sessions, music videos and interviews on baeblemusic.com</summary>
+        <language>de</language>
+        <description lang="en">Watch concerts, sessions, music videos and interviews on baeblemusic.com</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.baeblemusic_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.baeblemusic.com</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.blip_tv" name="Blip.tv" version="1.0.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -291,7 +311,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.filmstarts_de" name="FilmStarts.de" version="2.1.4" provider-name="AddonScriptorDE">
+<addon id="plugin.video.filmstarts_de" name="FilmStarts.de" version="2.1.5" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -330,6 +350,45 @@
         <website></website>
         <source>https://github.com/AddonScriptorDE/plugin.video.giga_de</source>
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+    </extension>
+</addon>
+
+<addon id="plugin.video.heise_de" name="Heise.de" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch tech videos on heise.de/video</summary>
+        <language>de</language>
+        <description lang="en">Watch tech videos on heise.de/video</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.heise_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.heise.de/video</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.howstuffworks_com" name="HowStuffWorks.com" version="2.0.4" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Learn How Everything Works!</summary>
+        <language>en</language>
+        <description lang="en">Learn How Everything Works!</description>
+        <website>http://www.howstuffworks.com</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.howstuffworks_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=137984</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
@@ -541,7 +600,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.mtv_de" name="MTV.de" version="3.1.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.mtv_de" name="MTV.de" version="3.1.3" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -687,7 +746,6 @@
 <addon id="plugin.video.redbull_tv" name="RedBull.tv" version="2.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.pyamf" version="0.6.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -728,7 +786,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.rtl_now" name="NOW" version="1.1.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.rtl_now" name="NOW" version="1.1.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -858,6 +916,27 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.spiegel.tv</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.spotitube" name="Youtube Music" version="1.0.5" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video audio</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Play music videos via Youtube</summary>
+        <language></language>
+        <description lang="en">Play music videos via Youtube</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.spotitube</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website></website>
     </extension>
 </addon>
 
@@ -1091,6 +1170,27 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.walulissiehtfern_de" name="WalulisSiehtFern.de" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="plugin.video.youtube" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">WalulisSiehtFern full episodes</summary>
+        <language>de</language>
+        <description lang="en">WalulisSiehtFern full episodes</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.walulissiehtfern_de</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.walulissiehtfern.de</website>
+    </extension>
+</addon>
+
 <addon id="plugin.video.watchever_de" name="Watchever.de" version="1.0.5" provider-name="AddonScriptorDE">
     <requires>
         <import addon="plugin.program.chrome.launcher" version="1.0.0"/>
@@ -1134,67 +1234,23 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.youtube.billboard" name="YouTube Billboard" version="1.1.2" provider-name="AddonScriptorDE">
+<addon id="plugin.video.wettercom_tv" name="WetterCom.tv" version="1.0.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="plugin.video.youtube" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en">Play Billboard charts via YouTube</summary>
-        <language></language>
-        <description lang="en">Play Billboard charts via YouTube</description>
-        <website>http://www.youtube.com</website>
-        <broken>Not supported anymore! Use the YouTube Music addon instead...</broken>
-        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.billboard</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=171123</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
-    </extension>
-</addon>
-
-<addon id="plugin.video.youtube.filme" name="Youtube Filme" version="1.0.0" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="plugin.video.youtube" version="3.0.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Watch free german movies on Youtube</summary>
-        <summary lang="de">Kostenlose deutsche Filme auf Youtube schauen</summary>
+        <summary lang="en">German weather news</summary>
         <language>de</language>
-        <description lang="en">Watch free german movies on Youtube</description>
-        <description lang="de">Kostenlose deutsche Filme auf Youtube schauen</description>
+        <description lang="en">German weather news</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.filme</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <source>https://github.com/AddonScriptorDE/plugin.video.wettercom_tv</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
-        <website>http://www.youtube.com</website>
-    </extension>
-</addon>
-
-<addon id="plugin.video.youtube.quickplay" name="YouTube QuickPlay" version="1.0.1" provider-name="AddonScriptorDE">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="plugin.video.youtube" version="3.0.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Type in any search query and the Top50 results will be played automatically. You also have some options: Play randomly, Only play unwatched, Search order/period</summary>
-        <language></language>
-        <description lang="en">Type in any search query and the Top50 results will be played automatically. You also have some options: Play randomly, Only play unwatched, Search order/period</description>
-        <website>http://www.youtube.com</website>
-        <source>https://github.com/AddonScriptorDE/plugin.video.youtube.jukebox</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
-        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.wettercom.tv</website>
     </extension>
 </addon>
 

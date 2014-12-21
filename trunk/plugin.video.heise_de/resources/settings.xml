@@ -1,0 +1,5 @@
+<settings>
+   <setting id="maxQuality" type="enum" label="30101" values="360p|720p" default="1"/>
+   <setting id="forceView" type="bool" label="30102" default="true"/>
+   <setting id="viewID" type="number" label="30103" enable="eq(-1,true)" default="51"/>
+</settings>

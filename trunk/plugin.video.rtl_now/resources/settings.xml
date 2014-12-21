@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="30201">
-        <setting id="useNoThumbMode" type="bool" label="30104" default="false"/>
+        <setting id="useNoThumbModeNew" type="bool" label="30104" default="true"/>
         <setting id="useThumbAsFanart" type="bool" label="30101" default="true"/>
         <setting id="forceView" type="bool" label="30102" default="true"/>
         <setting id="viewID" type="number" label="30103" default="51"/>
