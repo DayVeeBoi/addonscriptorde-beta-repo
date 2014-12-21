@@ -22,3 +22,5 @@
 - Added context menu to list all seasons
 1.1.1
 - Added setting to force listing without thumbs
+1.1.2
+- Fixed video playback

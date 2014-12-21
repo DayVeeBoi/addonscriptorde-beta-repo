@@ -15,6 +15,8 @@ import xbmcgui
 import xbmcaddon
 import xbmcvfs
 import time
+from operator import itemgetter
+from datetime import date
 
 #addon = xbmcaddon.Addon()
 #addonID = addon.getAddonInfo('id')
@@ -42,11 +44,14 @@ itunesForceCountry = addon.getSetting("itunesForceCountry") == "true"
 itunesCountry = addon.getSetting("itunesCountry")
 spotifyForceCountry = addon.getSetting("spotifyForceCountry") == "true"
 spotifyCountry = addon.getSetting("spotifyCountry")
+youtubeAddonUrl = addon.getSetting("youtubeAddon")
+youtubeAddonUrl = ["plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=", "plugin://plugin.video.bromix.youtube/play/?video_id="][int(youtubeAddonUrl)]
 userAgent = "Mozilla/5.0 (Windows NT 6.1; rv:30.0) Gecko/20100101 Firefox/30.0"
 opener.addheaders = [('User-Agent', userAgent)]
 urlMainBB = "http://www.billboard.com"
 urlMainOC = "http://www.officialcharts.com"
 urlMainBP = "http://www.beatport.com"
+urlMainHypem = "http://hypem.com"
 if itunesForceCountry and itunesCountry:
     iTunesRegion = itunesCountry
 else:
@@ -61,10 +66,10 @@ if not os.path.isdir(addonUserDataFolder):
 if not cacheDir.startswith(('smb://', 'nfs://', 'upnp://', 'ftp://')) and not os.path.isdir(cacheDir):
     os.mkdir(cacheDir)
 
-
 def index():
     addDir("Beatport", "", "bpMain", "")
     addDir("Billboard", "", "billboardMain", "")
+    addDir("Hype Machine", "", "hypemMain", "")
     addDir(translation(30043), "", "itunesMain", "")
     addDir("Official Charts Company (UK)", "", "ocMain", "")
     addDir(translation(30044), "", "spotifyMain", "")
@@ -75,6 +80,13 @@ def spotifyMain():
     addDir(translation(30041), "http://api.tunigo.com/v3/space/toplists?region="+spotifyRegion+"&page=0&per_page=50&platform=web", "listSpotifyPlaylists", "")
     addDir(translation(30042), "http://api.tunigo.com/v3/space/featured-playlists?region="+spotifyRegion+"&page=0&per_page=50&dt="+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M").replace(":","%3A")+"%3A00&platform=web", "listSpotifyPlaylists", "")
     addDir(translation(30006), "http://api.tunigo.com/v3/space/genres?region="+spotifyRegion+"&per_page=1000&platform=web", "listSpotifyGenres", "")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def hypemMain():
+    addAutoPlayDir("Popular: Now", urlMainHypem+"/popular?ax=1&sortby=shuffle", 'listHypem', "", "", "browse")
+    addAutoPlayDir("Popular: Last Week", urlMainHypem+"/popular/lastweek?ax=1&sortby=shuffle", 'listHypem', "", "", "browse")
+    addAutoPlayDir("Time Machine", "", 'listTimeMachine', "", "", "browse")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -129,12 +141,67 @@ def billboardMain():
     addAutoPlayDir(translation(30005), urlMainBB+"/rss/charts/hot-100", "listBillboardCharts", "", "", "browse")
     addAutoPlayDir("Trending 140", "Top 140 in Trending", "listBillboardChartsNew", "", "", "browse")
     addAutoPlayDir("Last 24 Hours", "Top 140 in Overall", "listBillboardChartsNew", "", "", "browse")
+    #addDir("Archive", "", "listBillboardArchiveMain", "", "", "browse")
     addDir(translation(30006), "genre", "listBillboardChartsTypes", "", "", "browse")
     addDir(translation(30007), "country", "listBillboardChartsTypes", "", "", "browse")
     addDir(translation(30008), "other", "listBillboardChartsTypes", "", "", "browse")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
+def listBillboardArchiveMain():
+    for i in range(date.today().year,1957,-1):
+        addAutoPlayDir(str(i), urlMainBB+"/archive/charts/"+str(i), "listBillboardArchive", "", "", "browse")
+    xbmcplugin.endOfDirectory(pluginhandle)
+    
+    
+def listBillboardArchive(url):
+    content = cache(url, 30)
+    match=re.compile('class="field-content">.+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
+    for url, title in match:
+        if not "billboard 200" in title.lower() and not "album" in title.lower():
+            addAutoPlayDir(cleanTitle(title), urlMainBB+url, "listBillboardArchiveVideos", "", "", "browse")
+    xbmcplugin.endOfDirectory(pluginhandle)
+    
+    
+def listBillboardArchiveVideos(type, url, limit):
+    if type=="play":
+        musicVideos = []
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playlist.clear()
+    content = cache(url, 30)
+    match=re.compile('views-field-field-chart-item-song.+?>(.+?)<.+?href="/artist/.+?">(.+?)<', re.DOTALL).findall(content)
+    pos = 1
+    for title, artist in match:
+        title = title.strip()
+        if title.lower()!="song":
+            title = cleanTitle(artist+" - "+title)
+            filtered = False
+            for entry2 in blacklist:
+                if entry2.strip().lower() and entry2.strip().lower() in title.lower():
+                    filtered = True
+            if filtered:
+                continue
+            if type=="browse":
+                addLink(title, title.replace(" - ", " "), "playYTByTitle", "")
+            else:
+                if xbox:
+                    url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                else:
+                    url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
+                musicVideos.append([title, url, ""])
+                if limit and int(limit)==pos:
+                    break
+                pos+=1
+    if type=="browse":
+        xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        random.shuffle(musicVideos)
+        for title, url, thumb in musicVideos:
+            listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
+            playlist.add(url, listitem)
+        xbmc.Player().play(playlist)
+    
+    
 def listBillboardChartsTypes(type):
     if type=="genre":
         addAutoPlayDir(translation(30009), urlMainBB+"/rss/charts/pop-songs", "listBillboardCharts", "", "", "browse")
@@ -161,6 +228,81 @@ def listBillboardChartsTypes(type):
         addAutoPlayDir(translation(30029), urlMainBB+"/rss/charts/digital-songs", "listBillboardCharts", "", "", "browse")
         addAutoPlayDir(translation(30030), urlMainBB+"/rss/charts/streaming-songs", "listBillboardCharts", "", "", "browse")
         addAutoPlayDir(translation(30031), urlMainBB+"/rss/charts/on-demand-songs", "listBillboardCharts", "", "", "browse")
+    xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def listHypem(type, url, limit):
+    musicVideos = []
+    if type=="play":
+        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playlist.clear()
+    parentUrl = url
+    if url==urlMainHypem+"/popular?ax=1&sortby=shuffle":
+        content = cache(url, 0)
+    else:
+        content = cache(url, 1)
+    match = re.compile('class="rank">(.+?)<.+?href="/artist/.+?">(.+?)<.+?class="base-title">(.+?)<', re.DOTALL).findall(content)
+    spl=content.split('class="rank"')
+    for i in range(1,len(spl),1):
+        entry=spl[i]
+        match=re.compile('>(.+?)<', re.DOTALL).findall(entry)
+        rank=match[0]
+        match=re.compile('href="/artist/.+?">(.+?)<', re.DOTALL).findall(entry)
+        artist=match[0]
+        match=re.compile('class="base-title">(.+?)<', re.DOTALL).findall(entry)
+        title=match[0]
+        match=re.compile('class="remix-link">(.+?)<', re.DOTALL).findall(entry)
+        if match:
+            title+=" - "+match[0]
+        match=re.compile('class="thumb".+?background:url\\((.+?)\\)', re.DOTALL).findall(entry)
+        thumb = ""
+        if match:
+            thumb=match[0]
+        title = cleanTitle(artist.strip()+" - "+title.strip())
+        oTitle = title
+        '''match=re.compile('class="toggle-reposts">(.+?)<', re.DOTALL).findall(entry)
+        if match:
+            reposts = match[0]
+            reposts = reposts.replace("Posted by","").replace("blogs","").strip()
+            title+=" ["+reposts+"+]"'''
+        filtered = False
+        for entry2 in blacklist:
+            if entry2.strip().lower() and entry2.strip().lower() in title.lower():
+                filtered = True
+        if filtered:
+            continue
+        if type=="play":
+            if xbox:
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(oTitle.replace(" - ", " "))+"&mode=playYTByTitle"
+            else:
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(oTitle.replace(" - ", " "))+"&mode=playYTByTitle"
+        else:
+            url = oTitle
+        musicVideos.append([int(rank), title, url, thumb])
+    musicVideos = sorted(musicVideos, key=itemgetter(0))
+    if type=="browse":
+        for rank, title, url, thumb in musicVideos:
+            addLink(title, url.replace(" - ", " "), "playYTByTitle", "")
+        xbmcplugin.endOfDirectory(pluginhandle)
+    else:
+        if limit:
+            musicVideos = musicVideos[:int(limit)]
+        random.shuffle(musicVideos)
+        for rank, title, url, thumb in musicVideos:
+            listitem = xbmcgui.ListItem(title, thumbnailImage=thumb)
+            playlist.add(url, listitem)
+        xbmc.Player().play(playlist)
+
+
+def listTimeMachine():
+    for i in range(1, 210, 1):
+        dt = datetime.date.today()
+        while dt.weekday()!=0:
+            dt -= datetime.timedelta(days=1)
+        dt -= datetime.timedelta(weeks=i)
+        months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        month = months[int(dt.strftime("%m"))-1]
+        addAutoPlayDir(dt.strftime("%b %d, %Y"), urlMainHypem+"/popular/week:"+month+"-"+dt.strftime("%d-%Y")+"?ax=1&sortby=shuffle", 'listHypem', "", "", "browse")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -238,9 +380,9 @@ def listSpotifyVideos(type, url, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, thumb])
             if limit and int(limit)==pos:
                 break
@@ -290,9 +432,9 @@ def listOC(type, url, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, thumb])
             if limit and int(limit)==pos:
                 break
@@ -340,9 +482,9 @@ def listBP(type, url, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, thumb])
             if limit and int(limit)==pos:
                 break
@@ -391,9 +533,9 @@ def listItunesVideos(type, genreID, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", thumb)
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, thumb])
             if limit and int(limit)==pos:
                 break
@@ -424,9 +566,9 @@ def listBillboardCharts(type, url, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", "")
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, ""])
             if limit and int(limit)==pos:
                 break
@@ -459,9 +601,9 @@ def listBillboardChartsNew(type, url, limit):
             addLink(title, title.replace(" - ", " "), "playYTByTitle", "")
         else:
             if xbox:
-                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://video/Youtube Music/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             else:
-                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=autoPlayYTByTitle"
+                url = "plugin://"+addonID+"/?url="+urllib.quote_plus(title.replace(" - ", " "))+"&mode=playYTByTitle"
             musicVideos.append([title, url, ""])
             if limit and int(limit)==pos:
                 break
@@ -482,30 +624,17 @@ def playYTByTitle(title):
         if xbox:
             url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + youtubeID
         else:
-            url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + youtubeID
-        listitem = xbmcgui.ListItem(path=url)
-        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-    except:
-        pass
-
-
-def autoPlayYTByTitle(title):
-    try:
-        youtubeID = getYoutubeId(title)
-        if xbox:
-            url = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + youtubeID
-        else:
-            url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + youtubeID
+            url = youtubeAddonUrl + youtubeID
         listitem = xbmcgui.ListItem(path=url)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
         if infoEnabled:
             showInfo()
     except:
         pass
-        
+
 
 def getYoutubeId(title):
-    content = cache("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title)+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2", 1)
+    content = cache("http://gdata.youtube.com/feeds/api/videos?vq="+urllib.quote_plus(title.lower())+"&max-results=1&start-index=1&orderby=relevance&time=all_time&v=2", 1)
     match=re.compile('<yt:videoid>(.+?)</yt:videoid>', re.DOTALL).findall(content)
     return match[0]
 
@@ -617,22 +746,30 @@ chartTitle = urllib.unquote_plus(params.get('chartTitle', ''))
 
 if mode == 'playYTByTitle':
     playYTByTitle(url)
-elif mode == 'autoPlayYTByTitle':
-    autoPlayYTByTitle(url)
+elif mode == 'playYTByTitle':
+    playYTByTitle(url)
 elif mode == 'spotifyMain':
     spotifyMain()
 elif mode == 'itunesMain':
     itunesMain()
 elif mode == 'billboardMain':
     billboardMain()
+elif mode == 'listBillboardArchiveMain':
+    listBillboardArchiveMain()
 elif mode == 'ocMain':
     ocMain()
 elif mode == 'bpMain':
     bpMain()
+elif mode == 'hypemMain':
+    hypemMain()
 elif mode == 'listOC':
     listOC(type, url, limit)
 elif mode == 'listBP':
     listBP(type, url, limit)
+elif mode == 'listHypem':
+    listHypem(type, url, limit)
+elif mode == 'listTimeMachine':
+    listTimeMachine()
 elif mode == 'listSpotifyGenres':
     listSpotifyGenres(url)
 elif mode == 'listSpotifyPlaylists':
@@ -647,6 +784,10 @@ elif mode == 'playItunesVideos':
     playItunesVideos(url)
 elif mode == 'listBillboardCharts':
     listBillboardCharts(type, url, limit)
+elif mode == 'listBillboardArchive':
+    listBillboardArchive(url)
+elif mode == 'listBillboardArchiveVideos':
+    listBillboardArchiveVideos(type, url, limit)
 elif mode == 'listBillboardChartsNew':
     listBillboardChartsNew(type, url, limit)
 elif mode == 'listBillboardChartsTypes':

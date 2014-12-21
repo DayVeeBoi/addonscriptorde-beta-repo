@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui,sys,xbmcaddon,os,random
+import urllib,urllib2,re,xbmcplugin,xbmcgui,sys,xbmcaddon,os,random,json
 
 pluginhandle = int(sys.argv[1])
 
@@ -12,9 +12,8 @@ blacklistFile=xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+add
 addon = xbmcaddon.Addon(id=addonID)
 translation = addon.getLocalizedString
 filterVids=addon.getSetting("filterVids")
-forceViewMode = addon.getSetting("forceViewMode") == "true"
-useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
-viewMode = str(addon.getSetting("viewMode"))
+forceViewMode = addon.getSetting("forceView") == "true"
+viewMode = str(addon.getSetting("viewID"))
 
 def index():
         artistsFavsCount=0
@@ -221,40 +220,24 @@ def listVideos(url):
         newTitles=""
         #content = content[content.find("<div class='current_season'>"):]
         #content = content[:content.find("</ul>")]
-        spl=content.split('marquee-slide video')
+        spl=content.split('playable video')
         for i in range(1,len(spl),1):
             entry=spl[i]
-            match=re.compile('"token":"(.+?)"', re.DOTALL).findall(entry)
-            if match:
-              url=match[0]
-              match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-              thumb=match[0]
-              match=re.compile("class='info-title'>(.+?)<", re.DOTALL).findall(entry)
-              title=match[0]
-              if ">" in title:
-                title = title[title.find(">")+1:]
-              match=re.compile("class='info-subtitle'>(.+?)<", re.DOTALL).findall(entry)
-              title2=match[0]
-              if ">" in title2:
-                title2 = title2[title2.find(">")+1:].strip()
-              match=re.compile("<span>(.+?)</span>", re.DOTALL).findall(entry)
-              if match:
-                title2=match[0]
-              title=title+" - "+title2
-              title=cleanTitle(title)
-              titleInfos="###URL###="+url+"###TITLE###="+title+"!!!END!!!"
-              match=re.compile("<span class='chart_position'>(.+?)</span>", re.DOTALL).findall(entry)
-              titleRaw=title
-              if len(match)==1:
-                title=match[0].strip()+". "+title
-              if contentTitles.find(titleInfos)==-1 and newTitles.find(titleInfos)==-1:
-                newTitles = newTitles + titleInfos
-              if contentBlacklist.find(titleRaw)==-1:
-                if filterVids=="true":
-                  if title.lower().find("all eyes on")==-1 and title.lower().find("interview")==-1:
-                    addLink(title,url,'playVideo',thumb)
-                else:
-                  addLink(title,url,'playVideo',thumb)
+            if 'class="share"' in entry:
+                match=re.compile('data-object-id="(.+?)"', re.DOTALL).findall(entry)
+                url="http://www.mtv.de/videos/"+match[0]
+                match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+                thumb=match[0]
+                match=re.compile('<h4>.+?>(.+?)<', re.DOTALL).findall(entry)
+                artist=match[0]
+                match=re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
+                titleNew=artist+" - "+match[0]
+                titleNew=cleanTitle(titleNew)
+                titleInfos="###URL###="+url+"###TITLE###="+titleNew+"!!!END!!!"
+                if contentTitles.find(titleInfos)==-1 and newTitles.find(titleInfos)==-1:
+                    newTitles = newTitles + titleInfos
+                if contentBlacklist.find(titleNew)==-1:
+                    addLink(titleNew,url,'playVideo',thumb)
         xbmcplugin.endOfDirectory(pluginhandle)
         xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/titles.py,'+urllib.quote_plus(newTitles)+')')
         if forceViewMode:
@@ -274,14 +257,14 @@ def listVideosLatest(url):
           contentTitles=fh.read()
           fh.close()
         content = getUrl(url)
-        spl=content.split(" teaser'>")
+        spl=content.split('class="music playable')
         for i in range(1,len(spl),1):
           entry=spl[i]
           match=re.compile('href="(.+?)"', re.DOTALL).findall(entry)
           url="http://www.mtv.de/"+match[0]
           match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-          thumb=match[0].replace("/306x172","/960x540!")
-          match=re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+          thumb=match[0]
+          match=re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
           titleNew=match[0]
           titleNew=cleanTitle(titleNew)
           titleInfos="###URL###="+url+"###TITLE###="+titleNew+"!!!END!!!"
@@ -289,11 +272,6 @@ def listVideosLatest(url):
             newTitles = newTitles + titleInfos
           if contentBlacklist.find(titleNew)==-1:
             addLink(titleNew,url,'playVideo',thumb)
-        if urlMain.find("?page=")==-1:
-          nextPage="2"
-        else:
-          nextPage=str(int(urlMain[-1:])+1)
-        addDir(translation(30012)+" ("+nextPage+")","http://www.mtv.de/musikvideos?page="+nextPage,'listVideosLatest',"")
         xbmcplugin.endOfDirectory(pluginhandle)
         xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/titles.py,'+urllib.quote_plus(newTitles)+')')
         if forceViewMode:
@@ -425,8 +403,6 @@ def addLink(name,url,mode,iconimage,rndPos=""):
         nameNew=name
         if name.find(". ")==2:
           nameNew=name[4:]
-        if useThumbAsFanart:
-          liz.setProperty("fanart_image", iconimage)
         playListInfos="###MODE###=ADD###URL###="+u+"###TITLE###="+nameNew+"###THUMB###="+iconimage+"###END###"
         liz.addContextMenuItems([(translation(30202), 'XBMC.RunScript(special://home/addons/'+addonID+'/playlist.py,'+urllib.quote_plus(playListInfos)+')',),(translation(30204), 'XBMC.RunScript(special://home/addons/'+addonID+'/blacklist.py,'+urllib.quote_plus(playListInfos)+')',)])
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)

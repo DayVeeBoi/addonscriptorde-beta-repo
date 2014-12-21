@@ -31,8 +31,10 @@ baseUrl = "http://www.filmstarts.de"
 
 def index():
     addDir('Trailer: '+translation(30008), '', "search", '')
-    addDir('Trailer: '+translation(30001), baseUrl + '/trailer/aktuell_im_kino.html?version=1', "showSortDirection", '')
-    addDir('Trailer: '+translation(30002), baseUrl + '/trailer/bald_im_kino.html?version=1', "showSortDirection", '')
+    addDir('Trailer: Neu', baseUrl + '/trailer/neu/', "listVideos", '')
+    addDir('Trailer: Top', baseUrl + '/trailer/beliebteste.html', "listVideos", '')
+    addDir('Trailer: Aktuell im Kino', baseUrl + '/trailer/imkino/', "listVideos", '')
+    addDir('Trailer: Demnächst im Kino', baseUrl + '/trailer/bald/', "listVideos", '')
     addDir('Filmstarts: Fünf Sterne', baseUrl + '/videos/shows/funf-sterne', "listVideos", '')
     addDir('Filmstarts: Interviews', baseUrl + '/trailer/interviews/', "listVideos", '')
     addDir('Filmstarts: Fehlerteufel', baseUrl + '/videos/shows/filmstarts-fehlerteufel', "listVideos", '')
@@ -65,11 +67,19 @@ def listVideos(urlFull):
             maxPage = int(match[0][2])
         except:
             pass
-    spl = content.split('class="datablock')
+    if 'class="datablock' in content:
+        spl = content.split('class="datablock')
+    else:
+        spl = content.split('article data-block=')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile("src='(.+?)'", re.DOTALL).findall(entry)
-        thumb = match[0]
+        match1 = re.compile("src='(.+?)'", re.DOTALL).findall(entry)
+        match2 = re.compile('"src":"(.+?)"', re.DOTALL).findall(entry)
+        thumb = ""
+        if match1:
+            thumb = match1[0]
+        elif match2:
+            thumb = match2[0]
         match1 = re.compile("href='(.+?)'.*?>(.+?)</a>", re.DOTALL).findall(entry)
         match2 = re.compile('href="(.+?)".*?>(.+?)</a>', re.DOTALL).findall(entry)
         match = ""
@@ -77,25 +87,26 @@ def listVideos(urlFull):
             match=match1
         elif match2:
             match=match2
-        url = match[0][0]
-        title = match[0][1].replace("<strong>","").replace("</strong>","").replace("<span class='bold'>","").replace("</span>","").replace("\n","")
-        if "Trailer" in title:
-            title = title[:title.find("Trailer")]
-        if "Teaser" in title:
-            title = title[:title.find("Teaser")]
-        title = cleanTitle(title)
-        if showAllTrailers and "/trailer/" in url:
-            url = url[:url.find("/trailer/")]+"/trailers/"
-            addDir(title, baseUrl + url, "listTrailers", get_better_thumb(thumb))
-        else:
-            addLink(title, baseUrl + url, "playVideo", get_better_thumb(thumb))
+        if match:
+            url = match[0][0]
+            title = match[0][1].replace("<strong>","").replace("</strong>","").replace("<span class='bold'>","").replace("</span>","").replace("\n","")
+            if "Trailer" in title:
+                title = title[:title.find("Trailer")]
+            if "Teaser" in title:
+                title = title[:title.find("Teaser")]
+            title = cleanTitle(title)
+            if showAllTrailers and "/trailer/" in url:
+                url = url[:url.find("/trailer/")]+"/trailers/"
+                addDir(title, baseUrl + url, "listTrailers", get_better_thumb(thumb))
+            else:
+                addLink(title, baseUrl + url, "playVideo", get_better_thumb(thumb))
     if currentPage < maxPage:
         sortNr = urlFull[urlFull.find('sort_order=')+11:]
         sortNr = sortNr[:sortNr.find('&')]
         urlNew = urlFull[:urlFull.find('?')]+"?page="+str(currentPage+1)+"&sort_order="+sortNr+"&version=1"
         addDir(translation(30007)+" ("+str(currentPage+1)+")", urlNew, "listVideos", '')
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceView and ".html" in urlFull:
+    if forceView and baseUrl + '/trailer/' in urlFull and not baseUrl + '/trailer/interviews/' in urlFull:
         xbmc.executebuiltin('Container.SetViewMode('+viewID+')')
 
 
@@ -109,7 +120,9 @@ def listTrailers(url, fanart):
         if match:
             url = baseUrl + match[0]
             match = re.compile('"src":"(.+?)"', re.DOTALL).findall(entry)
-            thumb = match[0]
+            thumb = ""
+            if match:
+                thumb = match[0]
             match = re.compile('<span class="title fs14 ">.+?>(.+?)</span>', re.DOTALL).findall(entry)
             title = match[0].replace("<b>","").replace("</b>"," -").replace("</a>","").replace("<strong>","").replace("</strong>","")
             title = title.replace(" DF", " - "+str(translation(30009))).replace(" OV", " - "+str(translation(30010)))

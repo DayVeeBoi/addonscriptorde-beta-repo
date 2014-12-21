@@ -14,5 +14,4 @@
 - Fixed show playback
 - Changed show listing
 2.0.6
-- Fixed video playback
-- Fixed show listing
+- Fixed live/vod playback

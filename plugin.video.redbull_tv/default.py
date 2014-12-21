@@ -7,11 +7,11 @@ import socket
 import sys
 import re
 import os
+import json
 import time
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
-from pyamf import remoting
 
 addon = xbmcaddon.Addon()
 socket.setdefaulttimeout(30)
@@ -30,9 +30,9 @@ mainUrl = "http://www.redbull.tv"
 def index():
     addDir(translation(30005), "live", 'listEvents', "")
     addDir(translation(30006), "latest", 'listEvents', "")
-    addDir(translation(30002), mainUrl+"/Redbulltv", 'latestVideos', "")
-    addDir(translation(30003), mainUrl+"/cs/Satellite?pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&orderby=name&start=1", 'listShows', "")
-    addDir(translation(30004), "", 'search', "")
+    #addDir(translation(30002), mainUrl+"/videos", 'listVideos', "")
+    #addDir(translation(30003), mainUrl+"/shows?page=0&per_page=100", 'listShows', "")
+    #addDir(translation(30004), "", 'search', "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -91,7 +91,7 @@ def listEvents(url):
         subTitle = match[0][2]
         title = date+" "+timeFrom+" (GMT) - "+title
         title = cleanTitle(title)
-        addLink(title, url, 'playEvent', "", date+" "+timeFrom+"-"+timeTo+" (GMT): "+subTitle+"\n"+desc)
+        addLink(title, url, 'playVideo', "", date+" "+timeFrom+"-"+timeTo+" (GMT): "+subTitle+"\n"+desc)
     if matchPage:
         for pageNr, title in matchPage:
             if title == "next":
@@ -128,19 +128,16 @@ def latestVideos(url):
 def listShows(url):
     urlMain = url
     content = getUrl(url)
-    content = content[content.find('<div class="carousel-container"'):]
-    spl = content.split('<div data-id=')
+    spl = content.split("class='grid__unit")
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile('<span class="episode-count">(.+?)</span>', re.DOTALL).findall(entry)
-        subTitle = match[0]
-        match = re.compile('<span class="title">(.+?)</span>', re.DOTALL).findall(entry)
-        title = match[0].strip()+" ("+subTitle.strip().replace("[", "").replace("]", "").replace(" episodes", "").replace(" episode", "")+")"
+        match = re.compile('title="(.+?)"', re.DOTALL).findall(entry)
+        title = match[0].strip()
         title = cleanTitle(title)
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = mainUrl+match[0]
-        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = mainUrl+match[0].replace(" ", "%20")
+        match = re.compile('data-srcset="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0]
         addDir(title, url, 'listVideos', thumb)
     start = urlMain.split("=")[-1]
     match = re.compile('class="next" onclick="javascript:loadShows\\(\'name\', (.+?)\\)', re.DOTALL).findall(content)
@@ -152,29 +149,20 @@ def listShows(url):
 
 
 def listVideos(url):
-    xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
     content = getUrl(url)
-    spl = content.split('<div id="season-')
+    spl = content.split("class='grid__unit")
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        season = entry[:entry.find('"')]
-        if len(season) == 1:
-            season = "0"+season
-        entry = entry[entry.find('<tbody>'):]
-        entry = entry[:entry.find('</tbody>')]
-        spl2 = entry.split('<tr')
-        for i in range(1, len(spl2), 1):
-            entry2 = spl2[i]
-            match = re.compile('<td><a href="(.+?)">(.+?)</a></td>', re.DOTALL).findall(entry2)
-            url = mainUrl+match[0][0]
-            episode = match[0][1]
-            if len(episode) == 1:
-                episode = "0"+episode
-            title = match[1][1]
-            length = match[2][1]
-            if "</a>" in length:
-                length = ""
-            addLink("S"+season+"E"+episode+" - "+title, url, 'playVideo', "", "", length)
+        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+        url = mainUrl+match[0]
+        match = re.compile('data-srcset="(.+?)"', re.DOTALL).findall(entry)
+        thumb = match[0]
+        if "/episodes/" in url:
+            match = re.compile("class='h3 teaser__title.+?'>(.+?)<", re.DOTALL).findall(entry)
+            title = match[0]
+            match = re.compile("class='h4 teaser__subtitle'>(.+?)<", re.DOTALL).findall(entry)
+            title = match[0]+": "+title
+            addLink(title, url, 'playVideo', thumb, "", "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -202,72 +190,21 @@ def search():
 
 def playVideo(url):
     content = getUrl(url)
-    match = re.compile('name="@videoPlayer" value="(.+?)"', re.DOTALL).findall(content)
-    playBrightCoveStream(match[0])
-
-
-def playEvent(url):
-    content = getUrl(url)
-    match = re.compile('data-player-id="(.+?)"', re.DOTALL).findall(content)
-    if match:
-        playBrightCoveStreamLive(match[0])
+    match1 = re.compile("data-counter-target='(.+?)'", re.DOTALL).findall(content)
+    match2 = re.compile("data-id='(.+?)'", re.DOTALL).findall(content)
+    if match1:
+        xbmc.executebuiltin('XBMC.Notification(Info:,Not available yet...,5000,'+icon+')')
+    elif match2:
+        content = getUrl("https://api.redbull.tv/v1/videos/"+match2[0])
+        content = json.loads(content)
+        listItem = xbmcgui.ListItem(path=content["videos"]["live"]["uri"])
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
     else:
-        match = re.compile('<span class="ts-utc">(.+?)</span>', re.DOTALL).findall(content)
-        if match:
-            xbmc.executebuiltin('XBMC.Notification('+str(translation(30105))+':,'+time.strftime("%d.%m.%y %H:%M", time.localtime(int(match[0]))) + ' ('+str(translation(30106))+'),5000,'+icon+')')
-        else:
-            xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30104))+'!,5000,'+icon+')')
-
-
-def playBrightCoveStream(bc_videoID):
-    bc_playerID = 761157706001
-    bc_publisherID = 710858724001
-    bc_const = "cf760beae3fbdde270b76f2109537e13144e6fbd"
-    conn = httplib.HTTPConnection("c.brightcove.com")
-    envelope = remoting.Envelope(amfVersion=3)
-    envelope.bodies.append(("/1", remoting.Request(target="com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", body=[bc_const, bc_playerID, bc_videoID, bc_publisherID], envelope=envelope)))
-    conn.request("POST", "/services/messagebroker/amf?playerId=" + str(bc_playerID), str(remoting.encode(envelope).read()), {'content-type': 'application/x-amf'})
-    response = conn.getresponse().read()
-    response = remoting.decode(response).bodies[0][1].body
-    streamUrl = ""
-    for item in sorted(response['renditions'], key=lambda item: item['encodingRate'], reverse=False):
-        encRate = item['encodingRate']
-        if encRate < maxBitRate:
-            streamUrl = item['defaultURL']
-    if streamUrl.find("http://") == 0:
-        listItem = xbmcgui.ListItem(path=streamUrl+"?videoId="+bc_videoID+"&lineUpId=&pubId="+str(bc_publisherID)+"&playerId="+str(bc_playerID)+"&affiliateId=&v=&fp=&r=&g=")
-    else:
-        url = streamUrl[0:streamUrl.find("&")]
-        playpath = streamUrl[streamUrl.find("&")+1:]
-        listItem = xbmcgui.ListItem(path=url+' playpath='+playpath)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
-
-
-def playBrightCoveStreamLive(bc_videoID):
-    bc_playerID = 761157706001
-    bc_publisherID = 710858724001
-    bc_const = "cf760beae3fbdde270b76f2109537e13144e6fbd"
-    conn = httplib.HTTPConnection("c.brightcove.com")
-    envelope = remoting.Envelope(amfVersion=3)
-    envelope.bodies.append(("/1", remoting.Request(target="com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", body=[bc_const, bc_playerID, bc_videoID, bc_publisherID], envelope=envelope)))
-    conn.request("POST", "/services/messagebroker/amf?playerId=" + str(bc_playerID), str(remoting.encode(envelope).read()), {'content-type': 'application/x-amf'})
-    response = conn.getresponse().read()
-    response = remoting.decode(response).bodies[0][1].body
-    streamUrl = response['FLVFullLengthURL']
-    content = getUrl(streamUrl)
-    match = re.compile('BANDWIDTH=(.+?),.+?\n(.+?).m3u8', re.DOTALL).findall(content)
-    streamUrl = ""
-    bitrate = 0
-    for bitrateTemp, url in match:
-        if int(bitrateTemp) <= maxBitRate and int(bitrateTemp) >= bitrate:
-            streamUrl = url+".m3u8"
-            bitrate = int(bitrateTemp)
-    listItem = xbmcgui.ListItem(path=streamUrl)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listItem)
+        xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30104))+'!,5000,'+icon+')')
 
 
 def cleanTitle(title):
-    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#039;", "\\").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
+    title = title.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&#39;", "'").replace("&#039;", "'").replace("&quot;", "\"").replace("&szlig;", "ß").replace("&ndash;", "-")
     title = title.replace("&Auml;", "Ä").replace("&Uuml;", "Ü").replace("&Ouml;", "Ö").replace("&auml;", "ä").replace("&uuml;", "ü").replace("&ouml;", "ö")
     title = title.strip()
     return title
