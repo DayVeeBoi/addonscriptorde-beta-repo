@@ -19,3 +19,7 @@
 - Removed US site support
 1.0.9
 - Readded US site support
+1.1.0
+- Removed international site support
+- Changed name from "South Park" to "SouthPark.de"
+- Fixed HD video playback (only tested via kodi 14.0+)

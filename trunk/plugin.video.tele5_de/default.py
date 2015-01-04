@@ -25,10 +25,14 @@ opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko
 
 
 def index():
-    addDir("Kalkofes Mattscheibe Rekalked", baseUrl+"/mattscheibe-rekalked/sendungen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/sendungen/kalkofes-mattscheibe-rekalked/sendung-teaser-kalkhofes-mattscheibe-rekalked.jpg")
-    addDir("Playlist", baseUrl+"/playlist/sendungen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/sendungen/playlist-sound-of-my-life/sendung-teaser-playlist.jpg")
-    #addDir("RAW", baseUrl+"/raw/ganze-folgen.html", 'listVideos', baseUrl+"/fileadmin/user_upload/media/webshow/RAW-te_wwe_website_navibild_20140505_v2_jr.jpg")
+    content = opener.open(baseUrl+"/was-verpasst/sendungen.html").read()
+    content = content[content.find('class="videosGesamt"'):]
+    content = content[:content.find('</section>')]
+    match = re.compile('href="http://www.tele5.de/(.+?)".+?src="(.+?)".+?<h3>(.+?)</h3>', re.DOTALL).findall(content)
+    for url, thumb, title in match:
+        addDir(title, baseUrl+"/"+url, 'listVideos', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
+    xbmc.executebuiltin('Container.SetViewMode(500)')
 
 
 def listVideos(urlMain):
@@ -56,9 +60,20 @@ def playVideo(url):
     content = opener.open(url).read()
     matchID = re.compile('/entry_id/(.+?)"', re.DOTALL).findall(content)
     match2 = re.compile('resource="http://(.+?)/.+?/wid/_(.+?)/', re.DOTALL).findall(content)
+    match3 = re.compile('src="http://api.medianac.com/p/(.+?)/sp/.+?/embedIframeJs/uiconf_id/(.+?)/', re.DOTALL).findall(content)
     matchYT = re.compile('youtube.com/embed/(.+?)"', re.DOTALL).findall(content)
-    if match2:
-        url = "http://"+match2[0][0]+"/p/"+match2[0][1]+"/sp/"+match2[0][1]+"00/playManifest/entryId/"+matchID[0]+"/format/rtmp/protocol/rtmp/cdnHost/medianac.nacamar.de/ks/"
+    if matchYT:
+        ytID = matchYT[0]
+        ytID = ytID[:ytID.find('?')]
+        if xbox:
+            finalUrl = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + ytID
+        else:
+            finalUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + ytID
+    elif match2 or match3:
+        if match2:
+            url = "http://"+match2[0][0]+"/p/"+match2[0][1]+"/sp/"+match2[0][1]+"00/playManifest/entryId/"+matchID[0]+"/format/rtmp/protocol/rtmp/cdnHost/medianac.nacamar.de/ks/"
+        elif match3:
+            url = "http://api.medianac.com/p/"+match3[0][0]+"/sp/"+match3[0][0]+"00/playManifest/entryId/"+matchID[0]+"/format/rtmp/protocol/rtmp/cdnHost/medianac.nacamar.de/ks/"
         content = opener.open(url).read()
         matchBase = re.compile('<baseURL>(.+?)</baseURL>', re.DOTALL).findall(content)
         matchStream = re.compile('<media url="(.+?)" bitrate="(.+?)"', re.DOTALL).findall(content)
@@ -66,15 +81,8 @@ def playVideo(url):
         finalUrl = ""
         for stream, bitrate in matchStream:
             if int(bitrate)>max:
-                finalUrl = matchBase[0]+"/"+stream[stream.find(':')+1:]
+                finalUrl = matchBase[0]+" playpath="+stream
                 max = int(bitrate)
-    elif matchYT:
-        ytID = matchYT[0]
-        ytID = ytID[:ytID.find('?')]
-        if xbox:
-            finalUrl = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + ytID
-        else:
-            finalUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + ytID
     listitem = xbmcgui.ListItem(path=finalUrl)
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 

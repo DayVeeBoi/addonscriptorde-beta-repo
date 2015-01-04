@@ -33,7 +33,7 @@ def index():
           else:
             titlesCount = len(fh.readlines())
           fh.close()
-        addDir("TV-Shows","http://www.mtv.de/shows/alle",'listShows',"")
+        addDir("TV-Shows","",'listShows',"")
         addDir(translation(30007),"http://www.mtv.de/musikvideos",'listVideosLatest',"")
         addDir(translation(30001),"http://www.mtv.de/charts/5-hitlist-germany-top-100",'listVideos',"")
         addDir(translation(30004),"http://www.mtv.de/charts/8-mtv-de-videocharts",'listVideos',"")
@@ -175,35 +175,49 @@ def playVideoFromPlaylist(url):
         listitem = xbmcgui.ListItem(path=urllib.unquote_plus(url))
         return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
-def listShows(url):
-        content = getUrl(url)
-        spl=content.split("class='franchise teaser")
+def listShows():
+        content = getUrl("http://www.mtv.de/shows?sort=atoz")
+        spl=content.split('class="viacom-icon play')
         for i in range(1,len(spl),1):
             entry=spl[i]
-            match=re.compile('<a href="(.+?)"', re.DOTALL).findall(entry)
-            url="http://www.mtv.de"+match[0]
-            match=re.compile('<h3>(.+?)</h3>', re.DOTALL).findall(entry)
-            title=match[0]
-            match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-            thumb=match[0]
-            addDir(title,url,'listVideos',thumb)
+            match=re.compile('href="(.+?)"', re.DOTALL).findall(entry)
+            if match:
+                url="http://www.mtv.de"+match[0]
+                match=re.compile('<h4>(.+?)</h4>', re.DOTALL).findall(entry)
+                title=cleanTitle(match[0])
+                match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+                thumb=match[0]
+                addDir(title,url,'listShow',thumb)
         xbmcplugin.endOfDirectory(pluginhandle)
+        if forceViewMode:
+          xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 def listShow(url):
         content = getUrl(url)
-        if content.find("<div class='season-info'>")>=0:
-          content = content[content.find("<div class='season-info'>"):]
-          content = content[:content.find("</ol>")]
-          spl=content.split("<li")
-          for i in range(1,len(spl),1):
-              entry=spl[i]
-              match=re.compile('href="(.+?)" class=".*?">(.+?)<', re.DOTALL).findall(entry)
-              url="http://www.mtv.de"+match[0][0]
-              title="Season "+match[0][1]
-              addDir(title,url,'listVideos',"")
-          xbmcplugin.endOfDirectory(pluginhandle)
+        match=re.compile('class="tab-link".+?href="(.+?)">(.+?)<', re.DOTALL).findall(content)
+        if match:
+            for url, title in match:
+                addDir("Season "+title,"http://www.mtv.de"+url,'listShowVideos',"")
+            xbmcplugin.endOfDirectory(pluginhandle)
         else:
-          listVideos(url)
+          listShowVideos(url)
+
+def listShowVideos(url):
+        content = getUrl(url)
+        spl=content.split('class="video-collection-video playable"')
+        for i in range(1,len(spl),1):
+          entry=spl[i]
+          match=re.compile('<a href="(.+?)">(.+?)<', re.DOTALL).findall(entry)
+          url="http://www.mtv.de/"+match[0][0]
+          titleNew=match[0][1]
+          match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
+          thumb=match[0]
+          match=re.compile('<h4>(.+?)</h4>', re.DOTALL).findall(entry)
+          titleNew=titleNew+" - "+match[0]
+          addLink(titleNew,url,'playShow',thumb)
+        xbmcplugin.endOfDirectory(pluginhandle)
+        if forceViewMode:
+          xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 def listVideos(url):
         contentTitles=""
@@ -277,8 +291,10 @@ def listVideosLatest(url):
         if forceViewMode:
           xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
-def playShow(id):
-        content = getUrl("http://api.mtvnn.com/v2/mrss.xml?uri=mgid:sensei:video:mtvnn.com:local_playlist-"+id+"-DE")
+def playShow(url):
+        content = getUrl(url)
+        match=re.compile('local_playlist-(.+?)&', re.DOTALL).findall(content)
+        content = getUrl("http://api.mtvnn.com/v2/mrss.xml?uri=mgid:sensei:video:mtvnn.com:local_playlist-"+match[0]+"-DE")
         match=re.compile("<media:content duration='(.+?)' isDefault='true' type='text/xml' url='(.+?)'></media:content>", re.DOTALL).findall(content)
         playVideoMain(match[0][1])
 
@@ -477,7 +493,9 @@ elif mode == 'listVideosLatest':
 elif mode == 'listVideosFromFavs':
     listVideosFromFavs(url)
 elif mode == 'listShows':
-    listShows(url)
+    listShows()
+elif mode == 'listShowVideos':
+    listShowVideos(url)
 elif mode == 'listShow':
     listShow(url)
 elif mode == 'listEpisodes':

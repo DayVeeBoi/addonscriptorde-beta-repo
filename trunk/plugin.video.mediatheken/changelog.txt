@@ -15,3 +15,6 @@
 - Changed ProSiebenSat.1 to 7TV
 1.0.6
 - Added Servus TV
+1.0.7
+- Changed MTV entry
+- Removed VevoTV

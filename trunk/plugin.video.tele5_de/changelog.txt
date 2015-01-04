@@ -2,3 +2,6 @@
 - Initial release
 1.0.1
 - Fixed site changes
+1.0.2
+- Fixed show listing
+- Fixed playback for some videos

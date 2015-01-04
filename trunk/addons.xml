@@ -333,7 +333,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.giga_de" name="GIGA.de" version="2.0.7" provider-name="AddonScriptorDE">
+<addon id="plugin.video.giga_de" name="GIGA.de" version="2.0.9" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -560,7 +560,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.6" provider-name="AddonScriptorDE">
+<addon id="plugin.video.mediatheken" name="Mediatheken" version="1.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -600,7 +600,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.mtv_de" name="MTV.de" version="3.1.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.mtv_de" name="MTV.de" version="3.1.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -873,7 +873,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.southpark_de" name="South Park" version="1.0.9" provider-name="AddonScriptorDE">
+<addon id="plugin.video.southpark_de" name="SouthPark.de" version="1.1.0" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -940,7 +940,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tele5_de" name="Tele5.de" version="1.0.1" provider-name="AddonScriptorDE">
+<addon id="plugin.video.tele5_de" name="Tele5.de" version="1.0.2" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1109,7 +1109,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.vice_com" name="Vice.com" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.vice_com" name="Vice.com" version="1.0.6" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1251,6 +1251,25 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=132563</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.wettercom.tv</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.wired_com" name="Wired.com" version="2.0.3" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Watch videos from the technology magazine Wired</summary>
+        <language>en</language>
+        <description lang="en">Watch videos from the technology magazine Wired</description>
+        <website>http://www.wired.com</website>
+        <source>https://github.com/AddonScriptorDE/plugin.video.wired_com</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=136354</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
     </extension>
 </addon>
 

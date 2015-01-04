@@ -13,3 +13,5 @@
 - "ProSiebenMaxx" and "Sat.1 Gold" are now officially supported
 1.0.6
 - Changed content source to 7TV Api v2
+1.0.7
+- Fixed playback for some videos (kodi 14.0+ required)
