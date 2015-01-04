@@ -6,6 +6,7 @@ import socket
 import sys
 import re
 import os
+import json
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
@@ -17,67 +18,58 @@ addonID = addon.getAddonInfo('id')
 xbox = xbmc.getCondVisibility("System.Platform.xbox")
 useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 forceViewMode = addon.getSetting("forceView") == "true"
-viewMode = str(addon.getSetting("viewIDVideos"))
+viewMode = str(addon.getSetting("viewIDVideosNew"))
 translation = addon.getLocalizedString
 urlMain = "http://www.vice.com"
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 addonUserdataFolder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
-favsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favourites")
+favsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favourites.new")
 subtitleLanguage = addon.getSetting("subtitleLanguage")
 subtitleLanguage = ["-", "ro", "pt", "pl", "nl", "it", "es", "ru", "fr", "de", "en"][int(subtitleLanguage)]
 
 if not os.path.isdir(addonUserdataFolder):
     os.mkdir(addonUserdataFolder)
 
-while (not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml"))):
-    addon.openSettings()
 
 def index():
-    addDir(translation(30002), "", 'listLatest', icon)
-    addDir(translation(30003), "", 'listShows', icon)
+    addDir(translation(30002), urlMain+"/en_us/ajax/getlatestvideos?limit=12&ids_not_in=", 'listVideos', icon)
+    addDir("Popular Shows", "", 'listShowsP', icon)
+    addDir("All Shows", "", 'listShowsA', icon)
     addDir(translation(30004), "", 'listShowsFavs', icon)
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode:
-        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
+
+        
+def listShow(url):
+    content = getUrl(url)
+    match = re.compile('data-series-id="(.+?)"', re.DOTALL).findall(content)
+    showID = match[0]
+    listVideos(urlMain+"/en_us/ajax/getseriesepisodes?limit=12&series_id="+showID+"&ids_not_in=,")
 
 
-def listLatest():
-    content = getUrl(urlMain+"/video")
-    spl = content.split('<li class="story" data-vr-contentbox="vice-vbs-index-video')
+def listShowsP():
+    content = getUrl(urlMain+"/videos")
+    content = content[content.find('class="list-widget featured-shows"'):]
+    content = content[:content.find('</section>')]
+    spl = content.split('class="item"')
     for i in range(1, len(spl), 1):
         entry = spl[i]
-        match = re.compile('<p>(.+?)</p>', re.DOTALL).findall(entry)
-        desc = match[0]
-        match = re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry)
-        date = match[0]
-        match = re.compile('<h2>.+?>(.+?)<', re.DOTALL).findall(entry)
+        match = re.compile('<h2>(.+?)</h2>', re.DOTALL).findall(entry)
         title = cleanTitle(match[0])
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = urlMain+match[0]
-        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = match[0].replace("_190x165.jpg","_669x375.jpg").replace(" ","%20")
-        addLink(title, url, 'playVideo', thumb, date+"\n"+desc)
+        match = re.compile('data-sources="(.+?)"', re.DOTALL).findall(entry)
+        thumb = "http:"+match[0]
+        thumb = thumb[:thumb.find(" ")]
+        addShowDir(title, url, 'listShow', thumb, "")
     xbmcplugin.endOfDirectory(pluginhandle)
-    if forceViewMode:
-        xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def listShows():
-    content = getUrl(urlMain+"/shows")
-    spl = content.split('<li class="story story-square">')
-    for i in range(1, len(spl), 1):
-        entry = spl[i]
-        match = re.compile('<a href="(.+?)">(.+?)</a>', re.DOTALL).findall(entry)
-        url = urlMain+match[0][0]
-        title = cleanTitle(match[0][1])
-        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = match[0]
-        match = re.compile('<p>(.+?)</p>', re.DOTALL).findall(entry)
-        desc = ""
-        if match:
-            desc = match[0]
-        addShowDir(title, url, 'listVideos', thumb, desc)
+def listShowsA():
+    content = getUrl(urlMain+"/en_us/ajax/getseries?limit=200")
+    content = json.loads(content)
+    for item in content["items"]:
+        addShowDir(item["title"].encode('utf-8'), urlMain+item["url"].encode('utf-8'), 'listShow', "", "")
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -93,32 +85,26 @@ def listShowsFavs():
             url = url[:url.find("#")]
             thumb = line[line.find("###THUMB###=")+12:]
             thumb = thumb[:thumb.find("#")]
-            addShowFavDir(title, urllib.unquote_plus(url), "listVideos", thumb)
+            addShowFavDir(title, urllib.unquote_plus(url), "listShow", thumb)
         fh.close()
     xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def listVideos(url):
-    content = getUrl(url)
-    spl = content.split('<li class="story" data-vr-contentbox="vice-vbs-episode')
-    for i in range(1, len(spl), 1):
-        entry = spl[i]
-        match = re.compile('<p>(.+?)</p>', re.DOTALL).findall(entry)
-        desc = ""
-        if match:
-            desc = match[0]
-        match = re.compile('<span>(.+?)</span>', re.DOTALL).findall(entry)
-        date = match[0]
-        match = re.compile('<h2>.+?>(.+?)<', re.DOTALL).findall(entry)
-        title = cleanTitle(match[0])
-        match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-        url = urlMain+match[0]
-        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
-        thumb = match[0].replace("_220x124.jpg","_669x375.jpg").replace(" ","%20")
-        addLink(title, url, 'playVideo', thumb, date+"\n"+desc)
-    match = re.compile('<li class="next"><a href="(.+?)"', re.DOTALL).findall(content)
-    if match:
-        addDir(translation(30001), urlMain+match[0], 'listVideos', "")
+def listVideos(mainUrl):
+    xbmcplugin.setContent(pluginhandle, "episodes")
+    ids = ""
+    content = getUrl(mainUrl)
+    content = json.loads(content)
+    for item in content["items"]:
+        ids += item["id"]+","
+        url = urlMain+item["url"]
+        title = item["info"]["title"].encode('utf-8')
+        thumb = "http://assets2.vice.com/"+item["info"]["image_path"]+item["info"]["image_file_name"]
+        desc = item["excerpt"].encode('utf-8').replace("<i>","'").replace("</i>","'")
+        date = item["publish_date"]
+        duration = item["video_duration_visual"]
+        addLink(title, url, 'playVideo', thumb, desc, date, duration)
+    addDir(translation(30001), mainUrl+ids, 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
@@ -127,7 +113,8 @@ def listVideos(url):
 def playVideo(url):
     content = getUrl(url)
     matchOO = re.compile('embedCode=(.+?)&', re.DOTALL).findall(content)
-    matchYT = re.compile('youtube.com/v/(.+?)"', re.DOTALL).findall(content)
+    matchYT = re.compile('data-youtube-id="(.+?)"', re.DOTALL).findall(content)
+    matchYT2 = re.compile('youtube.com/v/(.+?)"', re.DOTALL).findall(content)
     streamUrl = ""
     if matchOO:
         content = getUrl("http://player.ooyala.com/player.js?embedCode="+matchOO[0])
@@ -146,6 +133,13 @@ def playVideo(url):
             streamUrl = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + matchYT[0]
         else:
             streamUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + matchYT[0]
+        listitem = xbmcgui.ListItem(path=streamUrl)
+        xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
+    elif matchYT2:
+        if xbox:
+            streamUrl = "plugin://video/YouTube/?path=/root/video&action=play_video&videoid=" + matchYT2[0]
+        else:
+            streamUrl = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + matchYT2[0]
         listitem = xbmcgui.ListItem(path=streamUrl)
         xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
     if url.endswith("part-1"):
@@ -204,8 +198,7 @@ def favs(param):
         fh = open(favsFile, 'w')
         fh.write(content.replace(channelEntry+"\n", ""))
         fh.close()
-        if refresh == "TRUE":
-            xbmc.executebuiltin("Container.Refresh")
+        xbmc.executebuiltin("Container.Refresh")
 
 
 def setSubtitle(url):
@@ -281,11 +274,11 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 
-def addLink(name, url, mode, iconimage, desc=""):
+def addLink(name, url, mode, iconimage, desc="", date="", duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+str(name)
     ok = True
     liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
+    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc, "Aired": date, "Duration": duration, "Episode": 1})
     liz.setProperty('IsPlayable', 'true')
     if useThumbAsFanart:
         liz.setProperty("fanart_image", iconimage)
@@ -331,10 +324,12 @@ name = urllib.unquote_plus(params.get('name', ''))
 
 if mode == 'listVideos':
     listVideos(url)
-elif mode == 'listLatest':
-    listLatest()
-elif mode == 'listShows':
-    listShows()
+elif mode == 'listShow':
+    listShow(url)
+elif mode == 'listShowsA':
+    listShowsA()
+elif mode == 'listShowsP':
+    listShowsP()
 elif mode == 'listShowsFavs':
     listShowsFavs()
 elif mode == 'playVideo':

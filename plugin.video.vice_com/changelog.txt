@@ -8,3 +8,6 @@
 - Fixed show listing
 1.0.5
 - Changed default view
+1.0.6
+- Fixed video/show listing
+- Fixed playback for some videos

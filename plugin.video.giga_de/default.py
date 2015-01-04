@@ -60,10 +60,10 @@ def listVideos(url):
         title = match[0]
         title = cleanTitle(title)
         thumb = ""
-        match = re.compile('data-original="(.+?)"', re.DOTALL).findall(entry)
+        match = re.compile('src="(.+?)"', re.DOTALL).findall(entry)
         if match:
             thumb = match[0].replace("-300x190.jpg",".jpg")
-        addLink(title, url, 'playVideo', thumb)
+        addDir(title, url, 'playVideos', thumb)
     if "/page/" in mainUrl:
         match = re.compile('/page/(.+?)/', re.DOTALL).findall(mainUrl)
         nr = str(int(match[0])+1)
@@ -78,16 +78,38 @@ def listVideos(url):
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
 
 
-def playVideo(url):
+def playVideos(url):
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
     content = getUrl(url)
-    match = re.compile('/api/video/#v=(.+?)&', re.DOTALL).findall(content)
-    matchYT0 = re.compile('data-youtube-id="(.+?)"', re.DOTALL).findall(content)
-    matchYT1 = re.compile('youtube.com/v/(.+?)\\?', re.DOTALL).findall(content)
-    matchYT2 = re.compile('youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(content)
-    matchYT3 = re.compile('youtube.com/embed/(.+?)"', re.DOTALL).findall(content)
-    url = ""
-    if match:
+    i = 1
+    ids = []
+    match = re.compile('iframe.+?src="/api/video/jwplayer/#v=(.+?)&', re.DOTALL).findall(content)
+    for videoID in match:
+        if not videoID in ids:
+            ids.append(videoID)
+            url="plugin://plugin.video.giga_de/?url="+str(videoID)+"&mode=playVideo"
+            listitem = xbmcgui.ListItem("Part: "+str(i))
+            playlist.add(url, listitem)
+            i+=1
+    xbmc.Player().play(playlist)
+    
+
+
+def playVideo(url):
+    if "http" in url:
+        content = getUrl(url)
+        match = re.compile('data-video-id="(.+?)"', re.DOTALL).findall(content)
+        matchYT0 = re.compile('data-youtube-id="(.+?)"', re.DOTALL).findall(content)
+        matchYT1 = re.compile('youtube.com/v/(.+?)\\?', re.DOTALL).findall(content)
+        matchYT2 = re.compile('youtube.com/watch\\?v=(.+?)"', re.DOTALL).findall(content)
+        matchYT3 = re.compile('youtube.com/embed/(.+?)"', re.DOTALL).findall(content)
+        url = ""
+    if not "http" in url:
+        content = getUrl("http://video.giga.de/xml/"+url+".xml")
+    elif match:
         content = getUrl("http://video.giga.de/xml/"+match[0]+".xml")
+    if not "http" in url or match:
         match1 = re.compile('<high.+?<filename>(.+?)</filename>', re.DOTALL).findall(content)
         match2 = re.compile('<medium.+?<filename>(.+?)</filename>', re.DOTALL).findall(content)
         if match1 and maxVideoQuality == "720p":
@@ -177,6 +199,8 @@ if mode == 'listVideosTop':
     listVideosTop(url)
 elif mode == 'listVideos':
     listVideos(url)
+elif mode == 'playVideos':
+    playVideos(url)
 elif mode == 'playVideo':
     playVideo(url)
 elif mode == "queueVideo":

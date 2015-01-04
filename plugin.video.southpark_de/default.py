@@ -25,17 +25,12 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
-baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "southparkstudios.com", "-"]
-baseUrl = addon.getSetting("countryNew2")
-baseUrl = baseUrls[int(baseUrl)]
+#baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "southparkstudios.com", "-"]
+#baseUrl = addon.getSetting("countryNew2")
+#baseUrl = baseUrls[int(baseUrl)]
+baseUrl = "southpark.de"
 language = addon.getSetting("language")
 language = ["de", "en"][int(language)]
-
-while baseUrl == "-":
-    addon.openSettings()
-    baseUrl = addon.getSetting("countryNew2")
-    baseUrl = baseUrls[int(baseUrl)]
-
 
 def index():
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -43,9 +38,10 @@ def index():
     if not "/messages/geoblock/" in content and not "/geoblock/messages/" in content:
         if baseUrl == "southpark.de":
             url = "/alle-episoden"
+            addLink("- "+translation(30003), "http://www."+baseUrl+url+"/random", 'playVideo', icon)
         else:
             url = "/full-episodes"
-        addLink("- "+translation(30003), "http://www."+baseUrl+url+"/random", 'playVideo', icon)
+            addLink("- "+translation(30003), "http://www."+baseUrl+url+"/random", 'playVideo', icon)
         content = getUrl("http://www."+baseUrl+url)
         if 'content_epfinder' in content:
             content = content[content.find('content_epfinder'):]
@@ -144,7 +140,7 @@ def playVideo(url):
             if not "<title>South Park Intro" in entry:
                 match = re.compile('<media:content type="text/xml" medium="video" duration="(.+?)" isDefault="true" url="(.+?)"', re.DOTALL).findall(entry)
                 url = match[0][1].replace("&amp;", "&").replace("&device={device}","")
-                content = getUrl(url+"&acceptMethods=hdn1")
+                content = getUrl(url+"&acceptMethods=fms")
                 matchMp4 = re.compile('width=".+?" height=".+?" type="video/mp4" bitrate="(.+?)">.+?<src>(.+?)</src>', re.DOTALL).findall(content)
                 matchFlv = re.compile('width=".+?" height=".+?" type="video/x-flv" bitrate="(.+?)">.+?<src>(.+?)</src>', re.DOTALL).findall(content)
                 matchCC = re.compile('<transcript kind="captions".*?format="ttml" src="(.+?)"', re.DOTALL).findall(content)
@@ -163,14 +159,6 @@ def playVideo(url):
                         if int(br) > bitrate:
                             bitrate = int(br)
                             urlNew = urlTemp
-                            """
-                            if "/mtvnorigin/" in urlNew:
-                                urlNew = "http://mtvni.rd.llnwd.net/44620"+urlNew[urlNew.find("/mtvnorigin/"):]
-                            elif "/viacomspstrm/" in urlNew:
-                                urlNew = "http://mtvni.rd.llnwd.net/44620/mtvnorigin/"+urlNew[urlNew.find("/viacomspstrm/")+14:]
-                            elif "/mtviestor/" in urlNew:
-                                urlNew = "http://mtvni.rd.llnwd.net/44620/cdnorigin"+urlNew[urlNew.find("/mtviestor/"):]
-                            """
                     try:
                         title = matchTitle[0]
                         if matchSE1:

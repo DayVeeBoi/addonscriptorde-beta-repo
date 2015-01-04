@@ -15,3 +15,7 @@
 - Fixed site changes
 2.0.7
 - Fixed site changes
+2.0.8
+- Fixed site changes
+2.0.9
+- Fixed video playback

@@ -121,7 +121,7 @@ def listVideos(url, type, thumb):
                         duration = ""
                     videoID = str(item["id"])
                     thumb = item["image_url"].replace("mega_app_420x236","mega_app_1280x720")
-                    addLink(title, videoID, "playVideoMobile", thumb, fanart, desc, duration)
+                    addLink(title, videoID, "playVideo", thumb, fanart, desc, duration)
         except:
             pass
     xbmcplugin.endOfDirectory(pluginhandle)
@@ -163,7 +163,7 @@ def listVideosFavs(url):
             duration = ""
         videoID = str(item["id"])
         thumb = item["image_url"].replace("mega_app_566x318","mega_app_1280x720")
-        addLink(title, videoID, "playVideoMobile", thumb, fanart, desc, duration)
+        addLink(title, videoID, "playVideo", thumb, fanart, desc, duration)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewIDVideos+')')
@@ -189,19 +189,10 @@ def listShows(url, type):
         xbmc.executebuiltin('Container.SetViewMode('+viewIDShows+')')
 
 
-def playVideoMobile(videoID):
-    listitem = xbmcgui.ListItem(path="http://ws.vtc.sim-technik.de/video/playlist.m3u8?ClipID="+videoID)
-    xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-
-
-def playVideoDesktop(videoID):
-    clientID = ""
-    content = opener.open("http://vas.sim-technik.de/vas/live/v2/videos/"+videoID+"/sources?access_token=testclient&client_location="+urllib.quote_plus(url)+"&client_name=kolibri-1.2.5&client_id="+clientID).read()
-    match = re.compile('"server_id":"(.+?)"', re.DOTALL).findall(content)
-    serverID = match[0]
-    content = opener.open("http://vas.sim-technik.de/vas/live/v2/videos/"+videoID+"/sources/url?access_token=testclient&client_location="+urllib.quote_plus(url)+"&client_name=kolibri-1.2.5&client_id="+clientID+"&server_id="+serverID+"&source_ids=1%2C3%2C4").read()
-    streamURL = ""
-    listitem = xbmcgui.ListItem(path=streamURL)
+def playVideo(videoID):
+    content = opener.open("http://vas.sim-technik.de/video/video.json?clipid="+videoID+"&method=4").read()
+    content = json.loads(content)
+    listitem = xbmcgui.ListItem(path=content["VideoURL"])
     xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 
@@ -382,10 +373,8 @@ elif mode == 'listVideosFavs':
     listVideosFavs(url)
 elif mode == 'listShows':
     listShows(url, type)
-elif mode == 'playVideoMobile':
-    playVideoMobile(url)
-elif mode == 'playVideoDesktop':
-    playVideoDesktop(url)
+elif mode == 'playVideo':
+    playVideo(url)
 elif mode == 'queueVideo':
     queueVideo(url, name, thumb)
 elif mode == 'listShowsFavs':
