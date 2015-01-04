@@ -27,13 +27,14 @@ subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
 favsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/favourites.new")
 subtitleLanguage = addon.getSetting("subtitleLanguage")
 subtitleLanguage = ["-", "ro", "pt", "pl", "nl", "it", "es", "ru", "fr", "de", "en"][int(subtitleLanguage)]
+itemsPerPage = 12
 
 if not os.path.isdir(addonUserdataFolder):
     os.mkdir(addonUserdataFolder)
 
 
 def index():
-    addDir(translation(30002), urlMain+"/en_us/ajax/getlatestvideos?limit=12&ids_not_in=", 'listVideos', icon)
+    addDir(translation(30002), urlMain+"/en_us/ajax/getlatestvideos?limit="+str(itemsPerPage)+"&ids_not_in=", 'listVideos', icon)
     addDir("Popular Shows", "", 'listShowsP', icon)
     addDir("All Shows", "", 'listShowsA', icon)
     addDir(translation(30004), "", 'listShowsFavs', icon)
@@ -44,7 +45,7 @@ def listShow(url):
     content = getUrl(url)
     match = re.compile('data-series-id="(.+?)"', re.DOTALL).findall(content)
     showID = match[0]
-    listVideos(urlMain+"/en_us/ajax/getseriesepisodes?limit=12&series_id="+showID+"&ids_not_in=,")
+    listVideos(urlMain+"/en_us/ajax/getseriesepisodes?limit="+str(itemsPerPage)+"&series_id="+showID+"&ids_not_in=,")
 
 
 def listShowsP():
@@ -104,7 +105,8 @@ def listVideos(mainUrl):
         date = item["publish_date"]
         duration = item["video_duration_visual"]
         addLink(title, url, 'playVideo', thumb, desc, date, duration)
-    addDir(translation(30001), mainUrl+ids, 'listVideos', "")
+    if len(content["items"])==itemsPerPage:
+        addDir(translation(30001), mainUrl+ids, 'listVideos', "")
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
