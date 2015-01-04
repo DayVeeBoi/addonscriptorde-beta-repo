@@ -11,3 +11,5 @@
 1.0.6
 - Fixed video/show listing
 - Fixed playback for some videos
+1.0.7
+- Fixed next page listing
