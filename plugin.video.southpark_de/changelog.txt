@@ -23,3 +23,8 @@
 - Removed international site support
 - Changed name from "South Park" to "SouthPark.de"
 - Fixed HD video playback (only tested via kodi 14.0+)
+1.1.1
+- Fixed episode listing (airdate)
+- Fixed playback title (required for random mode)
+- Readded international site support (except 'US')
+- Changed name back from "SouthPark.de" to "South Park" ;)

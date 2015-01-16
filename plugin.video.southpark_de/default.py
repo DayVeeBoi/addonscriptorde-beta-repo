@@ -25,12 +25,17 @@ useThumbAsFanart = addon.getSetting("useThumbAsFanart") == "true"
 showSubtitles = addon.getSetting("showSubtitles") == "true"
 forceViewMode = addon.getSetting("forceViewMode") == "true"
 viewMode = str(addon.getSetting("viewMode"))
-#baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "southparkstudios.com", "-"]
-#baseUrl = addon.getSetting("countryNew2")
-#baseUrl = baseUrls[int(baseUrl)]
-baseUrl = "southpark.de"
-language = addon.getSetting("language")
+baseUrls = ["southparkstudios.se", "southparkstudios.no", "southparkstudios.fi", "southparkstudios.dk", "southpark.nl", "southpark.de", "-"]
+baseUrl = addon.getSetting("country2")
+baseUrl = baseUrls[int(baseUrl)]
+language = addon.getSetting("language2")
 language = ["de", "en"][int(language)]
+
+while baseUrl == "-":
+    xbmc.executebuiltin('XBMC.Notification(Info:,Select site version...,5000,'+icon+')')
+    addon.openSettings()
+    baseUrl = addon.getSetting("country2")
+    baseUrl = baseUrls[int(baseUrl)]
 
 def index():
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -53,30 +58,6 @@ def index():
                 for url, staffel in match:
                     if not "/random" in url:
                         addDir(str(translation(30001))+" "+staffel, "http://www."+baseUrl+"/feeds/full-episode/carousel/"+staffel+"/"+promoId, 'listVideos', icon)
-        else:
-            xbmcplugin.setContent(pluginhandle, "episodes")
-            spl = content.split('<article class="thumb "')
-            for i in range(1, len(spl), 1):
-                entry = spl[i]
-                match = re.compile('class="title">(.+?)<', re.DOTALL).findall(entry)
-                title = cleanTitle(match[0])
-                match = re.compile("class='air-date'>(.+?)<", re.DOTALL).findall(entry)
-                splDate = match[0].strip().split(".")
-                date = splDate[2]+"-"+splDate[0]+"-"+splDate[1]
-                match = re.compile("class='season'>s(.+?)e(.+?)<", re.DOTALL).findall(entry)
-                season = match[0][0]
-                episode = match[0][1]
-                nr = "S"+season+"E"+episode
-                match = re.compile('class="episode">(.+?)<', re.DOTALL).findall(entry)
-                desc = cleanTitle(match[0])
-                match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
-                url = match[0]
-                match = re.compile("background-image:url\\('(.+?)'\\)", re.DOTALL).findall(entry)
-                thumb = match[0]
-                thumb = thumb[:thumb.find("?")]
-                addLink(nr+" - "+title, url, 'playVideo', thumb, desc, season, episode, date)
-            if forceViewMode:
-                xbmc.executebuiltin('Container.SetViewMode('+viewMode+')')
         xbmcplugin.endOfDirectory(pluginhandle)
     else:
         xbmc.executebuiltin('XBMC.Notification(Info:,'+str(translation(30005))+',5000,'+icon+')')
@@ -93,10 +74,7 @@ def listVideos(url):
         title = cleanTitle(match[0])
         match = re.compile("airdate:'(.+?)'", re.DOTALL).findall(entry)
         splDate = match[0].split(".")
-        if baseUrl == "southpark.de":
-            date = splDate[2]+"-"+splDate[1]+"-"+splDate[0]
-        else:
-            date = splDate[2]+"-"+splDate[0]+"-"+splDate[1]
+        date = splDate[2]+"-"+splDate[1]+"-"+splDate[0]
         match = re.compile("episodenumber:'(.+?)'", re.DOTALL).findall(entry)
         episode = match[0]
         nr = "S"+episode[0:2]+"E"+episode[2:4]
@@ -118,10 +96,7 @@ def playVideo(url):
     playlist.clear()
     content = getUrl(url)
     matchTitle = re.compile('property="og:title" content="(.+?)"', re.DOTALL).findall(content)
-    matchDesc = re.compile('itemprop="description">(.+?)<', re.DOTALL).findall(content)
     matchThumb = re.compile('<meta property="og:image" content="(.+?)"', re.DOTALL).findall(content)
-    matchSE1 = re.compile('itemprop="episodeNumber">s(.+?)e(.+?)<', re.DOTALL).findall(content)
-    matchSE2 = re.compile('itemprop="episodeNumber" content="(.+?)"', re.DOTALL).findall(content)
     match1 = re.compile('"http://media.mtvnservices.com/mgid:arc:episode:'+baseUrl+':(.+?)"', re.DOTALL).findall(content)
     match2 = re.compile('data-mgid="mgid:arc:episode:'+baseUrl+':(.+?)"', re.DOTALL).findall(content)
     match = []
@@ -161,15 +136,9 @@ def playVideo(url):
                             urlNew = urlTemp
                     try:
                         title = matchTitle[0]
-                        if matchSE1:
-                            season = matchSE1[0][0]
-                            episode = matchSE1[0][1]
-                        elif matchSE2:
-                            season = matchSE2[0][:2]
-                            episode = matchSE2[0][2:]
                         if "(" in title:
                             title = title[:title.find("(")]
-                        listitem = xbmcgui.ListItem("S"+season+"E"+episode+" - "+title, thumbnailImage=matchThumb[0])
+                        listitem = xbmcgui.ListItem("South Park: "+title, thumbnailImage=matchThumb[0])
                     except:
                         pass
                     if xbox:

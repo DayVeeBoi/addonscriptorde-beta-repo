@@ -76,7 +76,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.3" provider-name="AddonScriptorDE">
+<addon id="plugin.video.ardmediathek_de" name="ARD Mediathek" version="3.0.4" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -120,6 +120,24 @@
         <forum>http://forum.xbmc.org/showthread.php?tid=204803</forum>
         <email>AddonScriptorDE at yahoo dot de</email>
         <website>http://www.arte.tv</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.atv_at" name="ATV.at" version="2.0.5" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="de">ATV.at Mediathek</summary>
+        <summary lang="en">ATV.at media library</summary>
+        <language>de</language>
+        <description lang="de">ATV.at Mediathek</description>
+        <description lang="en">ATV.at media library</description>
+    <platform>all</platform>
     </extension>
 </addon>
 
@@ -723,7 +741,29 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.prosiebensat1_media" name="7TV" version="1.0.5" provider-name="AddonScriptorDE">
+<addon id="plugin.video.prime_instant" name="Amazon Prime Instant Video" version="1.0.0" provider-name="AddonScriptorDE">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.mechanize" version="0.2.6"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Amazon Prime Instant Video Add-on (US/UK/DE)</summary>
+        <language></language>
+        <description lang="en">Amazon Prime Instant Video Add-on (US/UK/DE)</description>
+        <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <source>https://github.com/AddonScriptorDE/plugin.video.prime_instant</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=</forum>
+        <email>AddonScriptorDE at yahoo dot de</email>
+        <website>http://www.amazon.com</website>
+    </extension>
+</addon>
+
+<addon id="plugin.video.prosiebensat1_media" name="7TV" version="1.0.7" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -873,7 +913,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.southpark_de" name="SouthPark.de" version="1.1.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.southpark_de" name="SouthPark.de" version="1.1.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -1273,7 +1313,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.2.0" provider-name="AddonScriptorDE">
+<addon id="plugin.video.zdf_de_lite" name="ZDF Mediathek" version="2.2.1" provider-name="AddonScriptorDE">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
