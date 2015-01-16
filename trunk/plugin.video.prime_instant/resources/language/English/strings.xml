@@ -32,7 +32,7 @@
   <string id="30058">Show similar TV Shows</string>
   <string id="30059">Select streaming quality</string>
   <string id="30060">Show Details</string>
-  <string id="30081">Please enter your email/password and select the website version (US/UK/DE)...</string>
+  <string id="30081">Please select the site version (US/UK/DE)...</string>
   <string id="30082">You are not logged in! Check your credentials and restart the addon...</string>
   <string id="30083">The Video is not available in your country!</string>
   <string id="30084">Prime Account required / Video not included in your membership!</string>
@@ -41,6 +41,8 @@
   <string id="30087">This video is temporarily unavailable!</string>
   <string id="30088">Added to your Watchlist...</string>
   <string id="30089">Removed from your Watchlist...</string>
+  <string id="30090">Enter your Email:</string>
+  <string id="30091">Enter your Password:</string>
   <string id="30101">Email</string>
   <string id="30102">Password</string>
   <string id="30103">Website Version</string>

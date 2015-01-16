@@ -23,17 +23,13 @@ addon = xbmcaddon.Addon()
 addonID = addon.getAddonInfo('id')
 icon = xbmc.translatePath('special://home/addons/'+addonID+'/icon.png')
 
-email = addon.getSetting("email")
-password = addon.getSetting("password")
 
 def translation(id):
     return addon.getLocalizedString(id).encode('utf-8')
     
-if email == "" or password == "":
+if not os.path.exists(xbmc.translatePath("special://profile/addon_data/"+addonID+"/settings.xml")):
     xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30081)+',10000,'+icon+')')
     addon.openSettings()
-    email = addon.getSetting("email")
-    password = addon.getSetting("password")
 
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
@@ -73,7 +69,9 @@ viewIdEpisodes = addon.getSetting("viewIdEpisodes")
 viewIdDetails = addon.getSetting("viewIdDetails")
 urlMain = "http://www.amazon."+siteVersion
 urlMainS = "https://www.amazon."+siteVersion
-    
+addon.setSetting('email', '')
+addon.setSetting('password', '')
+
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0"
 opener.addheaders = [('User-agent', userAgent)]
@@ -781,17 +779,26 @@ def login():
     elif 'id="nav-item-signout"' in content:
         return "noprime"
     else:
-        br = mechanize.Browser()
-        br.set_cookiejar(cj)
-        br.set_handle_robots(False)
-        br.addheaders = [('User-agent', userAgent)]
-        content = br.open(urlMainS+"/gp/sign-in.html")
-        br.select_form(name="signIn")
-        br["email"] = email
-        br["password"] = password
-        content = br.submit().read()
-        cj.save(cookieFile)
-        content = opener.open(urlMain).read()
+        content = ""
+        keyboard = xbmc.Keyboard('', translation(30090))
+        keyboard.doModal()
+        if keyboard.isConfirmed() and keyboard.getText():
+            email = keyboard.getText()
+            keyboard = xbmc.Keyboard('', translation(30091))
+            keyboard.doModal()
+            if keyboard.isConfirmed() and keyboard.getText():
+                password = keyboard.getText()
+                br = mechanize.Browser()
+                br.set_cookiejar(cj)
+                br.set_handle_robots(False)
+                br.addheaders = [('User-agent', userAgent)]
+                content = br.open(urlMainS+"/gp/sign-in.html")
+                br.select_form(name="signIn")
+                br["email"] = email
+                br["password"] = password
+                content = br.submit().read()
+                cj.save(cookieFile)
+                content = opener.open(urlMain).read()
         if '"isPrime":1' in content:
             return "prime"
         elif 'id="nav-item-signout"' in content:
