@@ -32,7 +32,7 @@
   <string id="30058">Ähnliche Serien anzeigen</string>
   <string id="30059">Streaming Qualität auswählen</string>
   <string id="30060">Details anzeigen</string>
-  <string id="30081">Bitte Email/Passwort eingeben und Seitenversion (US/UK/DE) wählen...</string>
+  <string id="30081">Bitte die Seitenversion (US/UK/DE) wählen...</string>
   <string id="30082">Du bist nicht eingeloggt! Überprüfe deine Benutzerdaten und starte das Addon neu...</string>
   <string id="30083">Das Video ist in deinem Land nicht verfügbar!</string>
   <string id="30084">Prime Mitgliedschaft benötigt / Video nicht in Mitgliedschaft enthalten!</string>
@@ -41,6 +41,8 @@
   <string id="30087">Dieses Video ist derzeit nicht verfügbar!</string>
   <string id="30088">Zu deiner Watchlist hinzugefügt...</string>
   <string id="30089">Aus deiner Watchlist entfernt...</string>
+  <string id="30090">Email eingeben:</string>
+  <string id="30091">Password eingeben:</string>
   <string id="30101">Email</string>
   <string id="30102">Passwort</string>
   <string id="30103">Seitenversion</string>
