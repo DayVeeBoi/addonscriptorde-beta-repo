@@ -235,14 +235,12 @@ def listCats(type):
         match = re.compile('href="(.+?)"', re.DOTALL).findall(entry)
         url = match[0]
         if "/"+type+"?" in url:
-            match = re.compile('documentId=(.+?)&', re.DOTALL).findall(entry)
-            showID = match[0]
             match = re.compile('class="headline">(.+?)<', re.DOTALL).findall(entry)
             if match:
                 title = match[0]
                 match = re.compile('/image/(.+?)/16x9/', re.DOTALL).findall(entry)
                 thumb = baseUrl+"/image/"+match[0]+"/16x9/448"
-                addDir(cleanTitle(title), baseUrl+"/tv/?documentId="+showID, 'listVideos', thumb)
+                addDir(cleanTitle(title), baseUrl+url, 'listVideos', thumb)
     xbmcplugin.endOfDirectory(pluginhandle)
     if forceViewMode:
         xbmc.executebuiltin('Container.SetViewMode('+viewModeShows+')')

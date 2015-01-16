@@ -17,11 +17,13 @@ addon = xbmcaddon.Addon(id=addonID)
 socket.setdefaulttimeout(30)
 pluginhandle = int(sys.argv[1])
 translation = addon.getLocalizedString
+addonDir = xbmc.translatePath(addon.getAddonInfo('path'))
+defaultFanart = os.path.join(addonDir ,'fanart.png')
+icon = os.path.join(addonDir ,'icon.png')
 addon_work_folder = xbmc.translatePath("special://profile/addon_data/"+addonID)
 channelFavsFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".favorites")
 subFile = xbmc.translatePath("special://profile/addon_data/"+addonID+"/sub.srt")
 baseUrl = "http://www.zdf.de"
-defaultBackground = baseUrl+"/ZDFmediathek/img/fallback/946x532.jpg"
 
 if not os.path.isdir(addon_work_folder):
     os.mkdir(addon_work_folder)
@@ -194,6 +196,8 @@ def listVideos(url):
             length = ""
             if match:
                 length = match[0]
+                if length.startswith("00:"):
+                    length = "1"
             match = re.compile('<img src="(.+?)"', re.DOTALL).findall(entry)
             thumb = match[0]
             thumb = thumb.replace("/timg94x65blob", "/timg485x273blob")
@@ -283,7 +287,7 @@ def setSubtitle(url):
             beginS = str(round(begin%60, 1)).replace(".",",")
             if len(beginS.split(",")[0])==1:
                 beginS = "0"+beginS
-            beginM = str(int(begin)/60)
+            beginM = str((int(begin)/60)%60)
             if len(beginM)==1:
                 beginM = "0"+beginM
             beginH = str(int(begin)/60/60)
@@ -294,7 +298,7 @@ def setSubtitle(url):
             endS = str(round(end%60, 1)).replace(".",",")
             if len(endS.split(",")[0])==1:
                 endS = "0"+endS
-            endM = str(int(end)/60)
+            endM = str((int(end)/60)%60)
             if len(endM)==1:
                 endM = "0"+endM
             endH = str(int(end)/60/60)
@@ -403,11 +407,13 @@ def parameters_string_to_dict(parameters):
 def addLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     liz.addContextMenuItems([(translation(30012), 'RunPlugin(plugin://'+addonID+'/?mode=queueVideo&url='+urllib.quote_plus(u)+'&name='+urllib.quote_plus(name)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
     return ok
@@ -416,11 +422,13 @@ def addLink(name, url, mode, iconimage, duration=""):
 def addShowLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=ADD###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30028), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -430,11 +438,13 @@ def addShowLink(name, url, mode, iconimage, duration=""):
 def addShowFavLink(name, url, mode, iconimage, duration=""):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, "Duration": duration})
     liz.setProperty('IsPlayable', 'true')
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=REMOVE###REFRESH###=TRUE###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30029), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -444,11 +454,12 @@ def addShowFavLink(name, url, mode, iconimage, duration=""):
 def addDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
-    liz.setProperty("fanart_image", defaultBackground)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -456,11 +467,12 @@ def addDir(name, url, mode, iconimage):
 def addTopicDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
-    liz.setProperty("fanart_image", defaultBackground)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
@@ -468,10 +480,12 @@ def addTopicDir(name, url, mode, iconimage):
 def addShowDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=ADD###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30028), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
@@ -481,10 +495,12 @@ def addShowDir(name, url, mode, iconimage):
 def addShowFavDir(name, url, mode, iconimage):
     u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage=defaultBackground, thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name})
-    if useThumbAsFanart:
+    if useThumbAsFanart and iconimage:
         liz.setProperty("fanart_image", iconimage)
+    else:
+        liz.setProperty("fanart_image", defaultFanart)
     playListInfos = "###MODE###=REMOVE###REFRESH###=TRUE###TITLE###="+name+"###URL###="+urllib.quote_plus(url)+"###THUMB###="+iconimage+"###END###"
     liz.addContextMenuItems([(translation(30029), 'RunPlugin(plugin://'+addonID+'/?mode=favs&url='+urllib.quote_plus(playListInfos)+')',)])
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)

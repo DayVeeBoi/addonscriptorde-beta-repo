@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-   <setting id="language" type="enum" label="30102" values="DE|EN" default="0"/>
+   <setting id="country2" type="enum" label="30101" values="SE|NO|FI|DK|NL|DE|-" default="6"/>
+   <setting id="language2" type="enum" label="30102" enable="eq(-1,5)" values="DE|EN" default="0"/>
    <setting id="showSubtitles" type="bool" label="30106" default="false"/>
    <setting id="useThumbAsFanart" type="bool" label="30105" default="false"/>
    <setting id="forceViewMode" type="bool" label="30103" default="true"/>

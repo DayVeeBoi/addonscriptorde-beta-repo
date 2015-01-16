@@ -7,3 +7,5 @@
 - Fixed "Das Erste" live stream
 3.0.3
 - Fixed show listing
+3.0.4
+- Fixed category listing
