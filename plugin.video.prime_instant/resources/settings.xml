@@ -19,7 +19,6 @@
     <category label="30203">
         <setting id="useTMDb" type="bool" label="30113" default="true"/>
         <setting id="preferAmazonTrailer" type="bool" label="30120" default="false"/>
-        <setting id="useLogo" type="bool" label="30117" default="true"/>
         <setting id="updateDB" type="bool" label="30114" default="true"/>
         <setting id="showNotification" type="bool" label="30122" default="true"/>
         <setting type="sep" />
